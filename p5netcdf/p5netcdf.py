@@ -1012,9 +1012,9 @@ class Variable(Mixin):
 
                 case "zarr":
                     raise RuntimeError(
-                        "self._dims should have already been set to  "
-                        "something other than None by the "
-                        "zarr_parse_group_structure function"
+                        "You shouldn't be here: self._dims should have "
+                        "already been set to something other than None by "
+                        "the zarr_parse_group_structure function"
                     )
 
                 case _:
@@ -1817,21 +1817,41 @@ Group._Group__Group = Group
 class Dataset(Group):
     """A dataset viewed as netCDF.
 
-    The dataset (a `Dataset` object) is represented as a collection of
-    netCDF groups (`Group` objects), dimensions (`Dimension` objects),
-    variables (`Variable` objects), and attributes.
+    A `Dataset` object provides a consistent netCDF-4 API overlay for
+    datasets originating from various sources and accessed through
+    various backend libraries. The entire hierarchy is represented as
+    a standardized collection of netCDF groups (`Group` objects),
+    dimensions (`Dimension` objects), variables (`Variable` objects),
+    and user-facing attributes.
+
+    **Attributes**
+
+    Group and variable attributes follow the netCDF-4 conventions that
+    assign special meaning to selected attributes, treating them as
+    internal attributes which may be required to define the dataset
+    structure.
+
+    These attributes are ``CLASS``, ``NAME``, ``REFERENCE_LIST``,
+    ``DIMENSION_LIST``, ``DIMENSION_LABELS``, and
+    ``_ARRAY_DIMENSIONS``, as well as any attributes that start with
+    ``_Netcdf4``, ``_nc``, or ``_NC``.
+
+    How these attributes are used, if at all, depends on the backend
+    library being used to access the dataset (e.g. backends that have
+    their own dimension class may ignore them); but in all cases they
+    are removed from the `Group` and `Variable` attribute collections.
 
     **Performance**
 
     `p5netcdf` is "structure- and attribute-eager", meaning that
     during `Dataset` instantiation, the entire netCDF group, variable,
     and dimension structure is parsed; along with all group and
-    variable attributes. Variable data access is always via access to
-    the underlying backend library (see the *backend* parameter). Some
-    `Variable` and `Group` properties and methods might also access
-    the underlying backend but only for the first request, after which
-    the result is cached (see the *structural_metadata_strategy*
-    parameter).
+    variable attributes. Variable data array access is always via
+    access to the underlying backend library (see the *backend* and
+    *dataset* parameters). Some `Variable` and `Group` properties and
+    methods might also access the underlying backend for structural
+    metadata, but only for the first request, after which the result
+    is cached (see the *structural_metadata_strategy* parameter).
 
     .. versionadded:: NEXTVERSION
 
@@ -1845,7 +1865,7 @@ class Dataset(Group):
             * string-like (such as `str` or `pathlib.Path`)
 
             * file-like (such as `io.BufferedReader` or the result of
-                         an `fsspec` file system open)
+              an `fsspec` file system open)
 
             * directory-like (such as `fsspec.mapping.FSMap`)
 
@@ -1885,7 +1905,7 @@ class Dataset(Group):
 
         backend: `None` or (sequence of) `str`, optional
             Which library or libraries to use for reading a
-            string-like, file-like, or directoty-like *dataset*. An
+            string-like, file-like, or directory-like *dataset*. An
             attempt to open the dataset is made by the given backends
             in the order in which they are provided, stopping after
             the first successful read.
@@ -1935,8 +1955,8 @@ class Dataset(Group):
             * ``'maximal'``
 
               All structural metadata is retrieved from the dataset
-              and cached. The dataset then does not need to revisited
-              except to access the variable data arrays.
+              and cached. The dataset then does not need to be
+              revisited except to access the variable data arrays.
 
             Dataset metadata caching can also be applied to an
             existing `Dataset` instance with the
@@ -1960,7 +1980,7 @@ class Dataset(Group):
             be used when opening a dataset with the ``'netCDF4'``
             backend. Setting to `None` (the default) is equivalent to
             providing an empty dictionary. The keyword argument
-            ``mode='r'`` is always automatially applied, even when not
+            ``mode='r'`` is always automatically applied, even when not
             provided in *netCDF4_options*, and can't be set to a
             different value.
 
@@ -1970,7 +1990,7 @@ class Dataset(Group):
             with the ``'netcdf_file'`` backend. Setting to `None` (the
             default) is equivalent to providing an empty
             dictionary. The keyword arguments ``mode='r'`` and
-            ``mmap=True`` are always automatially applied, even when
+            ``mmap=True`` are always automatically applied, even when
             not provided in *netcdf_file_options*, and can't be set to
             different values.
 
@@ -1980,10 +2000,9 @@ class Dataset(Group):
             backend. Setting to `None` (the default) is equivalent to
             providing an empty dictionary.
 
-            It is recommmended to set ``rdcc_nbytes``, ``rdcc_w0``,
-            and ``rdcc_nslots`` keywords to reduce the risk of poor
-            HDF5 chunk-access performance with the ``'h5py'`` backend
-            (see
+            It is recommended to set ``rdcc_nbytes``, ``rdcc_w0``, and
+            ``rdcc_nslots`` keywords to reduce the risk of poor HDF5
+            chunk-access performance with the ``'h5py'`` backend (see
             https://docs.h5py.org/en/stable/high/file.html#chunk-cache
             for details).
 
@@ -1993,7 +2012,7 @@ class Dataset(Group):
             with the ``'xarray'`` backend. Setting to `None` (the
             default) is equivalent to providing an empty
             dictionary. The keyword arguments ``mask_and_scale=False,
-            decode_cf=False`` are always automatially applied, even
+            decode_cf=False`` are always automatically applied, even
             when not provided in *xarray_options*, and can't be set to
             different values.
 

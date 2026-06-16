@@ -31,5 +31,10 @@ def ppfive_open(dataset, options):
     """
     import ppfive
 
+    options = options.copy()
+    mode = options.pop("mode", "r")
+    if mode != "r":
+        raise ValueError(f"Can't set mode={mode!r} in ppfive_options")
+
     nc = ppfive.File(dataset, mode="r", **options)
     return nc, nc.attrs, ppfive

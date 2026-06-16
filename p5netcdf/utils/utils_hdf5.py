@@ -203,6 +203,11 @@ def pyfive_open(dataset, options):
     """
     import pyfive
 
+    options = options.copy()
+    mode = options.pop("mode", "r")
+    if mode != "r":
+        raise ValueError(f"Can't set mode={mode!r} in pyfive_options")
+
     nc = pyfive.File(dataset, mode="r", **options)
     return nc, nc.attrs, pyfive
 
@@ -239,6 +244,11 @@ def h5py_open(dataset, options):
 
     """
     import h5py
+
+    options = options.copy()
+    mode = options.pop("mode", "r")
+    if mode != "r":
+        raise ValueError(f"Can't set mode={mode!r} in h5py_options")
 
     nc = h5py.File(dataset, mode="r", **options)
     return nc, nc.attrs, h5py

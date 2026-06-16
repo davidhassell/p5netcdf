@@ -271,6 +271,11 @@ def zarr_open(dataset, options):
     """
     import zarr
 
+    options = options.copy()
+    mode = options.pop("mode", "r")
+    if mode != "r":
+        raise ValueError(f"Can't set mode={mode!r} in zarr_options")
+
     nc = zarr.open(dataset, mode="r", **options)
     return nc, nc.attrs, zarr
 
@@ -312,6 +317,8 @@ def zarr_parse_group_structure(group):
                 group._dimensions[name] = dim
 
             for name, var in group.variables.items():
+                # Set the variable's `_dim` attribute. This is
+                # important, as it allows `Variable.get_dims` to work.
                 var._dims = root._variable_to_dims[var.path]
 
         del root._group_to_dims, root._variable_to_dims
