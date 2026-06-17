@@ -166,7 +166,7 @@ def test_p5netcdf_Dataset__repr__(data_dir):
     with p5netcdf.Dataset(dataset) as p:
         assert (
             repr(p)
-            == f"<p5netcdf.Dataset: {p.filename}, 1 dimension, 1 variable, 1 group>"
+            == f"{p.dataset_name}: <p5netcdf.Dataset: /, 1 dimension, 1 variable, 1 group>"
         )
 
 
@@ -176,7 +176,7 @@ def test_p5netcdf_Dataset__str__(data_dir):
     with p5netcdf.Dataset(dataset) as p:
         assert (
             str(p)
-            == f"""<p5netcdf.Dataset: {p.filename}, 1 dimension, 1 variable, 1 group>
+            == f"""{p.dataset_name}: <p5netcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
     Dimensions:
         bounds2: <p5netcdf.Dimension: /bounds2, size=2>
     Variables:
@@ -224,7 +224,7 @@ def test_p5netcdf_Dataset_dump(data_dir):
     with p5netcdf.Dataset(dataset) as p:
         assert (
             p.dump(display=False)
-            == f"""<p5netcdf.Dataset: {p.filename}, 1 dimension, 1 variable, 1 group>
+            == f"""{p.dataset_name}: <p5netcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
     Attributes:
         Conventions: 'CF-1.13'
         global_attr_1: np.float64(3.14)
@@ -237,7 +237,7 @@ def test_p5netcdf_Dataset_dump(data_dir):
                 units: 'days since 2018-12-01'
                 standard_name: 'time'
     Groups:
-        <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
+        forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
             Dimensions:
                 lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>
             Variables:
@@ -248,7 +248,7 @@ def test_p5netcdf_Dataset_dump(data_dir):
                         standard_name: 'longitude'
                         bounds: '/forecast/lon_bnds'
             Groups:
-                <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
+                model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
                     Attributes:
                         group_attr_1: np.int64(12)
                         group_attr_2: 'bar'
@@ -319,11 +319,12 @@ def test_p5netcdf_Dataset_close(data_dir):
     assert not p._grp._fh.closed
 
 
-def test_p5netcdf_Dataset_filename(data_dir):
-    """Test Dataset.filename."""
+def test_p5netcdf_Dataset_dataset_name(data_dir):
+    """Test Dataset.dataset_name."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        assert p.filename == str(dataset)
+        assert p.dataset_name == str(dataset)
+        assert p.dataset_name == p.filename
 
 
 def test_p5netcdf_Dataset_ncdump(data_dir):
@@ -445,12 +446,12 @@ def test_p5netcdf_Dimension__repr__(data_dir):
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
         dim = p.dimensions["bounds2"]
-        assert repr(dim) == "<p5netcdf.Dimension: /bounds2, size=2>"
+        assert repr(dim) == "bounds2: <p5netcdf.Dimension: /bounds2, size=2>"
 
         dim = p["forecast"].dimensions["lon"]
         assert (
             repr(dim)
-            == "<p5netcdf.Dimension: /forecast/lon, size=8, unlimited>"
+            == "lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>"
         )
 
 
@@ -570,19 +571,20 @@ def test_p5netcdf_Variable__repr__(data_dir):
     with p5netcdf.Dataset(dataset) as p:
         var = p["time"]
         assert (
-            repr(var) == "<p5netcdf.Variable: /time, shape=(), dimensions=()>"
+            repr(var)
+            == "time: <p5netcdf.Variable: /time, shape=(), dimensions=()>"
         )
 
         var = p["forecast/lon"]
         assert (
             repr(var)
-            == "<p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>"
+            == "lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>"
         )
 
         var = p["/forecast/model/q"]
         assert (
             repr(var)
-            == "<p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>"
+            == "q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>"
         )
 
 
@@ -854,12 +856,12 @@ def test_p5netcdf_Group__repr__(data_dir):
     with p5netcdf.Dataset(dataset) as p:
         assert (
             repr(p["/forecast"])
-            == "<p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>"
+            == "forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>"
         )
 
         assert (
             repr(p["/forecast/model"])
-            == "<p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>"
+            == "model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>"
         )
 
 
@@ -869,7 +871,7 @@ def test_p5netcdf_Group__str__(data_dir):
     with p5netcdf.Dataset(dataset) as p:
         assert (
             str(p["/forecast"])
-            == """<p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
+            == """forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
     Dimensions:
         lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>
     Variables:
@@ -881,7 +883,7 @@ def test_p5netcdf_Group__str__(data_dir):
 
         assert (
             str(p["/forecast/model"])
-            == """<p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
+            == """model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
     Dimensions:
         lat: <p5netcdf.Dimension: /forecast/model/lat, size=5>
     Variables:
@@ -897,7 +899,7 @@ def test_p5netcdf_Group_dump(data_dir):
     with p5netcdf.Dataset(dataset) as p:
         assert (
             p["/forecast"].dump(display=False)
-            == """<p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
+            == """forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
     Dimensions:
         lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>
     Variables:
@@ -908,7 +910,7 @@ def test_p5netcdf_Group_dump(data_dir):
                 standard_name: 'longitude'
                 bounds: '/forecast/lon_bnds'
     Groups:
-        <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
+        model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
             Attributes:
                 group_attr_1: np.int64(12)
                 group_attr_2: 'bar'
@@ -965,7 +967,7 @@ def test_p5netcdf_Group_dump(data_dir):
 
         assert (
             p["/forecast/model"].dump(display=False)
-            == """<p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
+            == """model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
     Attributes:
         group_attr_1: np.int64(12)
         group_attr_2: 'bar'
