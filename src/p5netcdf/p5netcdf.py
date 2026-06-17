@@ -2528,8 +2528,8 @@ class Dataset(Group):
     def ncdump(self, display=True):
         """A text CDL description of the dataset.
 
-        The text representation is in CDL (network Common Data form
-        Language) form, and emulates the output of ``$ ncdump -h``.
+        The text representation is CDL (network Common Data form
+        Language), and emulates the output of ``$ ncdump -h``.
 
         .. versionadded:: NEXTVERSION
 

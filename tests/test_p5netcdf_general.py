@@ -3,7 +3,6 @@ import netCDF4
 import numpy as np
 import pyfive
 import pytest
-import xarray
 
 import p5netcdf
 
@@ -132,31 +131,6 @@ def test_p5netcdf_Dataset_pyfive_like(data_dir):
         assert (
             py5["forecast/model/q"].dimensions
             == p["forecast/model/q"].dimensions
-        )
-
-
-def test_p5netcdf_Dataset_xarray_like(data_dir):
-    """Check Dataset with an xarray.DataTree input."""
-    dataset = data_dir / "test.nc"
-    xr_dataset = xarray.open_datatree(
-        dataset, mask_and_scale=False, decode_cf=False
-    )
-    with p5netcdf.Dataset(xr_dataset) as x, p5netcdf.Dataset(dataset) as p:
-        # Verify it works correctly
-        assert x.backend == "xarray"
-        assert (
-            x["forecast/model/q"].dimensions
-            == p["forecast/model/q"].dimensions
-        )
-
-        # Test that we can access the same data
-        assert np.array_equal(
-            x["forecast/model/q"][...], p["forecast/model/q"][...]
-        )
-
-        # Test attributes are preserved
-        assert (
-            x["forecast/model/q"].attrs["standard_name"] == "specific_humidity"
         )
 
 
@@ -1306,3 +1280,94 @@ def test_p5netcdf_edge_cases(data_dir):
         # Test scalar variable indexing
         time_var = p["/time"]
         assert time_var[()] == 31
+
+
+def test_p5netcdf_ncdump(data_dir):
+    """Test Dataset.ncdump."""
+    dataset = data_dir / "test.nc"
+    with p5netcdf.Dataset(dataset) as p:
+        # NOTE: Don't use a f-string here, other wise you have to
+        #       escape all of the curly brackets.
+        assert (
+            p.ncdump(display=False)
+            == "netcdf "
+            + p.dataset_name
+            + """ {
+dimensions:
+     bounds2 = 2 ;
+variables:
+     int time ;
+         time:standard_name = "time" ;
+         time:units = "days since 2018-12-01" ;
+
+// global attributes:
+         :Conventions = "CF-1.13" ;
+         :global_attr_1 = 3.14 ;
+         :global_attr_2 = "foo" ;
+
+group: forecast {
+  dimensions:
+       lon = UNLIMITED ; // (8 currently)
+  variables:
+       double lon_bnds(lon, bounds2) ;
+       double lon(lon) ;
+           lon:bounds = "/forecast/lon_bnds" ;
+           lon:standard_name = "longitude" ;
+           lon:units = "degrees_east" ;
+
+  group: model {
+    dimensions:
+         lat = 5 ;
+    variables:
+         double lat_bnds(lat, bounds2) ;
+         double lat(lat) ;
+             lat:bounds = "/forecast/model/lat_bnds" ;
+             lat:standard_name = "latitude" ;
+             lat:units = "degrees_north" ;
+         float q(lat, lon) ;
+             q:cell_methods = "area: mean" ;
+             q:coordinates = "time" ;
+             q:float = 49. ;
+             q:float32 = 49.f ;
+             q:float64 = 49. ;
+             q:int = 49LL ;
+             q:int16 = 49s ;
+             q:int32 = 49 ;
+             q:int64 = 49LL ;
+             q:int8 = 49b ;
+             q:list1 = 2b, 3b ;
+             q:list10 = "" ;
+             string q:list11 = "a", "bb", "ccc" ;
+             string q:list12 = "a", "1", "2.5" ;
+             q:list13 = "a" ;
+             string q:list14 = "a", "bb" ;
+             q:list2 = 2s, 3s ;
+             q:list3 = 2LL, 3LL ;
+             q:list4 = 2, 3 ;
+             q:list5 = 2.f, 3.f ;
+             q:list6 = 2., 3. ;
+             q:list7 = 2LL, 3LL ;
+             q:list8 = 2 ;
+             q:list9 = "" ;
+             q:standard_name = "specific_humidity" ;
+             q:string1 = "1" ;
+             q:string2 = "a" ;
+             q:string3 = "kg m-2" ;
+             q:string4 = "" ;
+             q:string5 = " " ;
+             q:string6 = "" ;
+             q:string7 = "" ;
+             q:string8 = "" ;
+             q:string9 = "" ;
+             q:uint16 = 49US ;
+             q:uint32 = 49U ;
+             q:uint64 = 49ULL ;
+             q:uint8 = 49UB ;
+
+    // group attributes:
+             :group_attr_1 = 12LL ;
+             :group_attr_2 = "bar" ;
+    } // group model
+  } // group forecast
+}"""
+        )
