@@ -269,7 +269,10 @@ def zarr_open(dataset, options):
             the `zarr` library itself.
 
     """
-    import zarr
+    try:
+        import zarr
+    except ImportError as e:
+        raise RuntimeError("The 'zarr' library is not installed.") from e
 
     options = options.copy()
     mode = options.pop("mode", "r")

@@ -2314,19 +2314,15 @@ class Dataset(Group):
                 print(log, "\n")
 
             if verbose == 1:
-                if dataset_name:
-                    print(dataset_name)
-
                 print(repr(self))
-            else:
-                if verbose >= 5:
-                    self.dump(data=True)
-                elif verbose == 4:
-                    self.dump()
-                elif verbose == 3:
-                    self.structure()
-                elif verbose == 2:
-                    print(self)
+            elif verbose == 2:
+                print(self)
+            elif verbose == 3:
+                self.structure()
+            elif verbose == 4:
+                self.dump()
+            elif verbose >= 5:
+                self.dump(data=True)
 
     def __enter__(self):
         """Returns the `Dataset` instance.

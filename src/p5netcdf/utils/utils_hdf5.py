@@ -202,7 +202,7 @@ def pyfive_open(dataset, options):
 
     """
     import pyfive
-
+    
     options = options.copy()
     mode = options.pop("mode", "r")
     if mode != "r":
