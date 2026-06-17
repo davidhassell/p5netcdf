@@ -56,25 +56,25 @@ used if they are also installed.
 
 ## Install
 
-p5netcdf can be installed using `pip` using the command::
+p5netcdf can be installed using `pip` using the command:
 
     pip install p5netcdf
 
-or, to also install all of the backend libraries::
+or, to also install all of the backend libraries:
 
     pip install p5netcdf[all]
 
 `conda` packages, which also install all of the backend libraries, are
-also available from conda-forge::
+also available from conda-forge:
 
     conda install -c conda-forge p5netcdf
 
-To install from source in your home directory use::
+To install from source in your home directory use:
 
     pip install --user ./p5netcdf
 
 The library can also be imported directly from the `p5netcdf` source
-root directory::
+root directory:
 
     pip install -e . 
 
@@ -85,12 +85,7 @@ feedstock](https://github.com/conda-forge/p5netcdf-feedstock)
 
 ## Development
 
-### git
-
-You can check out the latest `p5netcdf` source from the GitHub
-repository https://github.com/davidhassell/p5netcdf
-
-### testing
+### Testing
 
 `p5netcdf` comes with a test suite in the `tests` directory.  These
 tests can be exercised using the `pytest` command from the root
