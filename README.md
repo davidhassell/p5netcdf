@@ -10,42 +10,42 @@
 
 # p5netcdf
 
-``p5netcdf`` is an open source library for representing datasets in a
+`p5netcdf` is an open source library for representing datasets in a
 variety of formats accessed through a variety of Python backends with
 a common netCDF-4 API.
 
 A dataset is mapped to a ``Dataset`` object, which contains netCDF
 groups (`Group` objects), dimensions (`Dimension` objects), variables
-(`Variable` objects), and user-facing attributes.
+(`Variable` objects), and user-facing attributes. In turn a group may
+contain other groups, dimensions, variables.
  
+- Currently supported are dataset formats are `netCDF-4`, `netCDF-3`,
+`Zarr3`, `Zarr2`, `Kerchunk`, `PP`, and `fields file` (the last two
+being formats used at the UK Met Office).
 
-- Currently supported are dataset formats are ``netCDF-4``,
-``netCDF-3``, ``Zarr3``, ``Zarr2``, ``Kerchunk``, ``PP``, and ``fields
-file`` (the last two being formats used at the UK Met Office).
+- Currently supported Python backends are `pyfive`, `netCDF4`,
+`zarr`, `scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py`.
 
-- Currently supported Python backends are ``pyfive``, ``netCDF4``,
-``zarr``, ``scipy.io.netcdf_file``, ``xarray``, ``ppfive``, and ``h5py``.
-
-``p5netcdf`` aims to support the same API as
-[`h5py`](https://github.com/h5py/h5py) for reading files.  
+`p5netcdf` aims to support the same API as
+[`h5py`](https://github.com/h5py/h5py) for reading files.
 
 Feature requests or bug reports should be reported in the
 [Issues](https://github.com/NCAS-CMS/p5netcdf/issues).
 
 ## Dependencies
 
-``p5netcdf`` is tested against Python versions 3.10 to 3.14.
-It may also work with other Python versions.
+`p5netcdf` is tested against Python versions 3.10 to 3.14.  It may
+also work with other Python versions.
 
-The only dependency to run the software, besides Python, is ``numpy``.
+The only dependency to run the software, besides Python, is `numpy`.
 
 ## Install
 
-p5netcdf can be installed using ``pip`` using the command::
+p5netcdf can be installed using `pip` using the command::
 
     pip install p5netcdf
 
-``conda`` packages are also available from conda-forge::
+`conda` packages are also available from conda-forge::
 
     conda install -c conda-forge p5netcdf
 
@@ -53,7 +53,7 @@ To install from source in your home directory use::
 
     pip install --user ./p5netcdf
 
-The library can also be imported directly from the ``p5netcdf`` source
+The library can also be imported directly from the `p5netcdf` source
 root directory::
 
     pip install -e . 
@@ -66,15 +66,15 @@ Package repository [conda-forge feedstock](https://github.com/conda-forge/p5netc
 
 ### git
 
-You can check out the latest ``p5netcdf`` souces with the command::
+You can check out the latest `p5netcdf` souces with the command::
 
     git clone https://github.com/NCAS-CMS/p5netcdf.git
 
 ### testing
 
-``p5netcdf`` comes with a test suite in the ``tests`` directory.
-These tests can be exercised using the ``pytest`` command from the
-root directory (requires installation of the ``pytest`` package).
+`p5netcdf` comes with a test suite in the `tests` directory.  These
+tests can be exercised using the `pytest` command from the root
+directory (requires installation of the `pytest` package).
 
 ### Documentation
 
