@@ -49,7 +49,10 @@ Feature requests or bug reports should be reported in the
 `p5netcdf` is tested against Python versions 3.10 to 3.14.  It may
 also work with other Python versions.
 
-The only dependency to run the software, besides Python, is `numpy`.
+The only dependency to required run the software, besides Python, is
+`numpy`. However, the backend libraries `pyfive`, `netCDF4`, `zarr`,
+`scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py`, can only be
+used if they are also installed.
 
 ## Install
 
@@ -57,7 +60,12 @@ p5netcdf can be installed using `pip` using the command::
 
     pip install p5netcdf
 
-`conda` packages are also available from conda-forge::
+or, to also install all of the backend libraries::
+
+    pip install p5netcdf[all]
+
+`conda` packages, which also install all of the backend libraries, are
+also available from conda-forge::
 
     conda install -c conda-forge p5netcdf
 
@@ -79,9 +87,8 @@ feedstock](https://github.com/conda-forge/p5netcdf-feedstock)
 
 ### git
 
-You can check out the latest `p5netcdf` souces with the command::
-
-    git clone https://github.com/NCAS-CMS/p5netcdf.git
+You can check out the latest `p5netcdf` source from the GitHub
+repository https://github.com/davidhassell/p5netcdf
 
 ### testing
 
