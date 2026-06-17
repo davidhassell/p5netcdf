@@ -10,9 +10,14 @@
 
 # p5netcdf
 
-``p5netcdf`` is an open source library for representing in a common
-netCDF API, datasets in a variety of formats opened by a variety of
-Python backends.
+``p5netcdf`` is an open source library for representing datasets in a
+variety of formats accessed through a variety of Python backends with
+a common netCDF-4 API.
+
+A dataset is mapped to a ``Dataset`` object, which contains netCDF
+groups (`Group` objects), dimensions (`Dimension` objects), variables
+(`Variable` objects), and user-facing attributes.
+ 
 
 - Currently supported are dataset formats are ``netCDF-4``,
 ``netCDF-3``, ``Zarr3``, ``Zarr2``, ``Kerchunk``, ``PP``, and ``fields
