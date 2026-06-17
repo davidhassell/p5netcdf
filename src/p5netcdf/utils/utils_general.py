@@ -158,7 +158,7 @@ def format_attr(attr, value, library):
     return np.array(value)
 
 
-def parse_attributes(obj, raw_attrs, ignore=True):
+def parse_attributes(obj, raw_attrs):
     """Format raw attributes attributes according to netCDF-4.
 
     * Strings return as pure Python strings.
@@ -169,6 +169,8 @@ def parse_attributes(obj, raw_attrs, ignore=True):
 
     Attributes from the `_IGNORED_ATTRS` list, or which start with any
     of the `_IGNORED_PREFIXES`, are not returned.
+
+    The attribues are sorted lexigraphically.
 
     .. versionadded:: NEXTVERSION
 
@@ -187,14 +189,12 @@ def parse_attributes(obj, raw_attrs, ignore=True):
 
     """
     library = obj.library
-    if ignore:
-        return {
-            k: format_attr(k, v, library)
-            for k, v in raw_attrs.items()
-            if k not in _IGNORED_ATTRS and not k.startswith(_IGNORED_PREFIXES)
-        }
-    else:
-        return {k: format_attr(k, v, library) for k, v in raw_attrs.items()}
+
+    return {
+        k: format_attr(k, v, library)
+        for k, v in sorted(raw_attrs.items())
+        if k not in _IGNORED_ATTRS and not k.startswith(_IGNORED_PREFIXES)
+    }
 
 
 def get_dimensions_from_defining_group(variable, dimension_names):

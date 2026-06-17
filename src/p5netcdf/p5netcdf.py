@@ -2191,7 +2191,7 @@ class Dataset(Group):
             #                     dictionary, or add a new key/value
             #                     pair, you must update the `__init__`
             #                     docstring.
-            read_functions = {
+            open_functions = {
                 "pyfive": pyfive_open,
                 "zarr": zarr_open,
                 "netCDF4": netCDF4_open,
@@ -2206,15 +2206,15 @@ class Dataset(Group):
                     backend = (backend,)
 
                 try:
-                    read_functions = {b: read_functions[b] for b in backend}
+                    open_functions = {b: open_functions[b] for b in backend}
                 except KeyError as error:
                     raise ValueError(
                         f"Invalid value for backend. Got {error}, "
-                        f"expected one of {tuple(read_functions)}"
+                        f"expected one of {tuple(open_functions)}"
                     )
 
             nc = None
-            for backend, func in read_functions.items():
+            for backend, func in open_functions.items():
                 options = open_options.get(backend, {})
                 try:
                     nc, attrs, library = func(dataset, options)
@@ -2238,7 +2238,7 @@ class Dataset(Group):
 
                 raise NetCDFError(
                     f"Can't open {dataset!r} with any of the backends "
-                    f"{tuple(read_functions)}:\n\n"
+                    f"{tuple(open_functions)}:\n\n"
                     f"{self.dataset_open_log(display=False)}"
                 )
 

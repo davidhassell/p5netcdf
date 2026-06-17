@@ -296,11 +296,11 @@ def zarr_parse_group_structure(group):
 
     """
     # Create variables in this group
-    for name, var in dict(group._grp.arrays()).items():
+    for name, var in sorted(dict(group._grp.arrays()).items()):
         group._create_variable(name, var, var.attrs, var.shape)
 
     # Create subgroups
-    for name, grp in dict(group._grp.groups()).items():
+    for name, grp in sorted(dict(group._grp.groups()).items()):
         group._create_group(name, grp, grp.attrs)
 
     # Starting from the root group, i) create dimensions in all
@@ -309,16 +309,18 @@ def zarr_parse_group_structure(group):
         root = group
         root._group_to_dims = {}
         root._variable_to_dims = {}
+
+        # Populate root._group_to_dims and root._variable_to_dims
         zarr_dimension_maps(root)
 
-        for path, dims in root._group_to_dims.items():
+        for path, dims in sorted(root._group_to_dims.items()):
             group = root[path]
-            for name, dim in dims.items():
+            for name, dim in sorted(dims.items()):
                 group._dimensions[name] = dim
 
+            # Set each variable's `_dim` attribute. This is important,
+            # as it allows `Variable.get_dims` to work.
             for name, var in group.variables.items():
-                # Set the variable's `_dim` attribute. This is
-                # important, as it allows `Variable.get_dims` to work.
                 var._dims = root._variable_to_dims[var.path]
 
         del root._group_to_dims, root._variable_to_dims
