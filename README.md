@@ -6,23 +6,26 @@
 [![codecov](https://codecov.io/gh/NCAS-CMS/p5netcdf/graph/badge.svg?token=3In5JuzeGK)](https://codecov.io/gh/NCAS-CMS/p5netcdf)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/p5netcdf/badges/version.svg)](https://anaconda.org/conda-forge/p5netcdf)
 
----
-
 **[Latest documentation on Read the Docs](https://app.readthedocs.org/projects/p5netcdf/builds/)**
 
 # p5netcdf
 
-``p5netcdf`` is an open source library for reading HDF5 files written
-using pure Python (no C extensions). The package is still in
-development and not all features of HDF5 files are supported.
+``p5netcdf`` is an open source library for representing in a common
+netCDF API, datasets in a variety of formats opened by a variety of
+Python backends.
+
+Currently supported are dataset formats are ``netCDF-4``,
+``netCDF-3``, ``Zarr3``, ``Zarr2``, ``Kerchunk``, ``PP``, and ``fields
+file`` (the last two being formats used at the UK Met Office).
+
+Currently supported Python backends are ``pyfive``, ``netCDF4``,
+``zarr``, ``scipy.io.netcdf_file``, ``xarray``, ``ppfive``, and ``h5py``.
 
 ``p5netcdf`` aims to support the same API as
-[`h5py`](https://github.com/h5py/h5py) for reading files.  Cases where
-a file uses a feature that is supported by ``h5py`` but not ``p5netcdf``
-are considered bugs and should be reported in our
-[Issues](https://github.com/NCAS-CMS/p5netcdf/issues).  Writing HDF5
-output is not a goal of ``p5netcdf`` and portions of the API which apply
-only to writing will not be implemented.
+[`h5py`](https://github.com/h5py/h5py) for reading files.  
+
+Feature requests or bug reports should be reported in the
+[Issues](https://github.com/NCAS-CMS/p5netcdf/issues).
 
 ## Dependencies
 
