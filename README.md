@@ -10,10 +10,11 @@
 
 # p5netcdf
 
-`p5netcdf` is an open source library for representing datasets in a
-variety of formats accessed through a variety of Python backends, all
-with a common netCDF API that follows [the netCDF Enhanced Data
-Model](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html).
+`p5netcdf` is an open source library for representing with a common
+netCDF API that follows the [netCDF Enhanced Data
+Model](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html),
+datasets in a variety of formats accessed through a variety of Python
+backends.
 
 A dataset is mapped to a `Dataset` object, which contains netCDF
 groups (`Group` objects), dimensions (`Dimension` objects), variables
