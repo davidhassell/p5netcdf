@@ -65,7 +65,7 @@ You can check out the latest ``p5netcdf`` souces with the command::
 These tests can be exercised using the ``pytest`` command from the
 root directory (requires installation of the ``pytest`` package).
 
-## Documentation
+### Documentation
 
 Build locally with Sphinx:
 
