@@ -6,16 +6,16 @@
 [![codecov](https://codecov.io/gh/NCAS-CMS/p5netcdf/graph/badge.svg?token=3In5JuzeGK)](https://codecov.io/gh/NCAS-CMS/p5netcdf)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/p5netcdf/badges/version.svg)](https://anaconda.org/conda-forge/p5netcdf)
 
-**[Latest documentation on Read the Docs](https://app.readthedocs.org/projects/p5netcdf/builds/)**
+**[Read the documentation](https://app.readthedocs.org/projects/p5netcdf/builds/)**
 
 # p5netcdf
 
 `p5netcdf` is an open source library for representing datasets in a
 variety of formats accessed through a variety of Python backends, all
 with a common netCDF API that follows [the netCDF Enhanced Data
-Model])https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html).
+Model](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html).
 
-A dataset is mapped to a ``Dataset`` object, which contains netCDF
+A dataset is mapped to a `Dataset` object, which contains netCDF
 groups (`Group` objects), dimensions (`Dimension` objects), variables
 (`Variable` objects), and attributes. In turn, a variable is
 associated with dimensions and may contain attributes; and a group may
@@ -31,13 +31,13 @@ being formats used at the UK Met Office).
 - Additionally, a dataset can be defined by a `pyfive`-like or
 `xarray`-like object in memory.
 
-The `p5netcdf` has been been designed to be "largely consistent" with
-the APIs of `netCDF4`, `pyfive` and `h5netcdf`. This means that,
+The `p5netcdf` API has been been designed to be "largely consistent"
+with the APIs of `netCDF4`, `pyfive` and `h5netcdf`. This means that,
 whilst `p5netcdf` can't be used as a perfect drop-in for any of these
 three libraries, most attributes and methods of each one of them can
 be found in `p5netcdf`, and with the same behaviour. For instance,
 `p5netcdf` variables have a `chunks` attribute and a `chunking`
-method - the former is also founnd in the `pyfive` and `h5netcdf`
+method - the former is also found in the `pyfive` and `h5netcdf`
 libraries, the latter in the `netCDF4` library.
 
 Feature requests or bug reports should be reported in the
