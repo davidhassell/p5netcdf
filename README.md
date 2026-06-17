@@ -1,6 +1,6 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18599472.svg)](https://doi.org/XX.XXXX/zenodo.XXXXXXXX)
+[![DOI](https://zenodo.org/badge/DOI/XX.XXXX/zenodo.XXXXXXX.svg)](https://doi.org/XX.XXXX/zenodo.XXXXXXXX)
 [![Documentation Status](https://app.readthedocs.org/projects/p5netcdf/badge/?version=latest)](https://p5netcdf.readthedocs.io/en/latest/?badge=latest)
 [![Test](https://github.com/NCAS-CMS/p5netcdf/actions/workflows/pytest.yml/badge.svg)](https://github.com/NCAS-CMS/p5netcdf/actions/workflows/pytest.yml)
 [![codecov](https://codecov.io/gh/NCAS-CMS/p5netcdf/graph/badge.svg?token=3In5JuzeGK)](https://codecov.io/gh/NCAS-CMS/p5netcdf)
