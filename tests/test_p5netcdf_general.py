@@ -277,6 +277,114 @@ def test_p5netcdf_Dataset_dump(data_dir):
                                 uint8: np.uint8(49)"""
         )
 
+        assert (
+            p.dump(display=False, data=True)
+            == f"""{p.dataset_name}: <p5netcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
+    Attributes:
+        Conventions: 'CF-1.13'
+        global_attr_1: np.float64(3.14)
+        global_attr_2: 'foo'
+    Dimensions:
+        bounds2: <p5netcdf.Dimension: /bounds2, size=2>
+    Variables:
+        time: <p5netcdf.Variable: /time, shape=(), dimensions=()>
+            Attributes:
+                standard_name: 'time'
+                units: 'days since 2018-12-01'
+            Data int32:
+                31
+    Groups:
+        forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
+            Dimensions:
+                lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>
+            Variables:
+                lon_bnds: <p5netcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>
+                    Data float64:
+                        [[  0.,  45.],
+                         [ 45.,  90.],
+                         [ 90., 135.],
+                         [135., 180.],
+                         [180., 225.],
+                         [225., 270.],
+                         [270., 315.],
+                         [315., 360.]]
+                lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
+                    Attributes:
+                        bounds: '/forecast/lon_bnds'
+                        standard_name: 'longitude'
+                        units: 'degrees_east'
+                    Data float64:
+                        [ 22.5,  67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5]
+            Groups:
+                model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
+                    Attributes:
+                        group_attr_1: np.int64(12)
+                        group_attr_2: 'bar'
+                    Dimensions:
+                        lat: <p5netcdf.Dimension: /forecast/model/lat, size=5>
+                    Variables:
+                        lat_bnds: <p5netcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
+                            Data float64:
+                                [[-90., -60.],
+                                 [-60., -30.],
+                                 [-30.,  30.],
+                                 [ 30.,  60.],
+                                 [ 60.,  90.]]
+                        lat: <p5netcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
+                            Attributes:
+                                bounds: '/forecast/model/lat_bnds'
+                                standard_name: 'latitude'
+                                units: 'degrees_north'
+                            Data float64:
+                                [-75., -45.,   0.,  45.,  75.]
+                        q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>
+                            Attributes:
+                                cell_methods: 'area: mean'
+                                coordinates: 'time'
+                                float: np.float64(49.0)
+                                float32: np.float32(49.0)
+                                float64: np.float64(49.0)
+                                int: np.int64(49)
+                                int16: np.int16(49)
+                                int32: np.int32(49)
+                                int64: np.int64(49)
+                                int8: np.int8(49)
+                                list1: array([2, 3], dtype=int8)
+                                list10: array([], dtype=float64)
+                                list11: ['a', 'bb', 'ccc']
+                                list12: ['a', '1', '2.5']
+                                list13: 'a'
+                                list14: ['a', 'bb']
+                                list2: array([2, 3], dtype=int16)
+                                list3: array([2, 3])
+                                list4: array([2, 3], dtype=int32)
+                                list5: array([2., 3.], dtype=float32)
+                                list6: array([2., 3.])
+                                list7: array([2, 3])
+                                list8: np.int32(2)
+                                list9: array([], dtype=int32)
+                                standard_name: 'specific_humidity'
+                                string1: '1'
+                                string2: 'a'
+                                string3: 'kg m-2'
+                                string4: ''
+                                string5: ' '
+                                string6: ''
+                                string7: ''
+                                string8: ''
+                                string9: ''
+                                uint16: np.uint16(49)
+                                uint32: np.uint32(49)
+                                uint64: np.uint64(49)
+                                uint8: np.uint8(49)
+                            Data float32:
+                                [[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029],
+                                 [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066],
+                                 [0.11 , 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011],
+                                 [0.029, 0.059, 0.039, 0.07 , 0.058, 0.072, 0.009, 0.017],
+                                 [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]]"""
+        )
+
 
 def test_p5netcdf_Dataset_close(data_dir):
     """Test Dataset.close."""
@@ -419,12 +527,12 @@ def test_p5netcdf_Dimension__repr__(data_dir):
     """Test Dimension.__repr__."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        dim = p.dimensions["bounds2"]
-        assert repr(dim) == "bounds2: <p5netcdf.Dimension: /bounds2, size=2>"
-
-        dim = p["forecast"].dimensions["lon"]
         assert (
-            repr(dim)
+            repr(p.dimensions["bounds2"])
+            == "bounds2: <p5netcdf.Dimension: /bounds2, size=2>"
+        )
+        assert (
+            repr(p["forecast"].dimensions["lon"])
             == "lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>"
         )
 
@@ -473,22 +581,16 @@ def test_p5netcdf_Dimension_name(data_dir):
     """Test Dimension.name."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        dim = p.dimensions["bounds2"]
-        assert dim.name == "bounds2"
-
-        dim = p["forecast"].dimensions["lon"]
-        assert dim.name == "lon"
+        assert p.dimensions["bounds2"].name == "bounds2"
+        assert p["forecast"].dimensions["lon"].name == "lon"
 
 
 def test_p5netcdf_Dimension_path(data_dir):
     """Test Dimension.path."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        dim = p.dimensions["bounds2"]
-        assert dim.path == "/bounds2"
-
-        dim = p["forecast"].dimensions["lon"]
-        assert dim.path == "/forecast/lon"
+        assert p.dimensions["bounds2"].path == "/bounds2"
+        assert p["forecast"].dimensions["lon"].path == "/forecast/lon"
 
 
 def test_p5netcdf_Dimension_group(data_dir):
@@ -496,16 +598,13 @@ def test_p5netcdf_Dimension_group(data_dir):
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
         group = p
-        dim = group.dimensions["bounds2"]
-        assert dim.group() is group
+        assert group.dimensions["bounds2"].group() is group
 
         group = p["/forecast"]
-        dim = group.dimensions["lon"]
-        assert dim.group() is group
+        assert group.dimensions["lon"].group() is group
 
         group = p["/forecast/model"]
-        dim = group.dimensions["lat"]
-        assert dim.group() is group
+        assert group.dimensions["lat"].group() is group
 
 
 def test_p5netcdf_Dimension_parent(data_dir):
@@ -513,16 +612,13 @@ def test_p5netcdf_Dimension_parent(data_dir):
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
         group = p
-        dim = group.dimensions["bounds2"]
-        assert dim.parent is group
+        assert group.dimensions["bounds2"].parent is group
 
         group = p["/forecast"]
-        dim = group.dimensions["lon"]
-        assert dim.parent is group
+        assert group.dimensions["lon"].parent is group
 
         group = p["/forecast/model"]
-        dim = group.dimensions["lat"]
-        assert dim.parent is group
+        assert group.dimensions["lat"].parent is group
 
 
 def test_p5netcdf_Dimension_backend(data_dir):
@@ -543,21 +639,16 @@ def test_p5netcdf_Variable__repr__(data_dir):
     """Test Variable.__repr__."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["time"]
         assert (
-            repr(var)
+            repr(p["time"])
             == "time: <p5netcdf.Variable: /time, shape=(), dimensions=()>"
         )
-
-        var = p["forecast/lon"]
         assert (
-            repr(var)
+            repr(p["forecast/lon"])
             == "lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>"
         )
-
-        var = p["/forecast/model/q"]
         assert (
-            repr(var)
+            repr(p["/forecast/model/q"])
             == "q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>"
         )
 
@@ -566,190 +657,138 @@ def test_p5netcdf_Variable_maxshape(data_dir):
     """Test Variable_maxshape."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["time"]
-        assert var.maxshape == ()
-
-        var = p["forecast/lon"]
-        assert var.maxshape == (None,)
-
-        var = p["forecast/lon_bnds"]
-        assert var.maxshape == (None, 2)
+        assert p["time"].maxshape == ()
+        assert p["forecast/lon"].maxshape == (None,)
+        assert p["forecast/lon_bnds"].maxshape == (None, 2)
+        assert p["forecast/model/lat"].maxshape == (5,)
+        assert p["forecast/model/lat_bnds"].maxshape == (5, 2)
 
 
 def test_p5netcdf_Variable_name(data_dir):
     """Test Variable.name."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["time"]
-        assert var.name == "time"
-
-        var = p["/forecast/model/q"]
-        assert var.name == "q"
+        assert p["time"].name == "time"
+        assert p["/forecast/model/q"].name == "q"
 
 
 def test_p5netcdf_Variable_path(data_dir):
     """Test Variable.path."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["time"]
-        assert var.path == "/time"
-
-        var = p["/forecast/model/q"]
-        assert var.path == "/forecast/model/q"
+        assert p["time"].path == "/time"
+        assert p["/forecast/model/q"].path == "/forecast/model/q"
 
 
 def test_p5netcdf_Variable_chunking(data_dir):
     """Test Variable.chunking."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/forecast/model/lat"]
-        assert var.chunking() == "contiguous"
-
-        var = p["/forecast/model/q"]
-        assert var.chunking() == [5, 3]
+        assert p["/forecast/model/lat"].chunking() == "contiguous"
+        assert p["/forecast/model/q"].chunking() == [5, 3]
 
 
 def test_p5netcdf_Variable_chunks(data_dir):
     """Test Variable.chunks."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/forecast/model/lat"]
-        assert var.chunks is None
-
-        var = p["/forecast/model/q"]
-        assert var.chunks == (5, 3)
+        assert p["/forecast/model/lat"].chunks is None
+        assert p["/forecast/model/q"].chunks == (5, 3)
 
 
 def test_p5netcdf_Variable_dtype(data_dir):
     """Test Variable.dtype."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/time"]
-        assert var.dtype == "int32"
-
-        var = p["/forecast/lon"]
-        assert var.dtype == "float64"
-
-        var = p["/forecast/model/q"]
-        assert var.dtype == "float32"
+        assert p["/time"].dtype == "int32"
+        assert p["/forecast/lon"].dtype == "float64"
+        assert p["/forecast/model/q"].dtype == "float32"
 
 
 def test_p5netcdf_Variable_orthogonal_indexing(data_dir):
     """Test Variable.__orthogonal_indexing__ property."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/forecast/model/q"]
-        assert isinstance(var.__orthogonal_indexing__, bool)
+        assert isinstance(p["/time"].__orthogonal_indexing__, bool)
+        assert isinstance(p["/forecast/model/q"].__orthogonal_indexing__, bool)
 
 
 def test_p5netcdf_Variable_dimension_paths(data_dir):
     """Test Variable.dimension_paths property."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/time"]
-        assert var.dimension_paths == ()
-
-        var = p["/forecast/lon"]
-        assert var.dimension_paths == ("/forecast/lon",)
-
-        var = p["/forecast/model/q"]
-        assert var.dimension_paths == ("/forecast/model/lat", "/forecast/lon")
+        assert p["/time"].dimension_paths == ()
+        assert p["/forecast/lon"].dimension_paths == ("/forecast/lon",)
+        assert p["/forecast/model/q"].dimension_paths == (
+            "/forecast/model/lat",
+            "/forecast/lon",
+        )
 
 
 def test_p5netcdf_Variable_shards(data_dir):
     """Test Variable.shards property."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/forecast/model/q"]
         # For non-zarr datasets, shards should be None
-        assert var.shards is None
+        assert p["/forecast/model/q"].shards is None
 
 
 def test_p5netcdf_Variable_ndim(data_dir):
     """Test Variable.ndim."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/time"]
-        var.ndim == 0
-
-        var = p["/forecast/lon"]
-        assert var.ndim == 1
-
-        var = p["/forecast/model/q"]
-        assert var.ndim == 2
+        assert p["/time"].ndim == 0
+        assert p["/forecast/lon"].ndim == 1
+        assert p["/forecast/model/q"].ndim == 2
 
 
 def test_p5netcdf_Variable_shape(data_dir):
     """Test Variable.shape."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/time"]
-        assert var.shape == ()
-
-        var = p["/forecast/lon"]
-        assert var.shape == (8,)
-
-        var = p["/forecast/model/q"]
-        assert var.shape == (5, 8)
+        assert p["/time"].shape == ()
+        assert p["/forecast/lon"].shape == (8,)
+        assert p["/forecast/model/q"].shape == (5, 8)
 
 
 def test_p5netcdf_Variable_size(data_dir):
     """Test Variable.size."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/time"]
-        assert var.size == 1
-
-        var = p["/forecast/lon"]
-        assert var.size == 8
-
-        var = p["/forecast/model/q"]
-        assert var.size == 40
+        assert p["/time"].size == 1
+        assert p["/forecast/lon"].size == 8
+        assert p["/forecast/model/q"].size == 40
 
 
 def test_p5netcdf_Variable__len__(data_dir):
     """Test Variable.__len__."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/time"]
         with pytest.raises(TypeError):
-            len(var)
+            len(p["/time"])
 
-        var = p["/forecast/lon"]
-        assert len(var) == 8
-
-        var = p["/forecast/model/q"]
-        assert len(var) == 5
+        assert len(p["/forecast/lon"]) == 8
+        assert len(p["/forecast/model/q"]) == 5
 
 
 def test_p5netcdf_Variable_dimensions(data_dir):
     """Test Variable.dimensions."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/time"]
-        assert var.dimensions == ()
-
-        var = p["/forecast/lon"]
-        assert var.dimensions == ("lon",)
-
-        var = p["/forecast/model/q"]
-        assert var.dimensions == ("lat", "lon")
+        assert p["/time"].dimensions == ()
+        assert p["/forecast/lon"].dimensions == ("lon",)
+        assert p["/forecast/model/q"].dimensions == ("lat", "lon")
 
 
 def test_p5netcdf_Variable_get_dims(data_dir):
     """Test Variable.__len__."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/time"]
-        assert var.get_dims() == ()
-
-        var = p["/forecast/lon"]
-        assert len(var.get_dims()) == 1
-        assert var.get_dims() == (p["/forecast"].dimensions["lon"],)
-
-        var = p["/forecast/model/q"]
-        assert len(var.get_dims()) == 2
-        assert var.get_dims() == (
+        assert p["/time"].get_dims() == ()
+        assert p["/forecast/lon"].get_dims() == (
+            p["/forecast"].dimensions["lon"],
+        )
+        assert p["/forecast/model/q"].get_dims() == (
             p["/forecast/model"].dimensions["lat"],
             p["/forecast"].dimensions["lon"],
         )
@@ -759,28 +798,18 @@ def test_p5netcdf_Variable_parent(data_dir):
     """Test Variable.parent."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/time"]
-        assert var.parent is p
-
-        var = p["/forecast/lon"]
-        assert var.parent is p["/forecast"]
-
-        var = p["/forecast/model/q"]
-        assert var.parent is p["/forecast/model"]
+        assert p["/time"].parent is p
+        assert p["/forecast/lon"].parent is p["/forecast"]
+        assert p["/forecast/model/q"].parent is p["/forecast/model"]
 
 
 def test_p5netcdf_Variable_group(data_dir):
     """Test Variable.group."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        var = p["/time"]
-        assert var.group() is p
-
-        var = p["/forecast/lon"]
-        assert var.group() is p["/forecast"]
-
-        var = p["/forecast/model/q"]
-        var.group() is p["/forecast/model"]
+        assert p["/time"].group() is p
+        assert p["/forecast/lon"].group() is p["/forecast"]
+        assert p["/forecast/model/q"].group() is p["/forecast/model"]
 
 
 def test_p5netcdf_Variable_getValue(data_dir):
@@ -788,13 +817,11 @@ def test_p5netcdf_Variable_getValue(data_dir):
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
         # Test scalar variable
-        var = p["/time"]
-        assert var.getValue() == 31
+        assert p["/time"].getValue() == 31
 
         # Test non-scalar variable should raise IndexError
-        var = p["/forecast/lon"]
         with pytest.raises(IndexError):
-            var.getValue()
+            p["/forecast/lon"].getValue()
 
 
 def test_p5netcdf_Variable_getncattr(data_dir):
@@ -1076,28 +1103,18 @@ def test_p5netcdf_Group__iter__(data_dir):
     """Test Group.__iter__."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        group = p
-        assert tuple(group) == ("forecast", "time")
-
-        group = p["/forecast"]
-        assert tuple(group) == ("model", "lon_bnds", "lon")
-
-        group = p["/forecast/model"]
-        assert tuple(group) == ("lat_bnds", "lat", "q")
+        assert tuple(p) == ("forecast", "time")
+        assert tuple(p["/forecast"]) == ("model", "lon_bnds", "lon")
+        assert tuple(p["/forecast/model"]) == ("lat_bnds", "lat", "q")
 
 
 def test_p5netcdf_Group_keys(data_dir):
     """Test Group.keys."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        group = p
-        assert tuple(group.keys()) == ("forecast", "time")
-
-        group = p["/forecast"]
-        assert tuple(group.keys()) == ("model", "lon_bnds", "lon")
-
-        group = p["/forecast/model"]
-        assert tuple(group.keys()) == ("lat_bnds", "lat", "q")
+        assert tuple(p.keys()) == ("forecast", "time")
+        assert tuple(p["/forecast"].keys()) == ("model", "lon_bnds", "lon")
+        assert tuple(p["/forecast/model"].keys()) == ("lat_bnds", "lat", "q")
 
 
 def test_p5netcdf_Group_values(data_dir):
@@ -1105,7 +1122,7 @@ def test_p5netcdf_Group_values(data_dir):
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
         group = p
-        assert tuple(group.values()) == (group["forecast"], group["time"])
+        assert tuple(p.values()) == (group["forecast"], group["time"])
 
         group = p["/forecast"]
         assert tuple(group.values()) == (
@@ -1151,14 +1168,9 @@ def test_p5netcdf_Group_name(data_dir):
     """Test Group.name."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        group = p
-        assert group.name == ""
-
-        group = p["/forecast"]
-        assert group.name == "forecast"
-
-        group = p["/forecast/model"]
-        assert group.name == "model"
+        assert p.name == ""
+        assert p["/forecast"].name == "forecast"
+        assert p["/forecast/model"].name == "model"
 
 
 def test_p5netcdf_Group_path(data_dir):
@@ -1166,22 +1178,16 @@ def test_p5netcdf_Group_path(data_dir):
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
         for path in ("/", "/forecast", "/forecast/model"):
-            group = p[path]
-            assert group.path == path
+            assert p[path].path == path
 
 
 def test_p5netcdf_Group_parent(data_dir):
     """Test Group.parent."""
     dataset = data_dir / "test.nc"
     with p5netcdf.Dataset(dataset) as p:
-        group = p
-        assert group.parent is None
-
-        group = p["/forecast"]
-        assert group.parent is p
-
-        group = p["/forecast/model"]
-        assert group.parent is p["/forecast"]
+        assert p.parent is None
+        assert p["/forecast"].parent is p
+        assert p["/forecast/model"].parent is p["/forecast"]
 
 
 def test_p5netcdf_Group_is_sub_group(data_dir):
@@ -1278,8 +1284,8 @@ def test_p5netcdf_edge_cases(data_dir):
         assert np.array_equal(var[:2], [22.5, 67.5])
 
         # Test scalar variable indexing
-        time_var = p["/time"]
-        assert time_var[()] == 31
+        var = p["/time"]
+        assert var[()] == 31
 
 
 def test_p5netcdf_ncdump(data_dir):

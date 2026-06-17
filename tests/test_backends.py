@@ -9,7 +9,7 @@ import p5netcdf
 def test_p5netcdf_netCDF4(data_dir):
     """Test netCDF4 functionality."""
     dataset = data_dir / "test.nc"
-    with p5netcdf.Dataset(dataset, backend='netCDF4') as p:
+    with p5netcdf.Dataset(dataset, backend="netCDF4") as p:
         assert p.backend == "netCDF4"
         assert (
             p.dump(display=False)

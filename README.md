@@ -1,1 +1,76 @@
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18599472.svg)](https://doi.org/XX.XXXX/zenodo.XXXXXXXX)
+[![Documentation Status](https://app.readthedocs.org/projects/p5netcdf/badge/?version=latest)](https://p5netcdf.readthedocs.io/en/latest/?badge=latest)
+[![Test](https://github.com/NCAS-CMS/p5netcdf/actions/workflows/pytest.yml/badge.svg)](https://github.com/NCAS-CMS/p5netcdf/actions/workflows/pytest.yml)
+[![codecov](https://codecov.io/gh/NCAS-CMS/p5netcdf/graph/badge.svg?token=3In5JuzeGK)](https://codecov.io/gh/NCAS-CMS/p5netcdf)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/p5netcdf/badges/version.svg)](https://anaconda.org/conda-forge/p5netcdf)
+
+![p5netcdf-logo](https://raw.githubusercontent.com/NCAS-CMS/p5netcdf/main/doc/figures/P5netcdf-logo.png)
+
+[Latest doc builds on RTD](https://app.readthedocs.org/projects/p5netcdf/builds/)
+
 # p5netcdf
+
+``p5netcdf`` is an open source library for reading HDF5 files written
+using pure Python (no C extensions). The package is still in
+development and not all features of HDF5 files are supported.
+
+``p5netcdf`` aims to support the same API as
+[`h5py`](https://github.com/h5py/h5py) for reading files.  Cases where
+a file uses a feature that is supported by ``h5py`` but not ``p5netcdf``
+are considered bugs and should be reported in our
+[Issues](https://github.com/NCAS-CMS/p5netcdf/issues).  Writing HDF5
+output is not a goal of ``p5netcdf`` and portions of the API which apply
+only to writing will not be implemented.
+
+## Dependencies
+
+``p5netcdf`` is tested against Python versions 3.10 to 3.14.
+It may also work with other Python versions.
+
+The only dependencies to run the software besides Python is ``numpy``.
+
+## Install
+
+p5netcdf can be installed using ``pip`` using the command::
+
+    pip install p5netcdf
+
+``conda`` packages are also available from conda-forge::
+
+    conda install -c conda-forge p5netcdf
+
+To install from source in your home directory use::
+
+    pip install --user ./p5netcdf
+
+The library can also be imported directly from the source directory.
+
+## Development
+
+### git
+
+You can check out the latest ``p5netcdf`` souces with the command::
+
+    git clone https://github.com/NCAS-CMS/p5netcdf.git
+
+### testing
+
+``p5netcdf`` comes with a test suite in the ``tests`` directory.
+These tests can be exercised using the ``pytest`` command from the
+root directory (requires installation of the ``pytest`` package).
+
+## Conda-forge feedstock
+
+Package repository [conda-forge feedstock](https://github.com/conda-forge/p5netcdf-feedstock)
+
+## Codecov
+
+Test coverage assessement is done using [codecov](https://app.codecov.io/gh/NCAS-CMS/p5netcdf/)
+
+## Documentation
+
+Build locally with Sphinx:
+
+    $ sphinx-build -Ea doc doc/build

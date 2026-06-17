@@ -19,6 +19,8 @@ def test_p5netcdf_h5netcdf_attributes(data_dir):
 
         for attr, pvalue in pq.attrs.items():
             hvalue = hq.attrs[attr]
+
+            # h5netcdf string-valued attributes are bytes
             if isinstance(hvalue, (bytes, np.bytes_)):
                 hvalue = hvalue.decode("UTF-8")
 
