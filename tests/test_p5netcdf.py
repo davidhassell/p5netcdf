@@ -166,7 +166,7 @@ def test_p5netcdf_Dataset__repr__(data_dir):
     with p5netcdf.Dataset(dataset) as p:
         assert (
             repr(p)
-            == "<p5netcdf.Dataset: /, 1 dimension, 1 variable, 1 group>"
+            == f"<p5netcdf.Dataset: {p.filename}, 1 dimension, 1 variable, 1 group>"
         )
 
 
@@ -176,15 +176,15 @@ def test_p5netcdf_Dataset__str__(data_dir):
     with p5netcdf.Dataset(dataset) as p:
         assert (
             str(p)
-            == f"""{p.filename}
-/home/david/p5netcdf/tests/data/test.nc
-<p5netcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
+            == f"""<p5netcdf.Dataset: {p.filename}, 1 dimension, 1 variable, 1 group>
     Dimensions:
         bounds2: <p5netcdf.Dimension: /bounds2, size=2>
     Variables:
         time: <p5netcdf.Variable: /time, shape=(), dimensions=()>
     Groups:
-        forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>""")
+        forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>"""
+        )
+
 
 def test_p5netcdf_Dataset_bad_file():
     """Test Dataset with not a netCDF file."""
@@ -224,84 +224,83 @@ def test_p5netcdf_Dataset_dump(data_dir):
     with p5netcdf.Dataset(dataset) as p:
         assert (
             p.dump(display=False)
-            == f"""{p.filename}
-<p5netcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
-Attributes:
-    Conventions: 'CF-1.13'
-    global_attr_1: np.float64(3.14)
-    global_attr_2: 'foo'
-Dimensions:
-    bounds2: <p5netcdf.Dimension: /bounds2, size=2>
-Variables:
-    time: <p5netcdf.Variable: /time, shape=(), dimensions=()>
-        Attributes:
-            units: 'days since 2018-12-01'
-            standard_name: 'time'
-Groups:
-    forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
-        Dimensions:
-            lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>
-        Variables:
-            lon_bnds: <p5netcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>
-            lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
-                Attributes:
-                    units: 'degrees_east'
-                    standard_name: 'longitude'
-                    bounds: '/forecast/lon_bnds'
-        Groups:
-            model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
-                Attributes:
-                    group_attr_1: np.int64(12)
-                    group_attr_2: 'bar'
-                Dimensions:
-                    lat: <p5netcdf.Dimension: /forecast/model/lat, size=5>
-                Variables:
-                    lat_bnds: <p5netcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
-                    lat: <p5netcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
-                        Attributes:
-                            units: 'degrees_north'
-                            standard_name: 'latitude'
-                            bounds: '/forecast/model/lat_bnds'
-                    q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>
-                        Attributes:
-                            list7: array([2, 3])
-                            int: np.int64(49)
-                            int8: np.int8(49)
-                            int16: np.int16(49)
-                            int32: np.int32(49)
-                            int64: np.int64(49)
-                            float: np.float64(49.0)
-                            float32: np.float32(49.0)
-                            float64: np.float64(49.0)
-                            uint8: np.uint8(49)
-                            uint16: np.uint16(49)
-                            uint32: np.uint32(49)
-                            uint64: np.uint64(49)
-                            list1: array([2, 3], dtype=int8)
-                            list2: array([2, 3], dtype=int16)
-                            list3: array([2, 3])
-                            list4: array([2, 3], dtype=int32)
-                            list5: array([2., 3.], dtype=float32)
-                            list6: array([2., 3.])
-                            list8: np.int32(2)
-                            list9: array([], dtype=int32)
-                            list10: array([], dtype=float64)
-                            list11: ['a', 'bb', 'ccc']
-                            list12: ['a', '1', '2.5']
-                            list13: 'a'
-                            list14: ['a', 'bb']
-                            string1: '1'
-                            string2: 'a'
-                            string3: 'kg m-2'
-                            string4: ''
-                            string5: ' '
-                            string6: ''
-                            string7: ''
-                            string8: ''
-                            string9: ''
-                            coordinates: 'time'
-                            cell_methods: 'area: mean'
-                            standard_name: 'specific_humidity'"""
+            == f"""<p5netcdf.Dataset: {p.filename}, 1 dimension, 1 variable, 1 group>
+    Attributes:
+        Conventions: 'CF-1.13'
+        global_attr_1: np.float64(3.14)
+        global_attr_2: 'foo'
+    Dimensions:
+        bounds2: <p5netcdf.Dimension: /bounds2, size=2>
+    Variables:
+        time: <p5netcdf.Variable: /time, shape=(), dimensions=()>
+            Attributes:
+                units: 'days since 2018-12-01'
+                standard_name: 'time'
+    Groups:
+        <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
+            Dimensions:
+                lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>
+            Variables:
+                lon_bnds: <p5netcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>
+                lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
+                    Attributes:
+                        units: 'degrees_east'
+                        standard_name: 'longitude'
+                        bounds: '/forecast/lon_bnds'
+            Groups:
+                <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
+                    Attributes:
+                        group_attr_1: np.int64(12)
+                        group_attr_2: 'bar'
+                    Dimensions:
+                        lat: <p5netcdf.Dimension: /forecast/model/lat, size=5>
+                    Variables:
+                        lat_bnds: <p5netcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
+                        lat: <p5netcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
+                            Attributes:
+                                units: 'degrees_north'
+                                standard_name: 'latitude'
+                                bounds: '/forecast/model/lat_bnds'
+                        q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>
+                            Attributes:
+                                list7: array([2, 3])
+                                int: np.int64(49)
+                                int8: np.int8(49)
+                                int16: np.int16(49)
+                                int32: np.int32(49)
+                                int64: np.int64(49)
+                                float: np.float64(49.0)
+                                float32: np.float32(49.0)
+                                float64: np.float64(49.0)
+                                uint8: np.uint8(49)
+                                uint16: np.uint16(49)
+                                uint32: np.uint32(49)
+                                uint64: np.uint64(49)
+                                list1: array([2, 3], dtype=int8)
+                                list2: array([2, 3], dtype=int16)
+                                list3: array([2, 3])
+                                list4: array([2, 3], dtype=int32)
+                                list5: array([2., 3.], dtype=float32)
+                                list6: array([2., 3.])
+                                list8: np.int32(2)
+                                list9: array([], dtype=int32)
+                                list10: array([], dtype=float64)
+                                list11: ['a', 'bb', 'ccc']
+                                list12: ['a', '1', '2.5']
+                                list13: 'a'
+                                list14: ['a', 'bb']
+                                string1: '1'
+                                string2: 'a'
+                                string3: 'kg m-2'
+                                string4: ''
+                                string5: ' '
+                                string6: ''
+                                string7: ''
+                                string8: ''
+                                string9: ''
+                                coordinates: 'time'
+                                cell_methods: 'area: mean'
+                                standard_name: 'specific_humidity'"""
         )
 
 
@@ -870,25 +869,25 @@ def test_p5netcdf_Group__str__(data_dir):
     with p5netcdf.Dataset(dataset) as p:
         assert (
             str(p["/forecast"])
-            == """forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
-Dimensions:
-    lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>
-Variables:
-    lon_bnds: <p5netcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>
-    lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
-Groups:
-    model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>"""
+            == """<p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
+    Dimensions:
+        lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>
+    Variables:
+        lon_bnds: <p5netcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>
+        lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
+    Groups:
+        model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>"""
         )
 
         assert (
             str(p["/forecast/model"])
-            == """model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
-Dimensions:
-    lat: <p5netcdf.Dimension: /forecast/model/lat, size=5>
-Variables:
-    lat_bnds: <p5netcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
-    lat: <p5netcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
-    q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>"""
+            == """<p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
+    Dimensions:
+        lat: <p5netcdf.Dimension: /forecast/model/lat, size=5>
+    Variables:
+        lat_bnds: <p5netcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
+        lat: <p5netcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
+        q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>"""
         )
 
 
@@ -898,127 +897,127 @@ def test_p5netcdf_Group_dump(data_dir):
     with p5netcdf.Dataset(dataset) as p:
         assert (
             p["/forecast"].dump(display=False)
-            == """forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
-Dimensions:
-    lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>
-Variables:
-    lon_bnds: <p5netcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>
-    lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
-        Attributes:
-            units: 'degrees_east'
-            standard_name: 'longitude'
-            bounds: '/forecast/lon_bnds'
-Groups:
-    model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
-        Attributes:
-            group_attr_1: np.int64(12)
-            group_attr_2: 'bar'
-        Dimensions:
-            lat: <p5netcdf.Dimension: /forecast/model/lat, size=5>
-        Variables:
-            lat_bnds: <p5netcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
-            lat: <p5netcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
-                Attributes:
-                    units: 'degrees_north'
-                    standard_name: 'latitude'
-                    bounds: '/forecast/model/lat_bnds'
-            q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>
-                Attributes:
-                    list7: array([2, 3])
-                    int: np.int64(49)
-                    int8: np.int8(49)
-                    int16: np.int16(49)
-                    int32: np.int32(49)
-                    int64: np.int64(49)
-                    float: np.float64(49.0)
-                    float32: np.float32(49.0)
-                    float64: np.float64(49.0)
-                    uint8: np.uint8(49)
-                    uint16: np.uint16(49)
-                    uint32: np.uint32(49)
-                    uint64: np.uint64(49)
-                    list1: array([2, 3], dtype=int8)
-                    list2: array([2, 3], dtype=int16)
-                    list3: array([2, 3])
-                    list4: array([2, 3], dtype=int32)
-                    list5: array([2., 3.], dtype=float32)
-                    list6: array([2., 3.])
-                    list8: np.int32(2)
-                    list9: array([], dtype=int32)
-                    list10: array([], dtype=float64)
-                    list11: ['a', 'bb', 'ccc']
-                    list12: ['a', '1', '2.5']
-                    list13: 'a'
-                    list14: ['a', 'bb']
-                    string1: '1'
-                    string2: 'a'
-                    string3: 'kg m-2'
-                    string4: ''
-                    string5: ' '
-                    string6: ''
-                    string7: ''
-                    string8: ''
-                    string9: ''
-                    coordinates: 'time'
-                    cell_methods: 'area: mean'
-                    standard_name: 'specific_humidity'"""
+            == """<p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
+    Dimensions:
+        lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>
+    Variables:
+        lon_bnds: <p5netcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>
+        lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
+            Attributes:
+                units: 'degrees_east'
+                standard_name: 'longitude'
+                bounds: '/forecast/lon_bnds'
+    Groups:
+        <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
+            Attributes:
+                group_attr_1: np.int64(12)
+                group_attr_2: 'bar'
+            Dimensions:
+                lat: <p5netcdf.Dimension: /forecast/model/lat, size=5>
+            Variables:
+                lat_bnds: <p5netcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
+                lat: <p5netcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
+                    Attributes:
+                        units: 'degrees_north'
+                        standard_name: 'latitude'
+                        bounds: '/forecast/model/lat_bnds'
+                q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>
+                    Attributes:
+                        list7: array([2, 3])
+                        int: np.int64(49)
+                        int8: np.int8(49)
+                        int16: np.int16(49)
+                        int32: np.int32(49)
+                        int64: np.int64(49)
+                        float: np.float64(49.0)
+                        float32: np.float32(49.0)
+                        float64: np.float64(49.0)
+                        uint8: np.uint8(49)
+                        uint16: np.uint16(49)
+                        uint32: np.uint32(49)
+                        uint64: np.uint64(49)
+                        list1: array([2, 3], dtype=int8)
+                        list2: array([2, 3], dtype=int16)
+                        list3: array([2, 3])
+                        list4: array([2, 3], dtype=int32)
+                        list5: array([2., 3.], dtype=float32)
+                        list6: array([2., 3.])
+                        list8: np.int32(2)
+                        list9: array([], dtype=int32)
+                        list10: array([], dtype=float64)
+                        list11: ['a', 'bb', 'ccc']
+                        list12: ['a', '1', '2.5']
+                        list13: 'a'
+                        list14: ['a', 'bb']
+                        string1: '1'
+                        string2: 'a'
+                        string3: 'kg m-2'
+                        string4: ''
+                        string5: ' '
+                        string6: ''
+                        string7: ''
+                        string8: ''
+                        string9: ''
+                        coordinates: 'time'
+                        cell_methods: 'area: mean'
+                        standard_name: 'specific_humidity'"""
         )
 
         assert (
             p["/forecast/model"].dump(display=False)
-            == """model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
-Attributes:
-    group_attr_1: np.int64(12)
-    group_attr_2: 'bar'
-Dimensions:
-    lat: <p5netcdf.Dimension: /forecast/model/lat, size=5>
-Variables:
-    lat_bnds: <p5netcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
-    lat: <p5netcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
-        Attributes:
-            units: 'degrees_north'
-            standard_name: 'latitude'
-            bounds: '/forecast/model/lat_bnds'
-    q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>
-        Attributes:
-            list7: array([2, 3])
-            int: np.int64(49)
-            int8: np.int8(49)
-            int16: np.int16(49)
-            int32: np.int32(49)
-            int64: np.int64(49)
-            float: np.float64(49.0)
-            float32: np.float32(49.0)
-            float64: np.float64(49.0)
-            uint8: np.uint8(49)
-            uint16: np.uint16(49)
-            uint32: np.uint32(49)
-            uint64: np.uint64(49)
-            list1: array([2, 3], dtype=int8)
-            list2: array([2, 3], dtype=int16)
-            list3: array([2, 3])
-            list4: array([2, 3], dtype=int32)
-            list5: array([2., 3.], dtype=float32)
-            list6: array([2., 3.])
-            list8: np.int32(2)
-            list9: array([], dtype=int32)
-            list10: array([], dtype=float64)
-            list11: ['a', 'bb', 'ccc']
-            list12: ['a', '1', '2.5']
-            list13: 'a'
-            list14: ['a', 'bb']
-            string1: '1'
-            string2: 'a'
-            string3: 'kg m-2'
-            string4: ''
-            string5: ' '
-            string6: ''
-            string7: ''
-            string8: ''
-            string9: ''
-            coordinates: 'time'
-            cell_methods: 'area: mean'
-            standard_name: 'specific_humidity'"""
+            == """<p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
+    Attributes:
+        group_attr_1: np.int64(12)
+        group_attr_2: 'bar'
+    Dimensions:
+        lat: <p5netcdf.Dimension: /forecast/model/lat, size=5>
+    Variables:
+        lat_bnds: <p5netcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
+        lat: <p5netcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
+            Attributes:
+                units: 'degrees_north'
+                standard_name: 'latitude'
+                bounds: '/forecast/model/lat_bnds'
+        q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>
+            Attributes:
+                list7: array([2, 3])
+                int: np.int64(49)
+                int8: np.int8(49)
+                int16: np.int16(49)
+                int32: np.int32(49)
+                int64: np.int64(49)
+                float: np.float64(49.0)
+                float32: np.float32(49.0)
+                float64: np.float64(49.0)
+                uint8: np.uint8(49)
+                uint16: np.uint16(49)
+                uint32: np.uint32(49)
+                uint64: np.uint64(49)
+                list1: array([2, 3], dtype=int8)
+                list2: array([2, 3], dtype=int16)
+                list3: array([2, 3])
+                list4: array([2, 3], dtype=int32)
+                list5: array([2., 3.], dtype=float32)
+                list6: array([2., 3.])
+                list8: np.int32(2)
+                list9: array([], dtype=int32)
+                list10: array([], dtype=float64)
+                list11: ['a', 'bb', 'ccc']
+                list12: ['a', '1', '2.5']
+                list13: 'a'
+                list14: ['a', 'bb']
+                string1: '1'
+                string2: 'a'
+                string3: 'kg m-2'
+                string4: ''
+                string5: ' '
+                string6: ''
+                string7: ''
+                string8: ''
+                string9: ''
+                coordinates: 'time'
+                cell_methods: 'area: mean'
+                standard_name: 'specific_humidity'"""
         )
 
 
