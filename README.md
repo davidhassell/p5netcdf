@@ -14,11 +14,11 @@
 netCDF API, datasets in a variety of formats opened by a variety of
 Python backends.
 
-Currently supported are dataset formats are ``netCDF-4``,
+- Currently supported are dataset formats are ``netCDF-4``,
 ``netCDF-3``, ``Zarr3``, ``Zarr2``, ``Kerchunk``, ``PP``, and ``fields
 file`` (the last two being formats used at the UK Met Office).
 
-Currently supported Python backends are ``pyfive``, ``netCDF4``,
+- Currently supported Python backends are ``pyfive``, ``netCDF4``,
 ``zarr``, ``scipy.io.netcdf_file``, ``xarray``, ``ppfive``, and ``h5py``.
 
 ``p5netcdf`` aims to support the same API as
