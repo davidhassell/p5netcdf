@@ -5,7 +5,8 @@
 [![Test](https://github.com/NCAS-CMS/p5netcdf/actions/workflows/pytest.yml/badge.svg)](https://github.com/NCAS-CMS/p5netcdf/actions/workflows/pytest.yml)
 [![codecov](https://codecov.io/gh/NCAS-CMS/p5netcdf/graph/badge.svg?token=3In5JuzeGK)](https://codecov.io/gh/NCAS-CMS/p5netcdf)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/p5netcdf/badges/version.svg)](https://anaconda.org/conda-forge/p5netcdf)
-[Latest doc builds on Read the Docs](https://app.readthedocs.org/projects/p5netcdf/builds/)
+
+**[Latest documentation on Read the Docs](https://app.readthedocs.org/projects/p5netcdf/builds/)**
 
 # p5netcdf
 
