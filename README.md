@@ -5,10 +5,7 @@
 [![Test](https://github.com/NCAS-CMS/p5netcdf/actions/workflows/pytest.yml/badge.svg)](https://github.com/NCAS-CMS/p5netcdf/actions/workflows/pytest.yml)
 [![codecov](https://codecov.io/gh/NCAS-CMS/p5netcdf/graph/badge.svg?token=3In5JuzeGK)](https://codecov.io/gh/NCAS-CMS/p5netcdf)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/p5netcdf/badges/version.svg)](https://anaconda.org/conda-forge/p5netcdf)
-
-![p5netcdf-logo](https://raw.githubusercontent.com/NCAS-CMS/p5netcdf/main/doc/figures/P5netcdf-logo.png)
-
-[Latest doc builds on RTD](https://app.readthedocs.org/projects/p5netcdf/builds/)
+[Latest doc builds on Read the Docs](https://app.readthedocs.org/projects/p5netcdf/builds/)
 
 # p5netcdf
 
@@ -29,7 +26,7 @@ only to writing will not be implemented.
 ``p5netcdf`` is tested against Python versions 3.10 to 3.14.
 It may also work with other Python versions.
 
-The only dependencies to run the software besides Python is ``numpy``.
+The only dependency to run the software, besides Python, is ``numpy``.
 
 ## Install
 
@@ -45,7 +42,14 @@ To install from source in your home directory use::
 
     pip install --user ./p5netcdf
 
-The library can also be imported directly from the source directory.
+The library can also be imported directly from the ``p5netcdf`` source
+root directory::
+
+    pip install -e . 
+
+### Conda-forge feedstock
+
+Package repository [conda-forge feedstock](https://github.com/conda-forge/p5netcdf-feedstock)
 
 ## Development
 
@@ -61,16 +65,13 @@ You can check out the latest ``p5netcdf`` souces with the command::
 These tests can be exercised using the ``pytest`` command from the
 root directory (requires installation of the ``pytest`` package).
 
-## Conda-forge feedstock
-
-Package repository [conda-forge feedstock](https://github.com/conda-forge/p5netcdf-feedstock)
-
-## Codecov
-
-Test coverage assessement is done using [codecov](https://app.codecov.io/gh/NCAS-CMS/p5netcdf/)
-
 ## Documentation
 
 Build locally with Sphinx:
 
     $ sphinx-build -Ea doc doc/build
+
+### Codecov
+
+Test coverage assessement is done using
+[codecov](https://app.codecov.io/gh/NCAS-CMS/p5netcdf/)
