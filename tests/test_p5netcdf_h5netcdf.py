@@ -1,3 +1,5 @@
+"""Check that p5netcdf is consistent with h5netcdf, where approriate."""
+
 import h5netcdf
 import numpy as np
 import pytest

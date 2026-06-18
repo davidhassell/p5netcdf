@@ -28,9 +28,13 @@ from .utils import (
     zarr_parse_group_structure,
 )
 
-np.set_printoptions(floatmode="maxprec")
-
+# package name for `repr` output
 _iam = "p5netcdf"
+
+# np.printoptions parameters for `dump` output (17 significant digits
+# is enough to fully represent every possible bit of precision for
+# 64-bit floats).
+_printoptions = {"precision": 17, "floatmode": "maxprec"}
 
 
 class Mixin:
@@ -988,25 +992,26 @@ class Variable(Mixin, Mixin2):
         if _structure:
             data = False
 
-        if data:
-            # Set numpy linewidth
-            linewidth0 = np.get_printoptions()["linewidth"]
-            np.set_printoptions(linewidth=len(lines[0]))
+        printoptions = _printoptions
+        if data and "linewidth" not in printoptions:
+            # Set the numpy linewidth
+            printoptions = printoptions | {"linewidth": len(lines[0])}
 
-        # Attributes
-        if not _structure and self.attrs:
-            lines.append(f"{i1}Attributes:")
-            lines.extend(
-                f"{i2}{name}: {value!r}" for name, value in self.attrs.items()
-            )
+        with np.printoptions(**printoptions):
+            # Attributes
+            if not _structure and self.attrs:
+                lines.append(f"{i1}Attributes:")
+                lines.extend(
+                    f"{i2}{name}: {value!r}"
+                    for name, value in self.attrs.items()
+                )
 
-        if data:
-            lines.append(f"{i1}Data {self.dtype.name}:")
-            lines.append(
-                f"{i2}{np.array2string(self[...], separator=', ', prefix=i2)}"
-            )
-            # Reset numpy linewidth
-            np.set_printoptions(linewidth=linewidth0)
+            if data:
+                lines.append(f"{i1}Data {self.dtype.name}:")
+                data_string = np.array2string(
+                    self[...], separator=", ", prefix=i2
+                )
+                lines.append(f"{i2}{data_string}")
 
         out = "\n".join(lines)
         if not display:
@@ -1587,10 +1592,17 @@ class Group(Mixin, Mixin2, Mapping):
 
         # Attributes
         if not _structure and self.attrs:
-            lines.append(f"{i1}Attributes:")
-            lines.extend(
-                f"{i2}{name}: {value!r}" for name, value in self.attrs.items()
-            )
+            printoptions = _printoptions
+            if data and "linewidth" not in printoptions:
+                # Set the numpy linewidth
+                printoptions = printoptions | {"linewidth": len(lines[0])}
+
+            with np.printoptions(**printoptions):
+                lines.append(f"{i1}Attributes:")
+                lines.extend(
+                    f"{i2}{name}: {value!r}"
+                    for name, value in self.attrs.items()
+                )
 
         # Dimensions
         if self.dimensions:
@@ -1765,17 +1777,17 @@ class Dataset(Group):
     variable is associated with dimensions and may contain attributes;
     and a group may contain other groups, dimensions, variables, and
     attributes.
-     
+
     * Currently supported are dataset formats are `netCDF-4`,
       `netCDF-3`, `Zarr3`, `Zarr2`, `Kerchunk`, `PP`, and `fields
       file` (the last two being formats used at the UK Met Office).
-    
+
     * Currently supported Python backends are `pyfive`, `netCDF4`,
       `zarr`, `scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py`.
-    
+
     * Additionally, a dataset can be defined by a `pyfive`-like or
       `xarray`-like object in memory.
-    
+
     The `p5netcdf` API has been been designed to be "largely
     consistent" with the APIs of `netCDF4`, `pyfive` and
     `h5netcdf`. This means that, whilst `p5netcdf` can't be used as a

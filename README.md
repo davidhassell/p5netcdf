@@ -42,7 +42,7 @@ method - the former is also found in the `pyfive` and `h5netcdf`
 libraries, the latter in the `netCDF4` library.
 
 Feature requests or bug reports should be reported in the
-[Issues](https://github.com/NCAS-CMS/p5netcdf/issues).
+[issues](https://github.com/NCAS-CMS/p5netcdf/issues).
 
 ## Dependencies
 
