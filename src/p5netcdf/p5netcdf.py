@@ -28,9 +28,6 @@ from .utils import (
     zarr_parse_group_structure,
 )
 
-# package name for `repr` output
-_iam = "p5netcdf"
-
 # np.printoptions parameters for `dump` output (17 significant digits
 # is enough to fully represent every possible bit of precision for
 # 64-bit floats).
@@ -333,7 +330,7 @@ class Dimension(Mixin):
     def __repr__(self):
         unlimited = ", unlimited" if self.isunlimited() else ""
         return (
-            f"{self.name}: <{_iam}.{self.__class__.__name__}: "
+            f"{self.name}: <{__package__}.{self.__class__.__name__}: "
             f"{self.path}, size={self.size}{unlimited}>"
         )
 
@@ -585,7 +582,7 @@ class Variable(Mixin, Mixin2):
             dims = self.dimensions
 
         return (
-            f"{self.name}: <{_iam}.{self.__class__.__name__}: "
+            f"{self.name}: <{__package__}.{self.__class__.__name__}: "
             f"{self.path}, shape={self.shape}, dimensions={dims}>"
         )
 
@@ -1303,7 +1300,8 @@ class Group(Mixin, Mixin2, Mapping):
         pg = "" if len(self.groups) == 1 else "s"
 
         return (
-            f"{self.name}: <{_iam}.{self.__class__.__name__}: {self.path}, "
+            f"{self.name}: <{__package__}.{self.__class__.__name__}: "
+            f"{self.path}, "
             f"{len(self.dimensions)} dimension{pd}, "
             f"{len(self.variables)} variable{pv}, "
             f"{len(self.groups)} group{pg}>"
@@ -2362,7 +2360,7 @@ class Dataset(Group):
             dataset_name = f"{dataset_name}: "
 
         return (
-            f"{dataset_name}<{_iam}.{self.__class__.__name__}: /, "
+            f"{dataset_name}<{__package__}.{self.__class__.__name__}: /, "
             f"{len(self.dimensions)} dimension{pd}, "
             f"{len(self.variables)} variable{pv}, "
             f"{len(self.groups)} group{pg}>"
