@@ -54,6 +54,11 @@ dev = [
     "pydocstyle",
 ]
 
+docs = [
+    "sphinx",
+    "sphinx_rtd_theme",
+]
+
 [tool.black]
 line-length = 79
 
