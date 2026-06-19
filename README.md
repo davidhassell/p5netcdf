@@ -6,7 +6,7 @@
 [![codecov](https://codecov.io/gh/NCAS-CMS/xnetcdf/graph/badge.svg?token=3In5JuzeGK)](https://codecov.io/gh/NCAS-CMS/xnetcdf)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/xnetcdf/badges/version.svg)](https://anaconda.org/conda-forge/xnetcdf)
 
-**[Read the documentation](https://xnetcdf.readthedocs.io)**
+# [Read the documentation](https://xnetcdf.readthedocs.io)
 
 # xnetcdf
 
