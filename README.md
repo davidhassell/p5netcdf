@@ -50,8 +50,8 @@ with xnetcdf.Dataset('path/to/your/dataset') as nc:
     # Use the structure() method for a more detailed view
     nc.structure()
 
-# The dataset attributes
-print(nc.attrs)
+    # The dataset attributes
+    print(nc.attrs)
 
     # Access a variable
     if 'temperature' in nc.variables:
@@ -59,7 +59,7 @@ print(nc.attrs)
         print(var)
 
         # Print the variable attributes
-    print(var.attrs)
+        print(var.attrs)
 
         # Print the data array from the variable
         print(var[...])
