@@ -83,4 +83,12 @@ library.
 Performance
 -----------
 
-TODO - something about eagerness/lazyness.
+TODO `xnetcdf` is "structure- and attribute-eager", meaning that
+during `Dataset` instantiation, the entire netCDF group, variable, and
+dimension structure is parsed; along with all group and variable
+attributes. Variable data array access is always via access to the
+underlying backend library (see the *backend* and *dataset*
+parameters). Some `Variable` and `Group` properties and methods might
+also access the underlying backend for structural metadata, but only
+for the first request, after which the result is cached (see the
+*structural_metadata_strategy* parameter).

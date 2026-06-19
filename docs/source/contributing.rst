@@ -9,14 +9,13 @@ Reporting bugs
 Please report bugs via a new issue in `GitHub issue tracker
 <https://github.com/NCAS-CMS/xnetcdf/issues>`_.
 
-Feature requests and suggested improvements
--------------------------------------------
+Feature requests
+----------------
 
 Suggestions for new features and any improvements to the
 functionality, API, documentation and infrastructure can be submitted
 via a new issue in the `GitHub issue tracker
 <https://github.com/NCAS-CMS/xnetcdf/issues>`_.
-
 
 Questions
 ---------

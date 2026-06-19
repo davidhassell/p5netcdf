@@ -269,8 +269,6 @@ class Mixin2:
 class Dimension(Mixin):
     """A netCDF dimension.
 
-    **Initialisation**
-
     :Parameters:
 
         name: `str`
@@ -458,7 +456,23 @@ class Dimension(Mixin):
 class Variable(Mixin, Mixin2):
     """A netCDF variable.
 
-     **Initialisation**
+    :Attributes:
+
+    Variable attributes follow the netCDF-4 conventions that assign
+    special meaning to selected attributes, treating them as internal
+    attributes which may be required to define the dataset structure.
+
+    These attributes, which will not appear in the `Variable`
+    attribute collection, are ``CLASS``, ``NAME``, ``REFERENCE_LIST``,
+    ``DIMENSION_LIST``, ``DIMENSION_LABELS``, and
+    ``_ARRAY_DIMENSIONS``, as well as any attributes that start with
+    ``_Netcdf4``, ``_nc``, or ``_NC``.
+
+    How these attributes are used, if at all, depends on the backend
+    library being used to access the dataset (e.g. backends that have
+    their own variable class may ignore them); but in all cases they
+    are removed from `Variable` attribute collections during the
+    parsing of the dataset.
 
     :Parameters:
 
@@ -1049,7 +1063,17 @@ class Variable(Mixin, Mixin2):
 class Group(Mixin, Mixin2, Mapping):
     """A netCDF group.
 
-    **Initialisation**
+    :Attributes:
+
+    Group attributes follow the netCDF-4 conventions that assign
+    special meaning to selected attributes, treating them as internal
+    attributes which may be required to define the dataset structure.
+
+    These attributes, which will not appear in the `Group` attribute
+    collection, are ``CLASS``, ``NAME``, ``REFERENCE_LIST``,
+    ``DIMENSION_LIST``, ``DIMENSION_LABELS``, and
+    ``_ARRAY_DIMENSIONS``, as well as any attributes that start with
+    ``_Netcdf4``, ``_nc``, or ``_NC``.
 
     :Parameters:
 
@@ -1633,38 +1657,22 @@ class Dataset(Group):
     associated with dimensions and may contain attributes; and a group
     may contain other groups, dimensions, variables, and attributes.
 
-    **Attributes**
+    :Attributes:
+    
+    Dataset attributes follow the netCDF-4 conventions that assign
+    special meaning to selected attributes, treating them as internal
+    attributes which may be required to define the dataset structure.
 
-    Group and variable attributes follow the netCDF-4 conventions that
-    assign special meaning to selected attributes, treating them as
-    internal attributes which may be required to define the dataset
-    structure.
-
-    These attributes are ``CLASS``, ``NAME``, ``REFERENCE_LIST``,
+    These attributes, which will not appear in the `Dataset` attribute
+    collection, are ``CLASS``, ``NAME``, ``REFERENCE_LIST``,
     ``DIMENSION_LIST``, ``DIMENSION_LABELS``, and
     ``_ARRAY_DIMENSIONS``, as well as any attributes that start with
     ``_Netcdf4``, ``_nc``, or ``_NC``.
 
-    How these attributes are used, if at all, depends on the backend
-    library being used to access the dataset (e.g. backends that have
-    their own dimension class may ignore them); but in all cases they
-    are removed from `Dataset`, `Group` and `Variable` attribute
-    collections.
-
-    **Performance**
-
-    TODO `xnetcdf` is "structure- and attribute-eager", meaning that
-    during `Dataset` instantiation, the entire netCDF group, variable,
-    and dimension structure is parsed; along with all group and
-    variable attributes. Variable data array access is always via
-    access to the underlying backend library (see the *backend* and
-    *dataset* parameters). Some `Variable` and `Group` properties and
-    methods might also access the underlying backend for structural
-    metadata, but only for the first request, after which the result
-    is cached (see the *structural_metadata_strategy* parameter).
-
-    **Initialisation**
-
+    :Indexing:
+    
+    
+    
     :Parameters:
 
         dataset:
@@ -1767,8 +1775,7 @@ class Dataset(Group):
             Keyword arguments that are passed to `pyfive.File` to be
             used when opening a dataset with the ``'pyfive'``
             backend. Setting to `None` (the default) is equivalent to
-            providing an empty dictionary. Ignored if *dataset* is not
-            a string-like or file-like object.
+            providing an empty dictionary.
 
         ppfive_options: `dict` or `None`, optional
             Keyword arguments that are passed to `ppfive.File` to be
@@ -2196,7 +2203,7 @@ class Dataset(Group):
             `dict`
                 The dimensions are keyed by their absolute paths.
 
-        **Example**
+        :Examples:
 
         >>> n.all_dimensions
         {'/bounds2': <xnetcdf.Dimension: /bounds2, size=2>,
@@ -2220,7 +2227,7 @@ class Dataset(Group):
             `dict`
                 The groups are keyed by their absolute paths.
 
-        **Example**
+        :Example:
 
         >>> n.all_groups
         {'/': <xnetcdf.Dataset: 1 dimension, 1 variable, 1 group>,
@@ -2244,7 +2251,7 @@ class Dataset(Group):
             `dict`
                 The variables are keyed by their absolute paths.
 
-        **Example**
+        :Example:
 
         >>> n.all_variables
         {'/time': <xnetcdf.Variable: /time, shape=(), dimensions=()>,

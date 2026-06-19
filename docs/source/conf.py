@@ -25,6 +25,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
     "sphinx.ext.extlinks",
+#   "sphinx.ext.napoleon",  # <-- Add this for Google/NumPy docstring style
 ]
 
 # Tell Intersphinx where to find the documentation mappings for other libraries
@@ -60,6 +61,16 @@ html_theme = (
 )
 html_static_path = ["_static"]
 
+# Tell Sphinx to parse internal page headers down to the level you
+# want (h2/h3)
+html_toc_object_entries_type = "domain"
+
+# If your theme options block exists, add/check this:
+html_theme_options = {
+    "sidebar_hide_name": False,
+    # This prevents Furo from aggressively hiding collapsed child components
+    "navigation_with_keys": True,
+}
 # Force single backticks to automatically link to Python documentation
 # objects
 default_role = "py:obj"
