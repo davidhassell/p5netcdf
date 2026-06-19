@@ -87,10 +87,10 @@ also work with other Python versions.
 
 The only dependency to required run the software, besides Python, is
 `numpy`. However, the backend libraries `pyfive`, `netCDF4`, `zarr`,
-`scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py`, can only be
+`scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py` can only be
 used if they are also installed.
 
-## Install
+## Installation
 
 xnetcdf can be installed using `pip` using the command:
 
@@ -125,7 +125,7 @@ $ pip install -e .
 ### Conda-forge feedstock
 
 Package repository [conda-forge
-feedstock](https://github.com/conda-forge/xnetcdf-feedstock)
+feedstock](https://github.com/conda-forge/xnetcdf-feedstock).
 
 ## Contributing
 
