@@ -1,16 +1,16 @@
 Quick start
 ===========
 
-Here is a simple example of how to use `p5netcdf` to open a dataset
+Here is a simple example of how to use `xnetcdf` to open a dataset
 and inspect its contents:
 
 .. code-block:: python
 
-    import p5netcdf
+    import xnetcdf
 
     # Open a dataset in any of the formats:
     # netCDF-4, netCDF-3, Zarr v3, Zarr v2, Kerchunk, PP, fields file
-    with p5netcdf.Dataset('path/to/your/dataset') as nc:
+    with xnetcdf.Dataset('path/to/your/dataset') as nc:
         # A one-line summary of the dataset
         print(repr(nc))
 
@@ -46,16 +46,16 @@ and inspect its contents:
 
 Let's go through this functionality with a netCDF-4 dataset that
 contains a group hierarchy: ``test.nc`` (`download 28 KB
-<https://raw.githubusercontent.com/davidhassell/p5netcdf/main/tests/data/test.nc>`_,
+<https://raw.githubusercontent.com/davidhassell/xnetcdf/main/tests/data/test.nc>`_,
 datasets of other formats can be found `here
-<https://github.com/davidhassell/p5netcdf/tree/main/tests/data>`_.):
+<https://github.com/davidhassell/xnetcdf/tree/main/tests/data>`_.):
 
 - Import the library and open the dataset:
 
 .. code-block:: python
 
-    >>> import p5netcdf
-    >>> nc = p5netcdf.Dataset('test.nc')
+    >>> import xnetcdf
+    >>> nc = xnetcdf.Dataset('test.nc')
 
 - Display the `repr` description of the datasest. This one-line
   description includes the dataset name, and how many dimensions and
@@ -64,7 +64,7 @@ datasets of other formats can be found `here
 .. code-block:: python
 		
     >>> nc
-    test.nc: <p5netcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
+    test.nc: <xnetcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
 
 - Display the `str` description of the datasest. In addition to the
   `repr` output, shows some details about each of the components in
@@ -74,47 +74,47 @@ datasets of other formats can be found `here
 .. code-block:: python
 		
     >>> print(nc)
-    test.nc: <p5netcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
+    test.nc: <xnetcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
         Dimensions:
-            bounds2: <p5netcdf.Dimension: /bounds2, size=2>
+            bounds2: <xnetcdf.Dimension: /bounds2, size=2>
         Variables:
-            time: <p5netcdf.Variable: /time, shape=(), dimensions=()>
+            time: <xnetcdf.Variable: /time, shape=(), dimensions=()>
         Groups:
-            forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
+            forecast: <xnetcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
 
-- Display the `~p5netcdf.Dataset.structure` description of the
+- Display the `~xnetcdf.Dataset.structure` description of the
   datasest. In addition to the `str` description, shows one-line
   details about each of the components in each sub-group
   recursively. In this case there are three levels in the group
   hierarchy -- ``/``, ``/forecast``, and ``/forecast/model`` -- and
   the depth of recursion can be limited with the ``depth`` keyword
-  argument to `~p5netcdf.Dataset.structure` method. The variable
+  argument to `~xnetcdf.Dataset.structure` method. The variable
   descriptions indicate which dimensions are spanned by their data
   arrays:
 
 .. code-block:: python
 		
     >>> nc.structure()
-    test.nc: <p5netcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
+    test.nc: <xnetcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
         Dimensions:
-            bounds2: <p5netcdf.Dimension: /bounds2, size=2>
+            bounds2: <xnetcdf.Dimension: /bounds2, size=2>
         Variables:
-            time: <p5netcdf.Variable: /time, shape=(), dimensions=()>
+            time: <xnetcdf.Variable: /time, shape=(), dimensions=()>
         Groups:
-            forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
+            forecast: <xnetcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
                 Dimensions:
-                    lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>
+                    lon: <xnetcdf.Dimension: /forecast/lon, size=8, unlimited>
                 Variables:
-                    lon_bnds: <p5netcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>
-                    lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
+                    lon_bnds: <xnetcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>
+                    lon: <xnetcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
                 Groups:
-                    model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
+                    model: <xnetcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
                         Dimensions:
-                            lat: <p5netcdf.Dimension: /forecast/model/lat, size=5>
+                            lat: <xnetcdf.Dimension: /forecast/model/lat, size=5>
                         Variables:
-                            lat_bnds: <p5netcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
-                            lat: <p5netcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
-                            q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>
+                            lat_bnds: <xnetcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
+                            lat: <xnetcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
+                            q: <xnetcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>
     
 - Access the dataset attributes:
 	     
@@ -131,7 +131,7 @@ datasets of other formats can be found `here
 		
    >>> var = nc['/forecast/lon']
    >>> print(var)
-   lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
+   lon: <xnetcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
    >>> var.attrs
    {'bounds': '/forecast/lon_bnds',
     'standard_name': 'longitude',
@@ -140,12 +140,12 @@ datasets of other formats can be found `here
    array([ 22.5,  67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5])
 
 - As in the previous code block, but as a printed display using the
-  variable's `~p5netcdf.Variable.dump` method:
+  variable's `~xnetcdf.Variable.dump` method:
 
 .. code-block:: python
 		
    >>> var.dump(data=True)
-   lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
+   lon: <xnetcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
        Attributes:
            bounds: '/forecast/lon_bnds'
            standard_name: 'longitude'
@@ -153,51 +153,51 @@ datasets of other formats can be found `here
        Data float64:
            [ 22.5,  67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5]
 
-- Display the `~p5netcdf.Dataset.dump` description of the datasest. In
-  addition to the `~p5netcdf.Dataset.structure` description, shows the
+- Display the `~xnetcdf.Dataset.dump` description of the datasest. In
+  addition to the `~xnetcdf.Dataset.structure` description, shows the
   attributes of all variables and groups:
 	     
 .. code-block:: python
 
     >>> nc.dump()
-    test.nc: <p5netcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
+    test.nc: <xnetcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
         Attributes:
             Conventions: 'CF-1.13'
             global_attr_1: np.float64(3.14)
             global_attr_2: 'foo'
         Dimensions:
-            bounds2: <p5netcdf.Dimension: /bounds2, size=2>
+            bounds2: <xnetcdf.Dimension: /bounds2, size=2>
         Variables:
-            time: <p5netcdf.Variable: /time, shape=(), dimensions=()>
+            time: <xnetcdf.Variable: /time, shape=(), dimensions=()>
                 Attributes:
                     standard_name: 'time'
                     units: 'days since 2018-12-01'
         Groups:
-            forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
+            forecast: <xnetcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
                 Dimensions:
-                    lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>
+                    lon: <xnetcdf.Dimension: /forecast/lon, size=8, unlimited>
                 Variables:
-                    lon_bnds: <p5netcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>
-                    lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
+                    lon_bnds: <xnetcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>
+                    lon: <xnetcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
                         Attributes:
                             bounds: '/forecast/lon_bnds'
                             standard_name: 'longitude'
                             units: 'degrees_east'
                 Groups:
-                    model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
+                    model: <xnetcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
                         Attributes:
                             group_attr_1: np.int64(12)
                             group_attr_2: 'bar'
                         Dimensions:
-                            lat: <p5netcdf.Dimension: /forecast/model/lat, size=5>
+                            lat: <xnetcdf.Dimension: /forecast/model/lat, size=5>
                         Variables:
-                            lat_bnds: <p5netcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
-                            lat: <p5netcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
+                            lat_bnds: <xnetcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
+                            lat: <xnetcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
                                 Attributes:
                                     bounds: '/forecast/model/lat_bnds'
                                     standard_name: 'latitude'
                                     units: 'degrees_north'
-                            q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>
+                            q: <xnetcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>
                                 Attributes:
                                     cell_methods: 'area: mean'
                                     coordinates: 'time'
@@ -238,34 +238,34 @@ datasets of other formats can be found `here
                                     uint64: np.uint64(49)
                                     uint8: np.uint8(49)
     
-- Display the `~p5netcdf.Dataset.dump` description of the datasest
+- Display the `~xnetcdf.Dataset.dump` description of the datasest
   with argument ``data=True``. In addition to the
-  `~p5netcdf.Dataset.dump` description, shows the data array values
+  `~xnetcdf.Dataset.dump` description, shows the data array values
   (abbreviated if large, which is not the case here) of all variables:
 	     
 .. code-block:: python
 
     >>> nc.dump(data=True)
-    test.nc: <p5netcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
+    test.nc: <xnetcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
         Attributes:
             Conventions: 'CF-1.13'
             global_attr_1: np.float64(3.14)
             global_attr_2: 'foo'
         Dimensions:
-            bounds2: <p5netcdf.Dimension: /bounds2, size=2>
+            bounds2: <xnetcdf.Dimension: /bounds2, size=2>
         Variables:
-            time: <p5netcdf.Variable: /time, shape=(), dimensions=()>
+            time: <xnetcdf.Variable: /time, shape=(), dimensions=()>
                 Attributes:
                     standard_name: 'time'
                     units: 'days since 2018-12-01'
                 Data int32:
                     31
         Groups:
-            forecast: <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
+            forecast: <xnetcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
                 Dimensions:
-                    lon: <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>
+                    lon: <xnetcdf.Dimension: /forecast/lon, size=8, unlimited>
                 Variables:
-                    lon_bnds: <p5netcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>
+                    lon_bnds: <xnetcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>
                         Data float64:
                             [[  0.,  45.],
                              [ 45.,  90.],
@@ -275,7 +275,7 @@ datasets of other formats can be found `here
                              [225., 270.],
                              [270., 315.],
                              [315., 360.]]
-                    lon: <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
+                    lon: <xnetcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>
                         Attributes:
                             bounds: '/forecast/lon_bnds'
                             standard_name: 'longitude'
@@ -283,28 +283,28 @@ datasets of other formats can be found `here
                         Data float64:
                             [ 22.5,  67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5]
                 Groups:
-                    model: <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
+                    model: <xnetcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>
                         Attributes:
                             group_attr_1: np.int64(12)
                             group_attr_2: 'bar'
                         Dimensions:
-                            lat: <p5netcdf.Dimension: /forecast/model/lat, size=5>
+                            lat: <xnetcdf.Dimension: /forecast/model/lat, size=5>
                         Variables:
-                            lat_bnds: <p5netcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
+                            lat_bnds: <xnetcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>
                                 Data float64:
                                     [[-90., -60.],
                                      [-60., -30.],
                                      [-30.,  30.],
                                      [ 30.,  60.],
                                      [ 60.,  90.]]
-                            lat: <p5netcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
+                            lat: <xnetcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>
                                 Attributes:
                                     bounds: '/forecast/model/lat_bnds'
                                     standard_name: 'latitude'
                                     units: 'degrees_north'
                                 Data float64:
                                     [-75., -45.,   0.,  45.,  75.]
-                            q: <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>
+                            q: <xnetcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>
                                 Attributes:
                                     cell_methods: 'area: mean'
                                     coordinates: 'time'
@@ -351,7 +351,7 @@ datasets of other formats can be found `here
                                      [0.029, 0.059, 0.039, 0.07 , 0.058, 0.072, 0.009, 0.017],
                                      [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]]
     
-- Display the `~p5netcdf.Dataset.ncdump` description of the
+- Display the `~xnetcdf.Dataset.ncdump` description of the
   datasest. Represents the dataset in CDL, omitting the data arrays,
   emulating ``$ ncdump -h`` output:
 	     

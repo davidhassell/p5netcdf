@@ -810,8 +810,6 @@ class Variable(Mixin, Mixin2):
     def chunking(self):
         """The data chunk shape.
 
-        This method has the same API as `netCDF4.Variable.chunking`.
-
         .. seealso:: `chunks`, `shards`
 
         :Returns:
@@ -1655,7 +1653,7 @@ class Dataset(Group):
 
     **Performance**
 
-    TODO `p5netcdf` is "structure- and attribute-eager", meaning that
+    TODO `xnetcdf` is "structure- and attribute-eager", meaning that
     during `Dataset` instantiation, the entire netCDF group, variable,
     and dimension structure is parsed; along with all group and
     variable attributes. Variable data array access is always via
@@ -1688,23 +1686,23 @@ class Dataset(Group):
 
              Note that::
 
-                >>> nc = p5netcdf.File('dataset', backend='pyfive')
+                >>> nc = xnetcdf.File('dataset', backend='pyfive')
 
              is identical to::
 
                 >>> p = pyfive.File('dataset')
-                >>> nc = p5netcdf.Dataset(p)
+                >>> nc = xnetcdf.Dataset(p)
 
              Also::
     
-                >>> nc = p5netcdf.Dataset('dataset', backend='xarray')
+                >>> nc = xnetcdf.Dataset('dataset', backend='xarray')
 
              is identical to::
 
                 >>> x = xarray.open_datatree(
                 ...     'dataset', mask_and_scale=False, decode_cf=False
                 ... )
-                >>> nc = p5netcdf.Dataset(x)
+                >>> nc = xnetcdf.Dataset(x)
 
         backend: `None` or (sequence of) `str`, optional
             Which library or libraries to use for reading a
@@ -2201,9 +2199,9 @@ class Dataset(Group):
         **Example**
 
         >>> n.all_dimensions
-        {'/bounds2': <p5netcdf.Dimension: /bounds2, size=2>,
-         '/forecast/lon': <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>,
-         '/forecast/model/lat': <p5netcdf.Dimension: /forecast/model/lat, size=5>}
+        {'/bounds2': <xnetcdf.Dimension: /bounds2, size=2>,
+         '/forecast/lon': <xnetcdf.Dimension: /forecast/lon, size=8, unlimited>,
+         '/forecast/model/lat': <xnetcdf.Dimension: /forecast/model/lat, size=5>}
 
         """
         if not hasattr(self, "_all_dimensions"):
@@ -2225,9 +2223,9 @@ class Dataset(Group):
         **Example**
 
         >>> n.all_groups
-        {'/': <p5netcdf.Dataset: 1 dimension, 1 variable, 1 group>,
-         '/forecast': <p5netcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>,
-         '/forecast/model': <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>}
+        {'/': <xnetcdf.Dataset: 1 dimension, 1 variable, 1 group>,
+         '/forecast': <xnetcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>,
+         '/forecast/model': <xnetcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>}
 
         """
         if not hasattr(self, "_all_groups"):
@@ -2249,12 +2247,12 @@ class Dataset(Group):
         **Example**
 
         >>> n.all_variables
-        {'/time': <p5netcdf.Variable: /time, shape=(), dimensions=()>,
-         '/forecast/lon_bnds': <p5netcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>,
-         '/forecast/lon': <p5netcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>,
-         '/forecast/model/lat_bnds': <p5netcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>,
-         '/forecast/model/lat': <p5netcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>,
-         '/forecast/model/q': <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>}
+        {'/time': <xnetcdf.Variable: /time, shape=(), dimensions=()>,
+         '/forecast/lon_bnds': <xnetcdf.Variable: /forecast/lon_bnds, shape=(8, 2), dimensions=(/forecast/lon, /bounds2)>,
+         '/forecast/lon': <xnetcdf.Variable: /forecast/lon, shape=(8,), dimensions=(/forecast/lon,)>,
+         '/forecast/model/lat_bnds': <xnetcdf.Variable: /forecast/model/lat_bnds, shape=(5, 2), dimensions=(/forecast/model/lat, /bounds2)>,
+         '/forecast/model/lat': <xnetcdf.Variable: /forecast/model/lat, shape=(5,), dimensions=(/forecast/model/lat,)>,
+         '/forecast/model/q': <xnetcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>}
 
         """
         if not hasattr(self, "_all_variables"):

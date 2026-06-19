@@ -115,7 +115,7 @@ def netcdf_file_dtype(variable):
 
     :Parameters:
 
-        variable: `p5netcdf.Variable`
+        variable: `Variable`
             The variable.
 
     :Returns:

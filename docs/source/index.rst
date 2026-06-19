@@ -1,5 +1,5 @@
-p5netcdf documentation
-======================
+xnetcdf documentation
+=====================
 
 .. toctree::
    :maxdepth: 1

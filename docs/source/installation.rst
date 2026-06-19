@@ -1,32 +1,32 @@
 Installation
 ============
 
-p5netcdf can be installed using ``pip`` using the command:
+xnetcdf can be installed using ``pip`` using the command:
 
 .. code-block:: console
 
-    pip install p5netcdf
+    pip install xnetcdf
 
 or, to also install all of the backend libraries:
 
 .. code-block:: console
 
-    pip install p5netcdf[all]
+    pip install xnetcdf[all]
 
 ``conda`` packages, which also install all of the backend libraries,
 are also available from conda-forge:
 
 .. code-block:: console
 
-    conda install -c conda-forge p5netcdf
+    conda install -c conda-forge xnetcdf
 
 To install from source in your home directory use:
 
 .. code-block:: console
 
-    pip install --user ./p5netcdf
+    pip install --user ./xnetcdf
 
-The library can also be imported directly from the ``p5netcdf`` source
+The library can also be imported directly from the `xnetcdf` source
 root directory:
 
 .. code-block:: console

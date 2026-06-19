@@ -1,7 +1,7 @@
 API Reference
 =============
 
-.. currentmodule:: p5netcdf
+.. currentmodule:: xnetcdf
 
 
 Dataset

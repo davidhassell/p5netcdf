@@ -9,24 +9,24 @@ def zarr_dimension_maps(group):
     Stores the dimensions defined in *group* and all of its sub-groups
     recursively. For instance::
 
-       {'/': {'bounds2': <p5netcdf.Dimension: /bounds2, size=2>},
-        '/forecast': {'lon': <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>},
-        '/forecast/model': {'lat': <p5netcdf.Dimension: /forecast/model/lat, size=5>}}
+       {'/': {'bounds2': <xnetcdf.Dimension: /bounds2, size=2>},
+        '/forecast': {'lon': <xnetcdf.Dimension: /forecast/lon, size=8, unlimited>},
+        '/forecast/model': {'lat': <xnetcdf.Dimension: /forecast/model/lat, size=5>}}
         '/forecast/model2': {}}
 
     Stores the tuple of the dimensions for all variables in *group*
     and its sub-groups recursively. For instance::
 
-       {'/forecast/lon': (<p5netcdf.Dimension: /forecast/lon, size=8, unlimited>,),
-        '/forecast/lon_bnds': (<p5netcdf.Dimension: /forecast/lon, size=8, unlimited>,
-                               <p5netcdf.Dimension: /bounds2, size=2>),
-        '/forecast/model/lat': (<p5netcdf.Dimension: /forecast/model/lat, size=5>,),
-        '/forecast/model/lat_bnds': (<p5netcdf.Dimension: /forecast/model/lat, size=5>,
-                                     <p5netcdf.Dimension: /bounds2, size=2>),
-        '/forecast/model/q': (<p5netcdf.Dimension: /forecast/model/lat, size=5>,
-                              <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>),
-        '/forecast/model2/tas': (<p5netcdf.Dimension: /forecast/model/lat, size=5>,
-                                 <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>),
+       {'/forecast/lon': (<xnetcdf.Dimension: /forecast/lon, size=8, unlimited>,),
+        '/forecast/lon_bnds': (<xnetcdf.Dimension: /forecast/lon, size=8, unlimited>,
+                               <xnetcdf.Dimension: /bounds2, size=2>),
+        '/forecast/model/lat': (<xnetcdf.Dimension: /forecast/model/lat, size=5>,),
+        '/forecast/model/lat_bnds': (<xnetcdf.Dimension: /forecast/model/lat, size=5>,
+                                     <xnetcdf.Dimension: /bounds2, size=2>),
+        '/forecast/model/q': (<xnetcdf.Dimension: /forecast/model/lat, size=5>,
+                              <xnetcdf.Dimension: /forecast/lon, size=8, unlimited>),
+        '/forecast/model2/tas': (<xnetcdf.Dimension: /forecast/model/lat, size=5>,
+                                 <xnetcdf.Dimension: /forecast/lon, size=8, unlimited>),
         '/time': ()}
 
     :Parameters:
