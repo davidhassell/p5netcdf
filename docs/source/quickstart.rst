@@ -8,11 +8,11 @@ and inspect its contents:
 
 .. code-block:: python
 
-    import xnetcdf
+    import xnetcdf as xn
 
     # Open a dataset in any of the formats:
     # netCDF-4, netCDF-3, Zarr v3, Zarr v2, Kerchunk, PP, fields file
-    with xnetcdf.Dataset('path/to/your/dataset') as nc:
+    with xn.Dataset('path/to/your/dataset') as nc:
         # A one-line summary of the dataset
         print(repr(nc))
 
@@ -56,8 +56,8 @@ datasets of other formats can be found `here
 
 .. code-block:: python
 
-    >>> import xnetcdf
-    >>> nc = xnetcdf.Dataset('test.nc')
+    >>> import xnetcdf as xn
+    >>> nc = xn.Dataset('test.nc')
 
 - Display the `repr` description of the datasest. This one-line
   description includes the dataset name, and how many dimensions and
@@ -69,9 +69,9 @@ datasets of other formats can be found `here
     test.nc: <xnetcdf.Dataset: /, 1 dimension, 1 variable, 1 group>
 
 - Display the `str` description of the datasest. In addition to the
-  `repr` output, shows some details about each of the components in
-  the root group. The variable descriptions indicate which dimensions
-  are spanned by their data arrays:
+  `repr` output, this shows some details about each of the components
+  in the root group. The variable descriptions indicate which
+  dimensions are spanned by their data arrays:
 
 .. code-block:: python
 		
@@ -85,14 +85,14 @@ datasets of other formats can be found `here
             forecast: <xnetcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>
 
 - Display the `~xnetcdf.Dataset.structure` description of the
-  datasest. In addition to the `str` description, shows one-line
+  datasest. In addition to the `str` description, this shows one-line
   details about each of the components in each sub-group
   recursively. In this case there are three levels in the group
-  hierarchy -- ``/``, ``/forecast``, and ``/forecast/model`` -- and
-  the depth of recursion can be limited with the ``depth`` keyword
-  argument to `~xnetcdf.Dataset.structure` method. The variable
-  descriptions indicate which dimensions are spanned by their data
-  arrays:
+  hierarchy -- ``/``, ``/forecast``, and ``/forecast/model`` (and note
+  that the depth of recursion can be limited with the ``depth``
+  keyword argument to `~xnetcdf.Dataset.structure` method). The
+  variable descriptions indicate which dimensions are spanned by their
+  data arrays:
 
 .. code-block:: python
 		
@@ -156,8 +156,8 @@ datasets of other formats can be found `here
            [ 22.5,  67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5]
 
 - Display the `~xnetcdf.Dataset.dump` description of the datasest. In
-  addition to the `~xnetcdf.Dataset.structure` description, shows the
-  attributes of all variables and groups:
+  addition to the `~xnetcdf.Dataset.structure` description, this shows
+  the attributes of all variables and groups:
 	     
 .. code-block:: python
 
@@ -240,10 +240,10 @@ datasets of other formats can be found `here
                                     uint64: np.uint64(49)
                                     uint8: np.uint8(49)
     
-- Display the `~xnetcdf.Dataset.dump` description of the datasest
-  with argument ``data=True``. In addition to the
-  `~xnetcdf.Dataset.dump` description, shows the data array values
-  (abbreviated if large, which is not the case here) of all variables:
+- Display the `~xnetcdf.Dataset.dump` description of the datasest with
+  argument ``data=True``. In addition to the `~xnetcdf.Dataset.dump`
+  description, this shows the data array values (abbreviated if large,
+  which is not the case here) of all variables:
 	     
 .. code-block:: python
 

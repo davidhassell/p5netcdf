@@ -25,14 +25,14 @@ that?", "how can I make it faster?", etc., can be raised via a new
 issue the `GitHub issue tracker
 <https://github.com/NCAS-CMS/xnetcdf/issues>`_.
 
-
 Preparing pull requests
 -----------------------
 
-Pull requests should follow on from a discussion in the `GitHub issue tracker
-<https://github.com/NCAS-CMS/xnetcdf/issues>`_.
+Pull requests should follow on from a discussion in the `GitHub issue
+tracker <https://github.com/NCAS-CMS/xnetcdf/issues>`_.
 
-Fork the `xnetcdf` GitHub repository https://github.com/NCAS-CMS/xnetcdf.
+Fork the `xnetcdf` GitHub repository
+https://github.com/NCAS-CMS/xnetcdf.
 
 Clone your fork locally and create a branch:
 
@@ -42,20 +42,19 @@ Clone your fork locally and create a branch:
     $ cd xnetcdf
     $ git checkout -b <your-bugfix-feature-branch-name main>
 
-Break your edits up into reasonably-sized commits, each representing
-a single logical change:
+Break your edits up into reasonably-sized commits, each representing a
+single logical change:
 
 .. code-block:: console
 	  
     $ git commit -a -m "<COMMIT MESSAGE>"
 
 Create a new changelog entry in ``Changelog.rst``. The entry should be
-written (where ``<description>`` should be a *brief* description of
-the change) as:
+written as:
 
 .. code-block:: rst
 
-   * <description> (https://github.com/NCAS-CMS/xnetcdf/issues/<issue number>)
+   * <brief description> (https://github.com/NCAS-CMS/xnetcdf/issues/<issue number>)
 
 Run the test suite to make sure the tests all pass:
 	
@@ -66,10 +65,12 @@ Run the test suite to make sure the tests all pass:
 
 Finally, make sure all commits have been pushed to the remote copy of
 your fork and submit the pull request via the GitHub website, to the
-``main`` branch of the ``NCAS-CMS/xnetcdf`` repository. Make sure to
-reference the original issue in the pull request's description.
+``main`` branch of the https://github.com/NCAS-CMS/xnetcdf
+repository. Make sure to reference the original issue in the pull
+request's description.
 
 Note that you can create the pull request while you're working on
-this, as it will automatically update as you add more commits. If it is
-a work in progress, you can mark it initially as a draft pull request.
+this, as it will automatically update as you add more commits. If it
+is a work in progress, you can mark it initially as a draft pull
+request.
 

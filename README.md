@@ -38,11 +38,11 @@ Here is a simple example of how to use `xnetcdf` to open a dataset
 and inspect its contents:
 
 ``` python
-import xnetcdf
+import xnetcdf as xn
 
 # Open a dataset in any of the formats:
 # netCDF-4, netCDF-3, Zarr v3, Zarr v2, Kerchunk, PP, fields file
-with xnetcdf.Dataset('path/to/your/dataset') as nc:
+with xn.Dataset('path/to/your/dataset') as nc:
     # A one-line summary of the dataset
     print(repr(nc))
 
