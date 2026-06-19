@@ -25,8 +25,6 @@ class NetCDFError(Exception):
 def get_library(obj):
     """Get the library that provides an object.
 
-    .. versionadded:: NEXTVERSION
-
     :Parameters:
 
         obj:
@@ -63,8 +61,6 @@ def get_library(obj):
 
 def format_attr(attr, value, library):
     """Format an attribute according to netCDF-4.
-
-    .. versionadded:: NEXTVERSION
 
     :Parameters:
 
@@ -172,8 +168,6 @@ def parse_attributes(obj, raw_attrs):
 
     The attribues are sorted lexigraphically.
 
-    .. versionadded:: NEXTVERSION
-
     :Parameters:
 
         obj: `Group` or `Variable`
@@ -203,8 +197,6 @@ def get_dimensions_from_defining_group(variable, dimension_names):
     For each given dimension name, find the corresponding `Dimension`
     object by searching up through the group hierarchy, starting from
     the variable's parent group.
-
-    .. versionadded:: NEXTVERSION
 
     :Parameters:
 

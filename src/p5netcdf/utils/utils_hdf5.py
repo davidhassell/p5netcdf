@@ -12,8 +12,6 @@ def hdf5_dimension_names(variable):
     Raises a `NetCDFError` exception if the DIMENSION_LIST attribute
     is not appropriately set.
 
-    .. versionadded:: NEXTVERSION
-
     :Parameters:
 
         variable: `Variable`
@@ -176,8 +174,6 @@ def hdf5_parse_group_structure(group):
 def pyfive_open(dataset, options):
     """Open a dataset with `pyfive`.
 
-    .. versionadded:: NEXTVERSION
-
     :Parameters:
 
         dataset:
@@ -217,8 +213,6 @@ def pyfive_open(dataset, options):
 # --------------------------------------------------------------------
 def h5py_open(dataset, options):
     """Open a dataset with the `h5py`.
-
-    .. versionadded:: NEXTVERSION
 
     :Parameters:
 

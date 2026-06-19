@@ -8,8 +8,6 @@ def cdl_format(g, lines, depth=0):
 
     All sub-groups are also converted.
 
-    .. versionadded:: NEXTVERSION
-
     :Parameters:
 
         g: `Group` or `Dataset`
@@ -99,8 +97,6 @@ def cdl_format(g, lines, depth=0):
 def cdl_is_string_list(value):
     """Detect if the CDL 'string' attribute prefix is needed.
 
-    .. versionadded:: NEXTVERSION
-
     :Parameters:
 
         value:
@@ -120,8 +116,6 @@ def cdl_is_string_list(value):
 
 def cdl_type(dtype):
     """Maps numpy data types CDL type keywords.
-
-    .. versionadded:: NEXTVERSION
 
     :Parameters:
 
@@ -161,8 +155,6 @@ def cdl_value(value):
 
     Formats an attribute value with CDL suffixes based on its numpy
     dtype.
-
-    .. versionadded:: NEXTVERSION
 
     :Parameters:
 

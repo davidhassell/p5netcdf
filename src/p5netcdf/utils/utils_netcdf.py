@@ -9,8 +9,6 @@ def netCDF4_parse_group_structure(group):
 
     Parses variables, dimensions, and sub-groups, recursively.
 
-    .. versionadded:: NEXTVERSION
-
     :Parameters:
 
         group: `Group` or `Dataset`
@@ -41,8 +39,6 @@ def netCDF4_open(dataset, options):
 
     The dataset is opened with "auto mask" and "auto scale" both set
     to `False`.
-
-    .. versionadded:: NEXTVERSION
 
     :Parameters:
 
@@ -90,8 +86,6 @@ def netcdf_file_close(root):
     It is assumed, but not checked, that the backend is indeed
     `netcdf_file`.
 
-    .. versionadded:: NEXTVERSION
-
     :Parameters:
 
         root: `Dataset`
@@ -119,8 +113,6 @@ def netcdf_file_close(root):
 def netcdf_file_dtype(variable):
     """The data type of variable opened with `netcdf_file`.
 
-    .. versionadded:: NEXTVERSION
-
     :Parameters:
 
         variable: `p5netcdf.Variable`
@@ -139,8 +131,6 @@ def netcdf_file_open(dataset, options):
 
     The dataset is opened with `scipy.io.netcdf_file` options
     ``mode='r'`` and ``mmap=True``.
-
-    .. versionadded:: NEXTVERSION
 
     :Parameters:
 
@@ -186,8 +176,6 @@ def netcdf_file_parse_group_structure(group):
 
     Parses variables, dimensions in the root. There are no
     sub-groups in netCDF-3.
-
-    .. versionadded:: NEXTVERSION
 
     :Parameters:
 

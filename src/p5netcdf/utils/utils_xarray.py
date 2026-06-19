@@ -9,8 +9,6 @@ def xarray_parse_group_structure(group):
 
     Parses variables, dimensions, and sub-groups, recursively.
 
-    .. versionadded:: NEXTVERSION
-
     :Parameters:
 
         group: `Group` or `File`
@@ -55,8 +53,6 @@ def xarray_open(dataset, options):
 
     The dataset is opened with `xarray.open_datatree` options
     ``mask_and_scale=False`` and ``decode_cf=False``.
-
-    .. versionadded:: NEXTVERSION
 
     :Parameters:
 

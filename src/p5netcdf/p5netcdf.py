@@ -40,9 +40,9 @@ class Mixin:
     Mixin class for methods common `Dimension`, `Variable`, and
     `Group`.
 
-    .. versionadded:: NEXTVERSION
-
     """
+
+    __hash__ = None
 
     # Quantum of indentation for the `dump` method
     __indent = "    "
@@ -50,8 +50,6 @@ class Mixin:
     @property
     def backend(self):
         """The name of the library that provides the backend.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `library`, `dataset`
 
@@ -71,15 +69,13 @@ class Mixin:
         or environment variables, then these are expanded in the
         returned string.
 
-        .. versionadded:: NEXTVERSION
-
-        .. seealso:: `dataset_name`, `library`
+        .. seealso:: `filename`, `dataset_name`, `is_local`,
+                     `protocol`, `library`
 
         :Returns:
 
                 The dataset definition. One of string-like, file-like,
-                directory-like, `pyfive.File`-like,
-                xarray.Dataset`-like, or `xarray.DataTree`-like.
+                directory-like, `pyfive`-like, or `xarray`-like.
 
         """
         return self.root._dataset
@@ -90,9 +86,7 @@ class Mixin:
 
         This is an alias for `filename`.
 
-        .. versionadded:: NEXTVERSION
-
-        .. seealso:: `filename`, `dataset`
+        .. seealso:: `dataset`, `is_local`, `protocol`, `dataset`
 
         :Returns:
 
@@ -108,8 +102,6 @@ class Mixin:
         """The name of the dataset.
 
         This is an alias for `dataset_name`.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `dataset_name`
 
@@ -132,8 +124,6 @@ class Mixin:
         `is_local` will return `None`, and `protocol` will raise an
         `AttributeError.
 
-        .. versionadded:: NEXTVERSION
-
         .. seealso:: `dataset`, `dataset_name`, `protocol`
 
         :Returns:
@@ -154,8 +144,6 @@ class Mixin:
         The backend library is the interface to the dataset, and
         provides access to the dataset contents.
 
-        .. versionadded:: NEXTVERSION
-
         .. seealso:: `backend`, `dataset`
 
         :Returns:
@@ -169,9 +157,7 @@ class Mixin:
     def parent(self):
         """The parent group.
 
-        .. versionadded:: NEXTVERSION
-
-        .. seealso:: `group`
+        .. seealso:: `root`
 
         :Returns:
 
@@ -190,8 +176,6 @@ class Mixin:
         from the dataset definition (as returned by `dataset`), but in
         those cases when it is not possible, `protocol` will raise an
         `AttributeError` and `is_local` will return `None`.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `dataset`, `dataset_name`, `is_local`
 
@@ -212,8 +196,6 @@ class Mixin:
     def root(self):
         """The root group.
 
-        .. versionadded:: NEXTVERSION
-
         .. seealso:: `parent`
 
         :Returns:
@@ -230,18 +212,14 @@ class Mixin:
 
 
 class Mixin2:
-    """Mixin class for methods common `Variable` and `Group`.
-
-    .. versionadded:: NEXTVERSION
-
-    """
+    """Mixin class for methods common `Variable` and `Group`."""
 
     @property
     def attrs(self):
         """The attributes.
 
-        .. versionadded:: NEXTVERSION
-
+        .. seealso:: `ncattrs`, `getncattr`
+        
         :Returns:
 
             `dict`
@@ -253,7 +231,7 @@ class Mixin2:
     def getncattr(self, name):
         """Get an attribute value by name.
 
-        .. versionadded:: NEXTVERSION
+        .. seealso:: `attrs`, `ncattrs`
 
         :Parameters:
 
@@ -277,7 +255,7 @@ class Mixin2:
     def ncattrs(self):
         """Return a list of attribute names.
 
-        .. versionadded:: NEXTVERSION
+        .. seealso:: `attrs`, `getncattr`
 
         :Returns:
 
@@ -290,8 +268,6 @@ class Mixin2:
 
 class Dimension(Mixin):
     """A netCDF dimension.
-
-    .. versionadded:: NEXTVERSION
 
     **Initialisation**
 
@@ -311,8 +287,6 @@ class Dimension(Mixin):
 
     """
 
-    __hash__ = None
-
     def __init__(self, name, size, isunlimited, parent):
         self._name = name
         self._size = size
@@ -320,11 +294,7 @@ class Dimension(Mixin):
         self._parent = parent
 
     def __len__(self):
-        """The size of the dimension.
-
-        .. versionadded:: NEXTVERSION
-
-        """
+        """The size of the dimension."""
         return self.size
 
     def __repr__(self):
@@ -337,8 +307,6 @@ class Dimension(Mixin):
     @property
     def name(self):
         """The name of the dimension in its parent group.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `path`
 
@@ -353,8 +321,6 @@ class Dimension(Mixin):
     @property
     def path(self):
         """The absolute path of the dimension.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `name`
 
@@ -381,8 +347,6 @@ class Dimension(Mixin):
     def size(self):
         """The size of the dimension.
 
-        .. versionadded:: NEXTVERSION
-
         :Returns:
 
             `int`
@@ -399,8 +363,6 @@ class Dimension(Mixin):
         _structure=False,
     ):
         """A full description of the dimension.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `structure`, `ncdump`
 
@@ -438,9 +400,7 @@ class Dimension(Mixin):
 
         This is an alias for `parent`.
 
-        .. versionadded:: NEXTVERSION
-
-        .. seealso:: `parent`
+        .. seealso:: `parent`, `root`
 
         :Returns:
 
@@ -452,8 +412,6 @@ class Dimension(Mixin):
 
     def isunlimited(self):
         """Whether the dimension is unlimited.
-
-        .. versionadded:: NEXTVERSION
 
         :Returns:
 
@@ -471,8 +429,6 @@ class Dimension(Mixin):
         _level=0,
     ):
         """A purely structural description of the dimension.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `dump`, `ncdump`
 
@@ -502,8 +458,6 @@ class Dimension(Mixin):
 class Variable(Mixin, Mixin2):
     """A netCDF variable.
 
-     .. versionadded:: NEXTVERSION
-
      **Initialisation**
 
     :Parameters:
@@ -528,8 +482,6 @@ class Variable(Mixin, Mixin2):
 
     """
 
-    __hash__ = None
-
     def __init__(self, name, parent, var, var_attrs, shape=None):
         self._name = name
         self._var = var
@@ -540,11 +492,7 @@ class Variable(Mixin, Mixin2):
             self._shape = shape
 
     def __getitem__(self, indices):
-        """Return a subspace of the data array defined by indices.
-
-        .. versionadded:: NEXTVERSION
-
-        """
+        """Return a subspace of the data array defined by indices."""
         array = self._var[indices]
         match self.backend:
             case "netcdf_file":
@@ -558,11 +506,7 @@ class Variable(Mixin, Mixin2):
         return array
 
     def __len__(self):
-        """The size of leading data array dimension.
-
-        .. versionadded:: NEXTVERSION
-
-        """
+        """The size of leading data array dimension."""
         shape = self.shape
         if shape:
             return shape[0]
@@ -588,11 +532,7 @@ class Variable(Mixin, Mixin2):
 
     @property
     def __orthogonal_indexing__(self):
-        """Flag to indicate whether indexing is orthogonal.
-
-        .. versionadded:: NEXTVERSION
-
-        """
+        """Flag to indicate whether indexing is orthogonal."""
         orthogonal_indexing = getattr(self, "_orthogonal_indexing", None)
         if orthogonal_indexing is None:
             orthogonal_indexing = getattr(
@@ -605,8 +545,6 @@ class Variable(Mixin, Mixin2):
     @property
     def chunks(self):
         """The data chunk shape.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `shards`, `chunking`
 
@@ -653,9 +591,7 @@ class Variable(Mixin, Mixin2):
 
     @property
     def dimension_paths(self):
-        """The variable dimensions.
-
-        .. versionadded:: NEXTVERSION
+        """The variable dimension paths.
 
         .. seealso:: `dimensions`, `get_dims`
 
@@ -675,9 +611,7 @@ class Variable(Mixin, Mixin2):
 
     @property
     def dimensions(self):
-        """The variable dimensions.
-
-        .. versionadded:: NEXTVERSION
+        """The variable dimension names.
 
         .. seealso:: `get_dims`
 
@@ -697,11 +631,7 @@ class Variable(Mixin, Mixin2):
 
     @property
     def dtype(self):
-        """The numpy data type of the variable.
-
-        .. versionadded:: NEXTVERSION
-
-        """
+        """The numpy data type of the variable."""
         dtype = getattr(self, "_dtype", None)
         if dtype is None:
             match self.backend:
@@ -735,8 +665,6 @@ class Variable(Mixin, Mixin2):
     def maxshape(self):
         """The maximum dimension lengths of the variable.
 
-        .. versionadded:: NEXTVERSION
-
         .. seealso:: `shape`
 
         :Returns:
@@ -761,8 +689,6 @@ class Variable(Mixin, Mixin2):
     def name(self):
         """The name of the variable in its parent group.
 
-        .. versionadded:: NEXTVERSION
-
         .. seealso:: `path`
 
         :Returns:
@@ -776,8 +702,6 @@ class Variable(Mixin, Mixin2):
     @property
     def ndim(self):
         """The number of dimensions for the variable.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `size`, `shape`
 
@@ -797,8 +721,6 @@ class Variable(Mixin, Mixin2):
     @property
     def path(self):
         """The absolute path of the variable.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `name`
 
@@ -825,8 +747,6 @@ class Variable(Mixin, Mixin2):
     def shape(self):
         """The dimension lengths of the variable.
 
-        .. versionadded:: NEXTVERSION
-
         .. seealso:: `ndim`, `size`, `maxshape`
 
         :Returns:
@@ -845,8 +765,6 @@ class Variable(Mixin, Mixin2):
     @property
     def shards(self):
         """The data shard shape.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `chunks`, `chunking`
 
@@ -874,8 +792,6 @@ class Variable(Mixin, Mixin2):
     def size(self):
         """The total number of elements in the variable's data.
 
-        .. versionadded:: NEXTVERSION
-
         .. seealso:: `ndim`, `shape`
 
         :Returns:
@@ -895,8 +811,6 @@ class Variable(Mixin, Mixin2):
         """The data chunk shape.
 
         This method has the same API as `netCDF4.Variable.chunking`.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `chunks`, `shards`
 
@@ -951,8 +865,6 @@ class Variable(Mixin, Mixin2):
         _structure=False,
     ):
         """A full description of the variable.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `structure`, `ncdump`
 
@@ -1019,8 +931,6 @@ class Variable(Mixin, Mixin2):
     def get_dims(self):
         """Return the dimensions of the variable.
 
-        .. versionadded:: NEXTVERSION
-
         .. seealso:: `dimensions`
 
         :Returns:
@@ -1078,11 +988,9 @@ class Variable(Mixin, Mixin2):
     def getValue(self):
         """Return the data value of a scalar variable.
 
-        .. versionadded:: NEXTVERSION
-
         :Returns:
 
-                The scalar value.
+        The scalar value.
 
         """
         if self.shape:
@@ -1097,9 +1005,7 @@ class Variable(Mixin, Mixin2):
 
         This is an alias for `parent`.
 
-        .. versionadded:: NEXTVERSION
-
-        .. seealso:: `parent`
+        .. seealso:: `parent`, `root`
 
         :Returns:
 
@@ -1116,8 +1022,6 @@ class Variable(Mixin, Mixin2):
         _level=0,
     ):
         """A purely structural description of the variable.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `dump`, `ncdump`
 
@@ -1147,8 +1051,6 @@ class Variable(Mixin, Mixin2):
 class Group(Mixin, Mixin2, Mapping):
     """A netCDF group.
 
-    .. versionadded:: NEXTVERSION
-
     **Initialisation**
 
     :Parameters:
@@ -1172,8 +1074,6 @@ class Group(Mixin, Mixin2, Mapping):
             The raw attributes of *grp*.
 
     """
-
-    __hash__ = None
 
     # Store classes for creating dimensions, variables and sub-groups
     #
@@ -1204,8 +1104,6 @@ class Group(Mixin, Mixin2, Mapping):
         include ``.`` (current group) and ``..`` (parent group)
         elements. The empty path ``''`` is equivalent to ``'.'``. A
         trailing ``/`` in non-empty path is ignored.
-
-        .. versionadded:: NEXTVERSION
 
         """
         if path == "":
@@ -1279,19 +1177,11 @@ class Group(Mixin, Mixin2, Mapping):
         return current
 
     def __iter__(self):
-        """The variables and sub-groups.
-
-        .. versionadded:: NEXTVERSION
-
-        """
+        """The variables and sub-groups."""
         return chain(self.groups, self.variables)
 
     def __len__(self):
-        """The number of variables and sub-groups.
-
-        .. versionadded:: NEXTVERSION
-
-        """
+        """The number of variables and sub-groups."""
         return len(self.variables) + len(self.groups)
 
     def __repr__(self):
@@ -1313,8 +1203,6 @@ class Group(Mixin, Mixin2, Mapping):
     def _create_dimension(self, name, size, isunlimited):
         """Create a new dimension in this group.
 
-        .. versionadded:: NEXTVERSION
-
         :Parameters:
 
              Parameters *name*, *size*, and *isunlimited* are
@@ -1332,8 +1220,6 @@ class Group(Mixin, Mixin2, Mapping):
 
     def _create_group(self, name, grp, grp_attrs):
         """Create a new sub-group in this group.
-
-        .. versionadded:: NEXTVERSION
 
         :Parameters:
 
@@ -1353,8 +1239,6 @@ class Group(Mixin, Mixin2, Mapping):
     def _create_variable(self, name, var, var_attrs, shape=None):
         """Create a new variable in this group.
 
-        .. versionadded:: NEXTVERSION
-
         :Parameters:
 
              Parameters *name*, *var*, *var_attrs*, and *shape* are
@@ -1373,16 +1257,14 @@ class Group(Mixin, Mixin2, Mapping):
     def _populate_all(self):
         """Populate the 'all_*' dictionaries.
 
-        Populates the root dictionaries of all dimensions, variables,
-        and groups.
-
-        .. versionadded:: NEXTVERSION
+        Populates the root group's dictionaries of all dimensions,
+        variables, and groups.
 
         """
         root = self.root
 
         if self.is_root:
-            # Initialise the 'all_*' dictionaries
+            # Initialise the 'all_*' dictionaries on the root group
             root._all_dimensions = {}
             root._all_variables = {}
             root._all_groups = {}
@@ -1403,8 +1285,6 @@ class Group(Mixin, Mixin2, Mapping):
         """Parse the group structure.
 
         Parses variables, dimensions, and subgroups, recursively.
-
-        .. versionadded:: NEXTVERSION
 
         :Parameters:
 
@@ -1442,8 +1322,6 @@ class Group(Mixin, Mixin2, Mapping):
     def dimensions(self):
         """The dimensions defined in this group.
 
-        .. versionadded:: NEXTVERSION
-
         :Returns:
 
             `dict`
@@ -1455,8 +1333,6 @@ class Group(Mixin, Mixin2, Mapping):
     @property
     def groups(self):
         """The sub-groups defined in this group.
-
-        .. versionadded:: NEXTVERSION
 
         :Returns:
 
@@ -1470,8 +1346,6 @@ class Group(Mixin, Mixin2, Mapping):
     def is_root(self):
         """Whether or not this is the root group.
 
-        .. versionadded:: NEXTVERSION
-
         :Returns:
 
             `bool`
@@ -1484,8 +1358,6 @@ class Group(Mixin, Mixin2, Mapping):
     def name(self):
         """The name of the group in its parent group.
 
-        .. versionadded:: NEXTVERSION
-
         :Returns:
 
             `str`
@@ -1497,8 +1369,6 @@ class Group(Mixin, Mixin2, Mapping):
     @property
     def path(self):
         """The absolute path of the group.
-
-        .. versionadded:: NEXTVERSION
 
         :Returns:
 
@@ -1526,8 +1396,6 @@ class Group(Mixin, Mixin2, Mapping):
     def variables(self):
         """The variables defined in this group.
 
-        .. versionadded:: NEXTVERSION
-
         :Returns:
 
             `dict`
@@ -1546,8 +1414,6 @@ class Group(Mixin, Mixin2, Mapping):
         _structure=False,
     ):
         """A full description of the group.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `structure`, `ncdump`
 
@@ -1659,8 +1525,6 @@ class Group(Mixin, Mixin2, Mapping):
 
         If `True`, then *other* is a sub-group of this group.
 
-        .. versionadded:: NEXTVERSION
-
         :Parameters:
 
             other: `Group` or `Dataset`
@@ -1689,8 +1553,6 @@ class Group(Mixin, Mixin2, Mapping):
 
         Both groups must have same parent `File` instance. A group is
         considered to be a sub-group of itself.
-
-        .. versionadded:: NEXTVERSION
 
         :Parameters:
 
@@ -1724,8 +1586,6 @@ class Group(Mixin, Mixin2, Mapping):
         _level=0,
     ):
         """A purely structural description of the group.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `dump`, `ncdump`
 
@@ -1771,30 +1631,9 @@ class Dataset(Group):
 
     A dataset is mapped to a `Dataset` object, which contains netCDF
     groups (`Group` objects), dimensions (`Dimension` objects),
-    variables (`Variable` objects), and attributes. In turn, a
-    variable is associated with dimensions and may contain attributes;
-    and a group may contain other groups, dimensions, variables, and
-    attributes.
-
-    * Currently supported are dataset formats are `netCDF-4`,
-      `netCDF-3`, `Zarr3`, `Zarr2`, `Kerchunk`, `PP`, and `fields
-      file` (the last two being formats used at the UK Met Office).
-
-    * Currently supported Python backends are `pyfive`, `netCDF4`,
-      `zarr`, `scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py`.
-
-    * Additionally, a dataset can be defined by a `pyfive`-like or
-      `xarray`-like object in memory.
-
-    The `p5netcdf` API has been been designed to be "largely
-    consistent" with the APIs of `netCDF4`, `pyfive` and
-    `h5netcdf`. This means that, whilst `p5netcdf` can't be used as a
-    perfect drop-in for any of these three libraries, most attributes
-    and methods of each one of them can be found in `p5netcdf`, and
-    with the same behaviour. For instance, `p5netcdf` variables have a
-    `chunks` attribute and a `chunking` method - the former is also
-    found in the `pyfive` and `h5netcdf` libraries, the latter in the
-    `netCDF4` library.
+    variables (`Variable` objects), and attributes. A variable is
+    associated with dimensions and may contain attributes; and a group
+    may contain other groups, dimensions, variables, and attributes.
 
     **Attributes**
 
@@ -1811,11 +1650,12 @@ class Dataset(Group):
     How these attributes are used, if at all, depends on the backend
     library being used to access the dataset (e.g. backends that have
     their own dimension class may ignore them); but in all cases they
-    are removed from the `Group` and `Variable` attribute collections.
+    are removed from `Dataset`, `Group` and `Variable` attribute
+    collections.
 
     **Performance**
 
-    `p5netcdf` is "structure- and attribute-eager", meaning that
+    TODO `p5netcdf` is "structure- and attribute-eager", meaning that
     during `Dataset` instantiation, the entire netCDF group, variable,
     and dimension structure is parsed; along with all group and
     variable attributes. Variable data array access is always via
@@ -1824,8 +1664,6 @@ class Dataset(Group):
     methods might also access the underlying backend for structural
     metadata, but only for the first request, after which the result
     is cached (see the *structural_metadata_strategy* parameter).
-
-    .. versionadded:: NEXTVERSION
 
     **Initialisation**
 
@@ -1841,39 +1679,32 @@ class Dataset(Group):
 
             * directory-like (such as `fsspec.mapping.FSMap`)
 
-            * `pyfive.File`-like
+            * `pyfive`-like (i.e. `pyfive.File`, or an object
+              registered as a subclass of `pyfive.File`)
 
-               Note that::
+            * `xarray`-like (i.e. `xarray.Dataset` or
+              `xarray.DataTree`, or an object registered as a subclass
+              of either of those)
 
-                  >>> nc = p5netcdf.File('dataset', backend='pyfive')
+             Note that::
 
-               is identical to::
+                >>> nc = p5netcdf.File('dataset', backend='pyfive')
 
-                  >>> p = pyfive.File('dataset')
-                  >>> nc = p5netcdf.Dataset(p)
+             is identical to::
 
-               A subclass of `pyfive.File` must expose the following
-               classes, attributes and methods from the `pyfive` API:
-               `!File.attrs` `!File.close`, `!File.filename`,
-               `!File.items`, `!File._fh`, `!Group.attrs`,
-               `!Group.items`, `Dataset.attrs`, `Dataset.chunks`,
-               `Dataset.dtype`, `Dataset.name`, `Dataset.shape`; and
-               its `!File` and `!Group` classes must be (registered
-               as) subclasses of `pyfive.File` and `pyfive.Group`
-               respectively. TODO
+                >>> p = pyfive.File('dataset')
+                >>> nc = p5netcdf.Dataset(p)
 
-            * `xarray.Dataset`-like or `xarray.DataTree`-like
+             Also::
+    
+                >>> nc = p5netcdf.Dataset('dataset', backend='xarray')
 
-               Note that::
+             is identical to::
 
-                  >>> nc = p5netcdf.Dataset('dataset', backend='xarray')
-
-               is identical to::
-
-                  >>> x = xarray.open_datatree(
-                  ...     'dataset', mask_and_scale=False, decode_cf=False
-                  ... )
-                  >>> nc = p5netcdf.Dataset(x)
+                >>> x = xarray.open_datatree(
+                ...     'dataset', mask_and_scale=False, decode_cf=False
+                ... )
+                >>> nc = p5netcdf.Dataset(x)
 
         backend: `None` or (sequence of) `str`, optional
             Which library or libraries to use for reading a
@@ -2108,8 +1939,7 @@ class Dataset(Group):
 
         if pyfive is not None and isinstance(dataset, pyfive.File):
             # --------------------------------------------------------
-            # 'dataset' is `pyfive.File`-like (which includes
-            # `ppfive.File`)
+            # 'dataset' is `pyfive`-like
             # --------------------------------------------------------
             nc = dataset
             attrs = nc.attrs
@@ -2146,8 +1976,7 @@ class Dataset(Group):
             dataset, (xarray.Dataset, xarray.DataTree)
         ):
             # --------------------------------------------------------
-            # 'dataset' is `xarray.Dataset`-like or
-            # `xarray.DataTree`-like
+            # 'dataset' is `xarray`-like
             # --------------------------------------------------------
             if isinstance(dataset, xarray.Dataset):
                 # Convert a Dataset to a DataTree
@@ -2335,19 +2164,11 @@ class Dataset(Group):
                 self.dump(data=True)
 
     def __enter__(self):
-        """Returns the `Dataset` instance.
-
-        .. versionadded:: NEXTVERSION
-
-        """
+        """Returns the `Dataset` instance."""
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        """Closes the `Dataset` instance with `close`.
-
-        .. versionadded:: NEXTVERSION
-
-        """
+        """Closes the `Dataset` instance with `close`."""
         self.close()
 
     def __repr__(self):
@@ -2370,7 +2191,7 @@ class Dataset(Group):
     def all_dimensions(self):
         """A dictionary of all dimensions.
 
-        .. versionadded:: NEXTVERSION
+        .. seealso:: `dimensions`, `all_variables`, `all_groups`
 
         :Returns:
 
@@ -2385,7 +2206,7 @@ class Dataset(Group):
          '/forecast/model/lat': <p5netcdf.Dimension: /forecast/model/lat, size=5>}
 
         """
-        if getattr(self, "_all_dimensions", None) is None:
+        if not hasattr(self, "_all_dimensions"):
             self._populate_all()
 
         return self._all_dimensions
@@ -2394,7 +2215,7 @@ class Dataset(Group):
     def all_groups(self):
         """A dictionary of all groups.
 
-        .. versionadded:: NEXTVERSION
+        .. seealso:: `groups`, `all_dimensions`, `all_variables`
 
         :Returns:
 
@@ -2409,7 +2230,7 @@ class Dataset(Group):
          '/forecast/model': <p5netcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>}
 
         """
-        if getattr(self, "_all_groups", None) is None:
+        if not hasattr(self, "_all_groups"):
             self._populate_all()
 
         return self._all_groups
@@ -2418,7 +2239,7 @@ class Dataset(Group):
     def all_variables(self):
         """A dictionary of all variables.
 
-        .. versionadded:: NEXTVERSION
+        .. seealso:: `variables`, `all_dimensions`, `all_groups`
 
         :Returns:
 
@@ -2436,7 +2257,7 @@ class Dataset(Group):
          '/forecast/model/q': <p5netcdf.Variable: /forecast/model/q, shape=(5, 8), dimensions=(/forecast/model/lat, /forecast/lon)>}
 
         """
-        if getattr(self, "_all_variables", None) is None:
+        if not hasattr(self, "_all_variables"):
             self._populate_all()
 
         return self._all_variables
@@ -2450,8 +2271,6 @@ class Dataset(Group):
         Metadata may have already been cached within the backend
         library, in which case retrieving and caching it in the
         `Dataset` instance it may by fast.
-
-        .. versionadded:: NEXTVERSION
 
         :Parameters:
 
@@ -2508,8 +2327,6 @@ class Dataset(Group):
         Closes the underlying netCDF dataset, but only if owned by
         this `Dataset` instance.
 
-        .. versionadded:: NEXTVERSION
-
         :Returns:
 
             `None`
@@ -2528,8 +2345,6 @@ class Dataset(Group):
 
     def dataset_open_log(self, display=True):
         """The dataset-open log.
-
-        .. versionadded:: NEXTVERSION
 
         :Parameters:
 
@@ -2556,8 +2371,6 @@ class Dataset(Group):
 
         The text representation is CDL (network Common Data form
         Language), and emulates the output of ``$ ncdump -h``.
-
-        .. versionadded:: NEXTVERSION
 
         .. seealso:: `dump`, `structure`
 

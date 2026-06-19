@@ -29,8 +29,6 @@ def zarr_dimension_maps(group):
                                  <p5netcdf.Dimension: /forecast/lon, size=8, unlimited>),
         '/time': ()}
 
-    .. versionadded:: NEXTVERSION
-
     :Parameters:
 
         group: `Group`
@@ -201,8 +199,6 @@ def zarr_dimension_maps(group):
 def zarr_raw_dimension_names(variable):
     """Return the raw dimension names for a variable.
 
-    .. versionadded:: NEXTVERSION
-
     :Parameters:
 
         variable: `Variable`
@@ -243,8 +239,6 @@ def zarr_raw_dimension_names(variable):
 
 def zarr_open(dataset, options):
     """Open a dataset with `zarr`.
-
-    .. versionadded:: NEXTVERSION
 
     :Parameters:
 

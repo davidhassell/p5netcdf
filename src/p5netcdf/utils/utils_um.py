@@ -4,8 +4,6 @@
 def ppfive_open(dataset, options):
     """Open a dataset with `ppfive`.
 
-    .. versionadded:: NEXTVERSION
-
     :Parameters:
 
         dataset:

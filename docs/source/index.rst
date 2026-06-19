@@ -1,17 +1,14 @@
-Welcome to p5netcdf's documentation!
-====================================
+p5netcdf documentation
+======================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
 
    introduction
+   installation
    quickstart
+   datasets_backends
    api_reference
    changelog
-
-Indices and tables
-==================
-
+   
 * :ref:`genindex`
-* :ref:`search`
