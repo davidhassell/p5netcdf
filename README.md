@@ -6,9 +6,10 @@
 [![codecov](https://codecov.io/gh/NCAS-CMS/xnetcdf/graph/badge.svg?token=3In5JuzeGK)](https://codecov.io/gh/NCAS-CMS/xnetcdf)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/xnetcdf/badges/version.svg)](https://anaconda.org/conda-forge/xnetcdf)
 
-# [Read the documentation](https://xnetcdf.readthedocs.io)
 
 # xnetcdf
+
+## [Read the documentation](https://xnetcdf.readthedocs.io)
 
 `xnetcdf` is an open source library for representing datasets, in a
 variety of formats and accessed through a variety of Python backends,
