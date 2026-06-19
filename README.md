@@ -6,7 +6,7 @@
 [![codecov](https://codecov.io/gh/NCAS-CMS/xnetcdf/graph/badge.svg?token=3In5JuzeGK)](https://codecov.io/gh/NCAS-CMS/xnetcdf)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/xnetcdf/badges/version.svg)](https://anaconda.org/conda-forge/xnetcdf)
 
-**[Read the documentation](https://app.readthedocs.org/projects/xnetcdf/builds/)**
+**[Read the documentation](https://xnetcdf.readthedocs.io)**
 
 # xnetcdf
 
@@ -24,7 +24,8 @@ variables, and attributes.
  
 - Currently supported dataset formats are ``netCDF-4``, ``netCDF-3``,
   ``Zarr v3``, ``Zarr v2``, ``Kerchunk``, ``PP``, and ``fields file``
-  (the last two being formats used at the UK Met Office).
+  (the last two are 
+  formats used at the UK Met Office).
 
 - Currently supported Python backends are `pyfive`, `netCDF4`, `zarr`,
   `scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py`.
@@ -78,9 +79,6 @@ See the
 [documentation](https://app.readthedocs.org/projects/xnetcdf/builds/)
 for more information and examples.
 
-Feature requests or bug reports should be reported in the
-[issues](https://github.com/NCAS-CMS/xnetcdf/issues).
-
 ## Dependencies
 
 `xnetcdf` is tested against Python versions 3.10 to 3.14.  It may
@@ -120,6 +118,12 @@ root directory:
 Package repository [conda-forge
 feedstock](https://github.com/conda-forge/xnetcdf-feedstock)
 
+## Contributing
+
+See the [Contributing
+page](https://xnetcdf.readthedocs.io/en/latest/contributing/) of the
+documentation for details.
+
 ## Development
 
 ### Testing
@@ -133,8 +137,3 @@ directory (requires installation of the `pytest` package).
 Build locally with Sphinx:
 
     $ sphinx-build -Ea doc doc/build
-
-### Codecov
-
-Test coverage assessement is done using
-[codecov](https://app.codecov.io/gh/NCAS-CMS/xnetcdf/)

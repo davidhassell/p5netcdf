@@ -15,13 +15,57 @@ variables, and attributes.
  
 - Currently supported dataset formats are ``netCDF-4``, ``netCDF-3``,
   ``Zarr v3``, ``Zarr v2``, ``Kerchunk``, ``PP``, and ``fields file``
-  (the last two being formats used at the UK Met Office).
+  (the last two are formats used at the UK Met Office).
 
 - Currently supported Python backends are `pyfive`, `netCDF4`, `zarr`,
   `scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py`.
 
 - Additionally, a dataset can be defined by a `pyfive`-like or
   `xarray`-like object in memory.
+
+Here is a simple example of how to use `xnetcdf` to open a dataset
+and inspect its contents:
+
+.. code-block:: python
+
+    import xnetcdf
+
+    # Open a dataset in any of the formats:
+    # netCDF-4, netCDF-3, Zarr v3, Zarr v2, Kerchunk, PP, fields file
+    with xnetcdf.Dataset('path/to/your/dataset') as nc:
+        # A one-line summary of the dataset
+        print(repr(nc))
+
+        # A longer summary of the dataset
+        print(nc)
+
+        # Use the structure() method for a more detailed view
+        nc.structure()
+
+        # The dataset attributes
+        print(nc.attrs)
+	
+        # Access a variable
+        if 'temperature' in nc.variables:
+            var = nc.variables['temperature']
+            print(var)
+
+            # Print the variable attributes
+            print(var.attrs)
+
+            # Print the data array from the variable
+            print(var[...])
+	    
+        # Use the dump() method for an even more detailed view
+        nc.dump()
+
+        # Use the dump() method with "data=True" for yet more detail
+        nc.dump(data=True)
+
+        # Use the ncdump() to emulate `$ ncdump -h path/to/your/dataset`
+        nc.ncdump()
+
+See :ref:`Quick_start` for more examples.
 
 API
 ---
@@ -40,6 +84,3 @@ Performance
 -----------
 
 TODO - something about eagerness/lazyness.
-
-Feature requests or bug reports should be reported in the `issues
-<https://github.com/NCAS-CMS/xnetcdf/issues>`_.
