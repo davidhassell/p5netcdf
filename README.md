@@ -74,6 +74,10 @@ with xnetcdf.Dataset('path/to/your/dataset') as nc:
     nc.ncdump()
 ```
 
+See the
+[documentation](https://app.readthedocs.org/projects/xnetcdf/builds/)
+for more information and examples.
+
 Feature requests or bug reports should be reported in the
 [issues](https://github.com/NCAS-CMS/xnetcdf/issues).
 
