@@ -76,7 +76,7 @@ with xnetcdf.Dataset('path/to/your/dataset') as nc:
 ```
 
 See the
-[documentation](https://app.readthedocs.org/projects/xnetcdf/builds/)
+[documentation](https://xnetcdf.readthedocs.io/en/latest/quickstart/)
 for more information and examples.
 
 ## Dependencies
@@ -136,4 +136,7 @@ directory (requires installation of the `pytest` package).
 
 Build locally with Sphinx:
 
-    $ sphinx-build -Ea doc doc/build
+    $ cd xnetcdf/docs
+	$ make html
+	
+View the documentation locally at xnetcdf/docs/build/html/index.html.
