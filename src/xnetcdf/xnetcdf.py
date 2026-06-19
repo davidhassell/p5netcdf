@@ -468,12 +468,20 @@ class Variable(Mixin, Mixin2):
     ``_ARRAY_DIMENSIONS``, as well as any attributes that start with
     ``_Netcdf4``, ``_nc``, or ``_NC``.
 
-    How these attributes are used, if at all, depends on the backend
-    library being used to access the dataset (e.g. backends that have
-    their own variable class may ignore them); but in all cases they
-    are removed from `Variable` attribute collections during the
-    parsing of the dataset.
+    These attributes, which will not appear in the `Variable`
+    attribute collection, are ``CLASS``, ``NAME``, ``REFERENCE_LIST``,
+    ``DIMENSION_LIST``, ``DIMENSION_LABELS``, and
+    ``_ARRAY_DIMENSIONS``, as well as any attributes that start with
+    ``_Netcdf4``, ``_nc``, or ``_NC``.
 
+    :Indexing:
+
+    A variable may be indexed, via the `__getitem__` method, with
+    indices that define a subspace of the variable's data. The
+    requested subspace is returned as a `numpy` array. The
+    interpretation of the indices is handled by the backend library,
+    and for the same dataset may be different for different backends.
+    
     :Parameters:
 
         name: `str`
@@ -1075,6 +1083,22 @@ class Group(Mixin, Mixin2, Mapping):
     ``_ARRAY_DIMENSIONS``, as well as any attributes that start with
     ``_Netcdf4``, ``_nc``, or ``_NC``.
 
+    :Indexing:
+    
+    Dictionary-like key lookup via the `__getitem__` method gives
+    access to any group or variable in the entire dataset.
+
+    Keys can be provided as an absolute path name or as a path name
+    that is relative to the root group. Relative path names may
+    include ``.`` and ``..`` elements to indicate positions in the
+    group hierarchy. Consecutive ``/`` characters are reduced to a
+    single ``/``, and a trailing ``/`` character is always allowed.
+
+    * If the key maps to a group, the `Group` instance is returned.
+    
+    * If the key maps to a variable, the `Variable` instance is
+      returned.
+    
     :Parameters:
 
         name: `str`
@@ -1122,10 +1146,12 @@ class Group(Mixin, Mixin2, Mapping):
     def __getitem__(self, path):
         """Get a variable or group from its path.
 
-        Absolute and relative nested paths are allowed, which may
-        include ``.`` (current group) and ``..`` (parent group)
-        elements. The empty path ``''`` is equivalent to ``'.'``. A
-        trailing ``/`` in non-empty path is ignored.
+        Keys can be provided as an absolute path name or as a path
+        name that is relative to the root group. Relative path names
+        may include ``.`` and ``..`` elements to indicate positions in
+        the group hierarchy. Consecutive ``/`` characters are reduced
+        to a single ``/``, and a trailing ``/`` character is always
+        allowed.
 
         """
         if path == "":
@@ -1671,7 +1697,19 @@ class Dataset(Group):
 
     :Indexing:
     
+    Dictionary-like key lookup via the `__getitem__` method gives
+    access to any group or variable in the entire dataset.
+
+    Keys can be provided as an absolute path name or as a path name
+    that is relative to the root group. Relative path names may
+    include ``.`` and ``..`` elements to indicate positions in the
+    group hierarchy. Consecutive ``/`` characters are reduced to a
+    single ``/``, and a trailing ``/`` character is always allowed.
     
+    * If the key maps to a group, the `Group` instance is returned.
+    
+    * If the key maps to a variable, the `Variable` instance is
+      returned.
     
     :Parameters:
 
