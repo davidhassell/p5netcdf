@@ -128,6 +128,13 @@ documentation for details.
 
 ### Testing
 
+Run the test suite (requires installation of the `pytest` package):
+
+``` shell
+$ cd xnetcdf
+$ pytest
+```
+   
 `xnetcdf` comes with a test suite in the `tests` directory.  These
 tests can be exercised using the `pytest` command from the root
 directory (requires installation of the `pytest` package).
@@ -139,4 +146,4 @@ Build locally with Sphinx:
     $ cd xnetcdf/docs
 	$ make html
 	
-View the documentation locally at xnetcdf/docs/build/html/index.html.
+View the documentation locally at `xnetcdf/docs/build/html/index.html`.
