@@ -93,25 +93,33 @@ used if they are also installed.
 
 xnetcdf can be installed using `pip` using the command:
 
-    pip install xnetcdf
+``` shell
+$ pip install xnetcdf
+```
 
 or, to also install all of the backend libraries:
 
-    pip install xnetcdf[all]
+``` shell
+$ pip install xnetcdf[all]
+```
 
 `conda` packages, which also install all of the backend libraries, are
 also available from conda-forge:
 
-    conda install -c conda-forge xnetcdf
-
+``` shell
+$ conda install -c conda-forge xnetcdf
+```
 To install from source in your home directory use:
 
-    pip install --user ./xnetcdf
-
+``` shell
+$ pip install --user ./xnetcdf
+```
 The library can also be imported directly from the `xnetcdf` source
 root directory:
 
-    pip install -e . 
+``` shell
+$ pip install -e . 
+```
 
 ### Conda-forge feedstock
 
