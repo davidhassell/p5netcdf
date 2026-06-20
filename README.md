@@ -13,23 +13,27 @@
 
 `xnetcdf` is an open source library for representing datasets, in a
 variety of formats and accessed through a variety of Python backends,
-with a common netCDF API that follows the `netCDF Enhanced Data Model
-<https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html>`_.
+with a common netCDF API that follows the [netCDF Enhanced Data
+Model](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html).
 
 A dataset is mapped to a `xnetcdf.Dataset` object, which contains
-netCDF groups (`xnetcdf.Group` objects), dimensions
-(`xnetcdf.Dimension` objects), variables (`xnetcdf.Variable` objects),
-and attributes. A variable is associated with dimensions and may
-contain attributes; and a group may contain other groups, dimensions,
-variables, and attributes.
+netCDF groups (`xnetcdf.Group` objects), netCDF dimensions
+(`xnetcdf.Dimension` objects), netCDF variables (`xnetcdf.Variable`
+objects), and attributes. A variable is associated with dimensions and
+may contain attributes; and a group may contain other groups,
+dimensions, variables, and attributes.
  
-- Currently supported dataset formats are ``netCDF-4``, ``netCDF-3``,
-  ``Zarr v3``, ``Zarr v2``, ``Kerchunk``, ``PP``, and ``fields file``
-  (the last two are 
-  formats used at the UK Met Office).
-
 - Currently supported Python backends are `pyfive`, `netCDF4`, `zarr`,
   `scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py`.
+
+- Currently supported dataset formats that can be read by at least one
+  of the backends are
+  [netCDF-4](https://docs.unidata.ucar.edu/nug/current/netcdf_introduction.html),
+  [netCDF-3](https://docs.unidata.ucar.edu/nug/current/netcdf_introduction.html),
+  [Zarr v3](https://zarr-specs.readthedocs.io/en/latest/specs.html),
+  [Zarr v2](https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html),
+  [Kerchunk](https://fsspec.github.io/kerchunk), PP, and fields file
+  (the last two are UK Met Office formats).
 
 - Additionally, a dataset can be defined by a `pyfive`-like or
   `xarray`-like object in memory.
@@ -38,42 +42,27 @@ Here is a simple example of how to use `xnetcdf` to open a dataset
 and inspect its contents:
 
 ``` python
-import xnetcdf as xn
-
-# Open a dataset in any of the formats:
-# netCDF-4, netCDF-3, Zarr v3, Zarr v2, Kerchunk, PP, fields file
-with xn.Dataset('path/to/your/dataset') as nc:
-    # A one-line summary of the dataset
-    print(repr(nc))
-
-    # A longer summary of the dataset
-    print(nc)
-
-    # Use the structure() method for a more detailed view
-    nc.structure()
-
-    # The dataset attributes
-    print(nc.attrs)
-
-    # Access a variable
-    if 'temperature' in nc.variables:
-        var = nc.variables['temperature']
-        print(var)
-
-        # Print the variable attributes
-        print(var.attrs)
-
-        # Print the data array from the variable
-        print(var[...])
-    
-    # Use the dump() method for an even more detailed view
-    nc.dump()
-
-    # Use the dump() method with "data=True" for yet more detail
-    nc.dump(data=True)
-
-    # Use the ncdump() to emulate `$ ncdump -h path/to/your/dataset`
-    nc.ncdump()
+>>> import xnetcdf
+>>> nc = xnetcdf.Dataset('path/to/your/dataset')  # Open the dataset
+>>> print(nc)  # Inspect the dataset contents
+path/to/your/dataset: <xnetcdf.Dataset: /, 3 dimensions, 6 variables, 0 groups>
+    Dimensions:
+        lat: <xnetcdf.Dimension: /lat, size=5>
+        bounds2: <xnetcdf.Dimension: /bounds2, size=2>
+        lon: <xnetcdf.Dimension: /lon, size=8>
+    Variables:
+        lat_bnds: <xnetcdf.Variable: /lat_bnds, shape=(5, 2), dimensions=(/lat, /bounds2)>
+        lat: <xnetcdf.Variable: /lat, shape=(5,), dimensions=(/lat,)>
+        lon_bnds: <xnetcdf.Variable: /lon_bnds, shape=(8, 2), dimensions=(/lon, /bounds2)>
+        lon: <xnetcdf.Variable: /lon, shape=(8,), dimensions=(/lon,)>
+        time: <xnetcdf.Variable: /time, shape=(), dimensions=()>
+        q: <xnetcdf.Variable: /q, shape=(5, 8), dimensions=(/lat, /lon)>
+>>> nc['lat'].attrs  # Get a variable's attributes
+{'bounds': 'lat_bnds',
+ 'standard_name': 'latitude',
+ 'units': 'degrees_north'}
+>>> nc['lat'][...]  # Get a variable's data array
+array([-75., -45.,   0.,  45.,  75.])
 ```
 
 See the
@@ -86,9 +75,9 @@ for more information and examples.
 also work with other Python versions.
 
 The only dependency to required run the software, besides Python, is
-`numpy`. However, the backend libraries `pyfive`, `netCDF4`, `zarr`,
-`scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py` can only be
-used if they are also installed.
+`numpy`. However, each of the backend libraries `pyfive`, `netCDF4`,
+`zarr`, `scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py` can
+only be used if it also installed.
 
 ## Installation
 

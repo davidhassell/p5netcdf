@@ -8,11 +8,11 @@ and inspect its contents:
 
 .. code-block:: python
 
-    import xnetcdf as xn
+    import xnetcdf
 
     # Open a dataset in any of the formats:
     # netCDF-4, netCDF-3, Zarr v3, Zarr v2, Kerchunk, PP, fields file
-    with xn.Dataset('path/to/your/dataset') as nc:
+    with xnetcdf.Dataset('path/to/your/dataset') as nc:
         # A one-line summary of the dataset
         print(repr(nc))
 
@@ -56,8 +56,8 @@ datasets of other formats can be found `here
 
 .. code-block:: python
 
-    >>> import xnetcdf as xn
-    >>> nc = xn.Dataset('test.nc')
+    >>> import xnetcdf
+    >>> nc = xnetcdf.Dataset('test.nc')
 
 - Display the `repr` description of the datasest. This one-line
   description includes the dataset name, and how many dimensions and
@@ -71,7 +71,8 @@ datasets of other formats can be found `here
 - Display the `str` description of the datasest. In addition to the
   `repr` output, this shows some details about each of the components
   in the root group. The variable descriptions indicate which
-  dimensions are spanned by their data arrays:
+  dimensions are spanned by their data arrays (the `/time` variable is
+  scalar and so has no dimensions):
 
 .. code-block:: python
 		
@@ -92,7 +93,8 @@ datasets of other formats can be found `here
   that the depth of recursion can be limited with the ``depth``
   keyword argument to `~xnetcdf.Dataset.structure` method). The
   variable descriptions indicate which dimensions are spanned by their
-  data arrays:
+  data arrays (for instance, the `/forecast/lon_bnds` variable is
+  spans the `/forecast/lon` and `/bounds2` dimensions):
 
 .. code-block:: python
 		

@@ -122,7 +122,7 @@ class Mixin:
         the local file system from the dataset definition (as returned
         by `dataset`), but in those cases when it is not possible,
         `is_local` will return `None`, and `protocol` will raise an
-        `AttributeError.
+        `AttributeError`.
 
         .. seealso:: `dataset`, `dataset_name`, `protocol`
 
@@ -241,7 +241,7 @@ class Mixin2:
         :Returns:
 
                 The attribute value. An `AttributeError` is raised if
-                the atrribute does not exist.
+                the attribute does not exist.
 
         """
         try:
@@ -1568,8 +1568,8 @@ class Group(Mixin, Mixin2, Mapping):
     def is_ancestor_group(self, other):
         """Return True if this group is an ancestor of another group.
 
-        Both groups must have same parent `File` instance. A group is
-        considered to be an ancestor of itself.
+        Both groups must have same parent `Dataset` instance. A group
+        is considered to be an ancestor of itself.
 
         If `True`, then *other* is a sub-group of this group.
 
@@ -1599,8 +1599,8 @@ class Group(Mixin, Mixin2, Mapping):
     def is_sub_group(self, other):
         """Return True if this group is a subgroup of another group.
 
-        Both groups must have same parent `File` instance. A group is
-        considered to be a sub-group of itself.
+        Both groups must have same parent `Dataset` instance. A group
+        is considered to be a sub-group of itself.
 
         :Parameters:
 
@@ -1678,10 +1678,11 @@ class Dataset(Group):
     """A dataset viewed as netCDF.
 
     A dataset is mapped to a `Dataset` object, which contains netCDF
-    groups (`Group` objects), dimensions (`Dimension` objects),
-    variables (`Variable` objects), and attributes. A variable is
-    associated with dimensions and may contain attributes; and a group
-    may contain other groups, dimensions, variables, and attributes.
+    groups (`Group` objects), netCDF dimensions (`Dimension` objects),
+    netCDF variables (`Variable` objects), and attributes. A variable
+    is associated with dimensions and may contain attributes; and a
+    group may contain other groups, dimensions, variables, and
+    attributes.
 
     :Attributes:
     
@@ -1974,7 +1975,7 @@ class Dataset(Group):
 
         # The name of the dataset
         dataset_name = ""
-        # The file system procotol of the dataset. -1 is a non-string
+        # The file system protocol of the dataset. -1 is a non-string
         # and non-None code for an unknown file system protocol.
         protocol = -1
         # The log of how the dataset is opened
@@ -2060,7 +2061,7 @@ class Dataset(Group):
                         dataset_name = dataset.name
                     except AttributeError:
                         try:
-                            # fsspec kerchunk dictionary-like
+                            # fsspec Kerchunk dictionary-like
                             dataset_name = dataset.fs.storage_options.get("fo")
                         except AttributeError:
                             pass
@@ -2232,7 +2233,7 @@ class Dataset(Group):
 
     @property
     def all_dimensions(self):
-        """A dictionary of all dimensions.
+        """A dictionary of all dimensions in the group hierarchy.
 
         .. seealso:: `dimensions`, `all_variables`, `all_groups`
 
@@ -2256,7 +2257,7 @@ class Dataset(Group):
 
     @property
     def all_groups(self):
-        """A dictionary of all groups.
+        """A dictionary of all groups in the group hierarchy.
 
         .. seealso:: `groups`, `all_dimensions`, `all_variables`
 
@@ -2280,7 +2281,7 @@ class Dataset(Group):
 
     @property
     def all_variables(self):
-        """A dictionary of all variables.
+        """A dictionary of all variables in the group hierarchy.
 
         .. seealso:: `variables`, `all_dimensions`, `all_groups`
 
@@ -2335,7 +2336,7 @@ class Dataset(Group):
                   cached. For instance, this includes all variable and
                   group attributes, but may exclude (depending on the
                   backend library)s the variable shapes. Minimal
-                  metdata caching is always applied during `Dataset`
+                  metadata caching is always applied during `Dataset`
                   instantiation, so there is no benefit in using this
                   option.
 
