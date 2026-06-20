@@ -1,5 +1,6 @@
 """Utilities for the `xarray` backend."""
 
+from .utils_general import get_library
 
 # --------------------------------------------------------------------
 # xarray
@@ -46,6 +47,45 @@ def xarray_parse_group_structure(group):
     # Recursively create subgroups
     for name, grp in group._grp.children.items():
         group._create_group(name, grp, grp.attrs)
+
+def ggg(dataset):
+    """TODO"""    
+    dataset_name = "<xarray-like>"
+
+    try:
+        import xarray
+    except ModuleNotFoundError:
+        return
+        
+    if not isinstance(dataset, (xarray.Dataset, xarray.DataTree)):
+        return
+    
+    # ----------------------------------------------------------------
+    # 'dataset' is `xarray`-like
+    # ----------------------------------------------------------------
+    if isinstance(dataset, xarray.Dataset):
+        # Convert a Dataset to a DataTree
+        dataset = xarray.DataTree(dataset=dataset)
+        
+    # Attempt to get the dataset name and file system protocol
+    try:
+        dataset_name = dataset.encoding.get("source")
+    except AttributeError:
+        pass
+    
+    if dataset_name == "":
+        dataset_name = "<xarray-like>"
+
+    return {
+        "dataset_name": dataset_name,
+        "protocol": -1,
+        "backend": "xarray",
+        "nc": dataset,
+        "attrs": dataset.attrs,
+        "library": get_library(dataset)
+        "owns_nc": False,
+    }
+            
 
 
 def xarray_open(dataset, options):

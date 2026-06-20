@@ -4,6 +4,48 @@
 # --------------------------------------------------------------------
 # netCDF4
 # --------------------------------------------------------------------
+
+def ggg(dataset, options):
+    """TODO"""
+    import netCDF4
+    
+    if isinstance(dataset, netCDF4.Dataset):
+        nc = dataset
+        library=get_library(dataset)
+        owns_nc = False
+    else:    
+        options = options.copy()
+        mode = options.pop("mode", "r")
+        if mode != "r":
+            raise ValueError(f"Can't set mode={mode!r} in netCDF4_options")
+        
+        nc = netCDF4.Dataset(dataset, mode="r", **options)
+        nc.set_auto_maskandscale(False)
+
+        library=netCDF4
+        owns_nc = True
+    
+    # Attempt to get the dataset name and file system protocol
+    dataset_name = dataset.filepath()
+    
+    from urllib.parse import urlparse
+    
+    protocol = urlparse(dataset_name).scheme
+
+    if dataset_name == "":
+        dataset_name = "<netCDF4-like>"
+
+    return {
+        "dataset_name": dataset_name,
+        "protocol": protocol,
+        "backend": "netCDF4",
+        "nc": dataset,
+        "attrs": {attr: dataset.getncattr(attr) for attr in nc.ncattrs()}
+        "library": library,
+        "owns_nc": owns_nc
+    }
+            
+
 def netCDF4_parse_group_structure(group):
     """Parse the group structure for the `netCDF4` backend.
 
@@ -70,16 +112,52 @@ def netCDF4_open(dataset, options):
     mode = options.pop("mode", "r")
     if mode != "r":
         raise ValueError(f"Can't set mode={mode!r} in netCDF4_options")
-
+    
     nc = netCDF4.Dataset(dataset, mode="r", **options)
     nc.set_auto_maskandscale(False)
-    attrs = {attr: nc.getncattr(attr) for attr in nc.ncattrs()}
-    return nc, attrs, netCDF4
+    
+    return ggg_neCDF4(nc, netCDF4)
+
+
+    
+#    attrs = {attr: nc.getncattr(attr) for attr in nc.ncattrs()}
+#    return nc, attrs, netCDF4
 
 
 # --------------------------------------------------------------------
 # netcdf_file
 # --------------------------------------------------------------------
+
+def ggg3(dataset):
+    """TODO"""    
+    try:
+        from scipy.io import netcdf_file
+    except (ModuleNotFoundError, ImportError):
+        return
+        
+    if not isinstance(dataset, netcdf_file):
+        return
+    
+    # Attempt to get the dataset name and file system protocol
+    dataset_name = dataset.filename
+    
+    from urllib.parse import urlparse
+    
+    protocol = urlparse(dataset_name).scheme
+    
+    if dataset_name == "":
+        dataset_name = "<netcdf_file-like>"
+
+    return {
+        "dataset_name": dataset_name,
+        "protocol": protocol,
+        "backend": "netCDF4",
+        "nc": dataset,
+        "attrs": nc._attributes,
+        "library": get_library(dataset)
+        "owns_nc": False,
+    }
+            
 def netcdf_file_close(root):
     """Close the dataset opened with `netcdf_file`.
 

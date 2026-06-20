@@ -2,6 +2,41 @@
 
 from .utils_general import NetCDFError
 
+def ggg(dataset):
+    """TODO"""    
+    dataset_name = "<zarr-like>"
+
+    try:
+        import zarr
+    except ModuleNotFoundError:
+        return 
+        
+    if isinstance(dataset, zarr.Group):
+        return 
+    
+    # ----------------------------------------------------------------
+    # 'dataset' is `zarr`-like
+    # ----------------------------------------------------------------
+      
+    # Attempt to get the dataset name and file system protocol
+    try:
+        dataset_name = dataset.encoding.get("source")
+    except AttributeError:
+        pass
+    
+    if dataset_name == "":
+        dataset_name = "<zarr-like>"
+
+    return {
+        "dataset_name": dataset_name,
+        "protocol": -1,
+        "backend": "zarr",
+        "nc": dataset,
+        "attrs": dataset.attrs,
+        "library": get_library(dataset)
+        "owns_nc": False,
+    }
+
 
 def zarr_dimension_maps(group):
     """Populate the dimension map dictionaries in the root group.

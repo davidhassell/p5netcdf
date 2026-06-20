@@ -1981,6 +1981,21 @@ class Dataset(Group):
         # The log of how the dataset is opened
         self._dataset_open_log = []
 
+        if isinstance(backend, str):
+            backend = (backend,)
+                
+        aaa = None
+        for func in(ggg_pyfive, ggg_netCDF4):        
+            aaa = ggg_pyfive(dataset)
+            if aaa:
+                break
+
+        if aaa is None:
+            # --------------------------------------------------------
+            # 'dataset' is string-like, file-like, or directory-like
+            # --------------------------------------------------------
+            pass
+        
         if pyfive is not None and isinstance(dataset, pyfive.File):
             # --------------------------------------------------------
             # 'dataset' is `pyfive`-like
@@ -2104,9 +2119,9 @@ class Dataset(Group):
                 "h5py": h5py_open,
             }
             if backend is not None:
-                # Restrict to selected backends
-                if isinstance(backend, str):
-                    backend = (backend,)
+#                # Restrict to selected backends
+#                if isinstance(backend, str):
+#                    backend = (backend,)
 
                 try:
                     open_functions = {b: open_functions[b] for b in backend}
