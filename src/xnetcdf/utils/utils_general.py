@@ -22,6 +22,48 @@ class NetCDFError(Exception):
     pass
 
 
+def get_dataset_name_and_protocol(dataset):
+    dataset_name = ""
+    protcol = -1
+
+    try:
+        dataset_name = os.fspath(dataset)
+    except:
+        try:
+            # fsspec file-like
+            dataset_name = dataset.path
+        except AttributeError:
+            try:
+                # BinaryIO
+                dataset_name = dataset.name
+            except AttributeError:
+                try:
+                    # fsspec Kerchunk dictionary-like
+                    dataset_name = dataset.fs.storage_options.get("fo")
+                except AttributeError:
+                    pass
+            else:
+                # BinaryIO
+                protocol = "file"
+        else:
+            try:
+                # fsspec file-like
+                protocol = dataset.fs.protocol
+            except AttributeError:
+
+                pass   
+
+        if dataset_name == "":
+            dataset_name = "<file-or-directory-like>"
+     
+    else:
+        # string-like
+        from urllib.parse import urlparse
+        
+        protocol = urlparse(dataset_name).scheme
+
+    return dataset_name, protocol
+
 def get_library(obj):
     """Get the library that provides an object.
 

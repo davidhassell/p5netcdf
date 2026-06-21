@@ -199,13 +199,57 @@ def pyfive_open(dataset, options):
     """
     import pyfive
 
-    options = options.copy()
-    mode = options.pop("mode", "r")
-    if mode != "r":
-        raise ValueError(f"Can't set mode={mode!r} in pyfive_options")
+    protocol = -1
+    
+    if isinstance(dataset, pyfive.File):
+        nc = dataset
+        library=get_library(dataset)
+        dataset_name = dataset.filepath()
+        owns_nc = False
+        
+        # Attempt to get the dataset name and file system protocol
+        try:
+            # fsspec file-like
+            dataset_name = dataset._fh.path
+        except AttributeError:
+            try:
+                # BinaryIO
+                dataset_name = dataset._fh.name
+            except AttributeError:
+                pass
+            else:
+                # BinaryIO
+                protocol = "file"
+        else:
+            try:
+                # fsspec file-like
+                protocol = dataset._fh.fs.protocol
+            except AttributeError:
+                pass
+            
+        if not dataset_name:
+            dataset_name = "<pyfive-like>"
+            
+    else:    
+        options = options.copy()
+        mode = options.pop("mode", "r")
+        if mode != "r":
+            raise ValueError(f"Can't set mode={mode!r} in pyfive_options")
+    
+        nc = pyfive.File(dataset, mode="r", **options)
 
-    nc = pyfive.File(dataset, mode="r", **options)
-    return nc, nc.attrs, pyfive
+        dataset_name, protocol = get_dataset_name_and_protocol(dataset)
+        library=pyfive
+        owns_nc = True        
+
+    return {
+        "dataset_name": dataset_name,
+        "protocol": protocol,
+        "nc": nc,
+        "attrs": nc.attrs,
+        "library": library,
+        "owns_nc": owns_nc
+    }
 
 
 # --------------------------------------------------------------------
@@ -239,10 +283,33 @@ def h5py_open(dataset, options):
     """
     import h5py
 
-    options = options.copy()
-    mode = options.pop("mode", "r")
-    if mode != "r":
-        raise ValueError(f"Can't set mode={mode!r} in h5py_options")
+    protocol = -1
+    
+    if isinstance(dataset, pyfive.File):
+        nc = dataset
+        library=get_library(dataset)
+        dataset_name = dataset.filename
+        owns_nc = False
+        if not dataset_name:
+            dataset_name = "<h5py-like>"
 
-    nc = h5py.File(dataset, mode="r", **options)
-    return nc, nc.attrs, h5py
+    else:    
+        options = options.copy()
+        mode = options.pop("mode", "r")
+        if mode != "r":
+            raise ValueError(f"Can't set mode={mode!r} in h5py_options")
+        
+        nc = h5py.File(dataset, mode="r", **options)
+
+        dataset_name, protocol = get_dataset_name_and_protocol(dataset)
+        library=h5py
+        owns_nc = True    
+    
+    return {
+        "dataset_name": dataset_name,
+        "protocol": protocol,
+        "nc": nc,
+        "attrs": nc.attrs,
+        "library": library,
+        "owns_nc": owns_nc
+    }

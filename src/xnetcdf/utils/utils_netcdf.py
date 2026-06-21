@@ -4,48 +4,6 @@
 # --------------------------------------------------------------------
 # netCDF4
 # --------------------------------------------------------------------
-
-def ggg(dataset, options):
-    """TODO"""
-    import netCDF4
-    
-    if isinstance(dataset, netCDF4.Dataset):
-        nc = dataset
-        library=get_library(dataset)
-        owns_nc = False
-    else:    
-        options = options.copy()
-        mode = options.pop("mode", "r")
-        if mode != "r":
-            raise ValueError(f"Can't set mode={mode!r} in netCDF4_options")
-        
-        nc = netCDF4.Dataset(dataset, mode="r", **options)
-        nc.set_auto_maskandscale(False)
-
-        library=netCDF4
-        owns_nc = True
-    
-    # Attempt to get the dataset name and file system protocol
-    dataset_name = dataset.filepath()
-    
-    from urllib.parse import urlparse
-    
-    protocol = urlparse(dataset_name).scheme
-
-    if dataset_name == "":
-        dataset_name = "<netCDF4-like>"
-
-    return {
-        "dataset_name": dataset_name,
-        "protocol": protocol,
-        "backend": "netCDF4",
-        "nc": dataset,
-        "attrs": {attr: dataset.getncattr(attr) for attr in nc.ncattrs()}
-        "library": library,
-        "owns_nc": owns_nc
-    }
-            
-
 def netCDF4_parse_group_structure(group):
     """Parse the group structure for the `netCDF4` backend.
 
@@ -106,17 +64,55 @@ def netCDF4_open(dataset, options):
             the `netCDF4` library itself.
 
     """
+def ggg(dataset, options):
+    """TODO"""
     import netCDF4
 
-    options = options.copy()
-    mode = options.pop("mode", "r")
-    if mode != "r":
-        raise ValueError(f"Can't set mode={mode!r} in netCDF4_options")
+    protocol = -1
     
-    nc = netCDF4.Dataset(dataset, mode="r", **options)
-    nc.set_auto_maskandscale(False)
+    if isinstance(dataset, netCDF4.Dataset):
+        nc = dataset
+        library=get_library(dataset)
+        owns_nc = False
+
+        dataset_name = dataset.filepath()
+        if not dataset_name:
+            dataset_name = "<netCDF4-like>"
+            
+    else:    
+        options = options.copy()
+        mode = options.pop("mode", "r")
+        if mode != "r":
+            raise ValueError(f"Can't set mode={mode!r} in netCDF4_options")
+        
+        nc = netCDF4.Dataset(dataset, mode="r", **options)
+        nc.set_auto_maskandscale(False)
+
+        dataset_name, protocol = get_dataset_name_and_protocol(dataset)
+        library=netCDF4
+        owns_nc = True    
     
-    return ggg_neCDF4(nc, netCDF4)
+    return {
+        "dataset_name": dataset_name,
+        "protocol": protocol,
+        "nc": nc,
+        "attrs": {attr: dataset.getncattr(attr) for attr in nc.ncattrs()}
+        "library": library,
+        "owns_nc": owns_nc
+    }
+
+
+#   import netCDF4
+#
+#   options = options.copy()
+#   mode = options.pop("mode", "r")
+#   if mode != "r":
+#       raise ValueError(f"Can't set mode={mode!r} in netCDF4_options")
+#   
+#   nc = netCDF4.Dataset(dataset, mode="r", **options)
+#   nc.set_auto_maskandscale(False)
+#   
+#   return ggg_neCDF4(nc, netCDF4)
 
 
     
@@ -234,19 +230,56 @@ def netcdf_file_open(dataset, options):
 
     """
     from scipy.io import netcdf_file
+    
+    protocol = -1
+    
+    if isinstance(dataset, netcdf_file):
+        nc = dataset
+        library=get_library(dataset)
+        owns_nc = False
+        dataset_name = dataset.filename
+        if not dataset_name:
+            dataset_name = "<netcdf_file-like>"
+            
+    else:    
+        options = options.copy()
+        mode = options.pop("mode", "r")
+        mmap = options.pop("mmap", True)
+        if mode != "r":
+            raise ValueError(f"Can't set mode={mode!r} in netcdf_file_options")
+        
+        if not mmap:
+            raise ValueError("Can't set mmap=False in netcdf_file_options")
+        
+        nc = netcdf_file(dataset, mode="r", mmap=True, **options)
+        
+        dataset_name, protocol = get_dataset_name_and_protocol(dataset)
+        library=netcdf_file
+        owns_nc = True    
+    
+    return {
+        "dataset_name": dataset_name,
+        "protocol": 'file'
+        "nc": nc,
+        "attrs": nc._attributes,
+        "library": library,
+        "owns_nc": owns_nc
+    }
 
-    options = options.copy()
-    mode = options.pop("mode", "r")
-    mmap = options.pop("mmap", True)
-    if mode != "r":
-        raise ValueError(f"Can't set mode={mode!r} in netcdf_file_options")
-
-    if not mmap:
-        raise ValueError(f"Can't set mmap={mmap!r} in netcdf_file_options")
-
-    nc = netcdf_file(dataset, mode="r", mmap=True, **options)
-    attrs = nc._attributes
-    return nc, attrs, netcdf_file
+ #   from scipy.io import netcdf_file
+ #
+ #   options = options.copy()
+ #   mode = options.pop("mode", "r")
+ #   mmap = options.pop("mmap", True)
+ #   if mode != "r":
+ #       raise ValueError(f"Can't set mode={mode!r} in netcdf_file_options")
+ #
+ #   if not mmap:
+ #       raise ValueError(f"Can't set mmap={mmap!r} in netcdf_file_options")
+ #
+ #   nc = netcdf_file(dataset, mode="r", mmap=True, **options)
+ #   attrs = nc._attributes
+ #   return nc, attrs, netcdf_file
 
 
 def netcdf_file_parse_group_structure(group):

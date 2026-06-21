@@ -1938,15 +1938,15 @@ class Dataset(Group):
         zarr_dimension_search="closest_ancestor",
         verbose=0,
     ):
-        try:
-            import pyfive
-        except ModuleNotFoundError:
-            pyfive = None
-
-        try:
-            import xarray
-        except ModuleNotFoundError:
-            xarray = None
+        #try:
+        #    import pyfive
+        #except ModuleNotFoundError:
+        #    pyfive = None
+        #
+        #try:
+        #    import xarray
+        #except ModuleNotFoundError:
+        #    xarray = None
 
         # Options for the different backend open functions
         open_options = {}
@@ -1981,200 +1981,185 @@ class Dataset(Group):
         # The log of how the dataset is opened
         self._dataset_open_log = []
 
-        if isinstance(backend, str):
-            backend = (backend,)
-                
-        aaa = None
-        for func in(ggg_pyfive, ggg_netCDF4):        
-            aaa = ggg_pyfive(dataset)
-            if aaa:
-                break
-
-        if aaa is None:
-            # --------------------------------------------------------
-            # 'dataset' is string-like, file-like, or directory-like
-            # --------------------------------------------------------
-            pass
-        
-        if pyfive is not None and isinstance(dataset, pyfive.File):
-            # --------------------------------------------------------
-            # 'dataset' is `pyfive`-like
-            # --------------------------------------------------------
-            nc = dataset
-            attrs = nc.attrs
-            library = get_library(nc)
-            self._owns_nc = False
-
-            # Use the 'pyfive' backend logic to parse the dataset
-            backend = "pyfive"
-
-            # Attempt to get the dataset name and file system protocol
+#        if pyfive is not None and isinstance(dataset, pyfive.File):
+#            # --------------------------------------------------------
+#            # 'dataset' is `pyfive`-like
+#            # --------------------------------------------------------
+#            nc = dataset
+#            attrs = nc.attrs
+#            library = get_library(nc)
+#            self._owns_nc = False
+#
+#            # Use the 'pyfive' backend logic to parse the dataset
+#            backend = "pyfive"
+#
+#            # Attempt to get the dataset name and file system protocol
+#            try:
+#                # fsspec file-like
+#                dataset_name = dataset._fh.path
+#            except AttributeError:
+#                try:
+#                    # BinaryIO
+#                    dataset_name = dataset._fh.name
+#                except AttributeError:
+#                    pass
+#                else:
+#                    # BinaryIO
+#                    protocol = "file"
+#            else:
+#                try:
+#                    # fsspec file-like
+#                    protocol = dataset._fh.fs.protocol
+#                except AttributeError:
+#                    pass
+#
+#            if dataset_name == "":
+#                dataset_name = "<pyfive-like>"
+#
+#        elif xarray is not None and isinstance(
+#            dataset, (xarray.Dataset, xarray.DataTree)
+#        ):
+#            # --------------------------------------------------------
+#            # 'dataset' is `xarray`-like
+#            # --------------------------------------------------------
+#            if isinstance(dataset, xarray.Dataset):
+#                # Convert a Dataset to a DataTree
+#                dataset = xarray.DataTree(dataset=dataset)
+#
+#            nc = dataset
+#            attrs = nc.attrs
+#            library = get_library(nc)
+#            self._owns_nc = False
+#
+#            # Use the 'xarray' backend logic to parse the dataset
+#            backend = "xarray"
+#
+#            # Attempt to get the dataset name and file system protocol
+#            try:
+#                dataset_name = dataset.encoding.get("source")
+#            except AttributeError:
+#                pass
+#
+#            if dataset_name == "":
+#                dataset_name = "<xarray-like>"
+#
+#        else:
+        # --------------------------------------------------------
+        # 'dataset' is string-like, file-like, or directory-like
+        # --------------------------------------------------------
+        # Attempt to get the dataset name and file system protocol
+        try:
+            # string-like: Expand tilde and environment variables
+            dataset = expanduser(expandvars(dataset))
+        except TypeError:
             try:
                 # fsspec file-like
-                dataset_name = dataset._fh.path
+                dataset_name = dataset.path
             except AttributeError:
                 try:
                     # BinaryIO
-                    dataset_name = dataset._fh.name
+                    dataset_name = dataset.name
                 except AttributeError:
-                    pass
+                    try:
+                        # fsspec Kerchunk dictionary-like
+                        dataset_name = dataset.fs.storage_options.get("fo")
+                    except AttributeError:
+                        pass
                 else:
                     # BinaryIO
                     protocol = "file"
             else:
                 try:
                     # fsspec file-like
-                    protocol = dataset._fh.fs.protocol
+                    protocol = dataset.fs.protocol
                 except AttributeError:
                     pass
 
             if dataset_name == "":
-                dataset_name = "<pyfive-like>"
-
-        elif xarray is not None and isinstance(
-            dataset, (xarray.Dataset, xarray.DataTree)
-        ):
-            # --------------------------------------------------------
-            # 'dataset' is `xarray`-like
-            # --------------------------------------------------------
-            if isinstance(dataset, xarray.Dataset):
-                # Convert a Dataset to a DataTree
-                dataset = xarray.DataTree(dataset=dataset)
-
-            nc = dataset
-            attrs = nc.attrs
-            library = get_library(nc)
-            self._owns_nc = False
-
-            # Use the 'xarray' backend logic to parse the dataset
-            backend = "xarray"
-
-            # Attempt to get the dataset name and file system protocol
-            try:
-                dataset_name = dataset.encoding.get("source")
-            except AttributeError:
-                pass
-
-            if dataset_name == "":
-                dataset_name = "<xarray-like>"
+                dataset_name = "<file-or-directory-like>"
 
         else:
-            # --------------------------------------------------------
-            # 'dataset' is string-like, file-like, or directory-like
-            # --------------------------------------------------------
-            # Attempt to get the dataset name and file system protocol
+            # string-like
+            dataset_name = dataset
+
+            from urllib.parse import urlparse
+
+            protocol = urlparse(dataset_name).scheme
+
+        # Map backend names to dataset-read functions. This
+        # ordered dictionary defines the default order of read
+        # functions attempted to open the dataset.
+        #
+        # Note to developers: If you change the order of this
+        #                     dictionary, or add a new key/value
+        #                     pair, you must update the `__init__`
+        #                     docstring.
+        open_functions = {
+            "pyfive": pyfive_open,
+            "zarr": zarr_open,
+            "netCDF4": netCDF4_open,
+            "netcdf_file": netcdf_file_open,
+            "ppfive": ppfive_open,
+            "xarray": xarray_open,
+            "h5py": h5py_open,
+        }
+        if backend is not None:
+             # Restrict to selected backends
+             if isinstance(backend, str):
+                 backend = (backend,)
+
             try:
-                # string-like: Expand tilde and environment variables
-                dataset = expanduser(expandvars(dataset))
-            except TypeError:
-                try:
-                    # fsspec file-like
-                    dataset_name = dataset.path
-                except AttributeError:
-                    try:
-                        # BinaryIO
-                        dataset_name = dataset.name
-                    except AttributeError:
-                        try:
-                            # fsspec Kerchunk dictionary-like
-                            dataset_name = dataset.fs.storage_options.get("fo")
-                        except AttributeError:
-                            pass
-                    else:
-                        # BinaryIO
-                        protocol = "file"
-                else:
-                    try:
-                        # fsspec file-like
-                        protocol = dataset.fs.protocol
-                    except AttributeError:
-                        pass
-
-                if dataset_name == "":
-                    dataset_name = "<file-or-directory-like>"
-
-            else:
-                # string-like
-                dataset_name = dataset
-
-                from urllib.parse import urlparse
-
-                protocol = urlparse(dataset_name).scheme
-
-            # Map backend names to dataset-read functions. This
-            # ordered dictionary defines the default order of read
-            # functions attempted to open the dataset.
-            #
-            # Note to developers: If you change the order of this
-            #                     dictionary, or add a new key/value
-            #                     pair, you must update the `__init__`
-            #                     docstring.
-            open_functions = {
-                "pyfive": pyfive_open,
-                "zarr": zarr_open,
-                "netCDF4": netCDF4_open,
-                "netcdf_file": netcdf_file_open,
-                "ppfive": ppfive_open,
-                "xarray": xarray_open,
-                "h5py": h5py_open,
-            }
-            if backend is not None:
-#                # Restrict to selected backends
-#                if isinstance(backend, str):
-#                    backend = (backend,)
-
-                try:
-                    open_functions = {b: open_functions[b] for b in backend}
-                except KeyError as error:
-                    raise ValueError(
-                        f"Invalid value for backend. Got {error}, "
-                        f"expected one of {tuple(open_functions)}"
-                    )
-
-            nc = None
-            for backend, func in open_functions.items():
-                options = open_options.get(backend, {})
-                try:
-                    nc, attrs, library = func(dataset, options)
-                except Exception as error:
-                    self._dataset_open_log.append(
-                        f"{backend}: {error.__class__.__name__}: {error}"
-                    )
-                else:
-                    self._dataset_open_log.append(
-                        f"{backend}: Successfully read {dataset!r}"
-                    )
-                    break
-
-            if nc is None:
-                # Failed to read dataset
-                try:
-                    # Rewind file-like
-                    dataset.seek(0)
-                except Exception:
-                    pass
-
-                raise NetCDFError(
-                    f"Can't open {dataset!r} with any of the backends "
-                    f"{tuple(open_functions)}:\n\n"
-                    f"{self.dataset_open_log(display=False)}"
+                open_functions = {b: open_functions[b] for b in backend}
+            except KeyError as error:
+                raise ValueError(
+                    f"Invalid value for backend. Got {error}, "
+                    f"expected one of {tuple(open_functions)}"
                 )
 
-            # The opened dataset is owned internally
-            self._owns_nc = True
+        nc = None
+        for backend, func in open_functions.items():
+            options = open_options.get(backend, {})
+            try:
+                nc = func(dataset, options)
+            except Exception as error:
+                self._dataset_open_log.append(
+                    f"{backend}: {error.__class__.__name__}: {error}"
+                )
+            else:
+                self._dataset_open_log.append(
+                    f"{backend}: Successfully read {dataset!r}"
+                )
+                break
 
+        if nc is None:
+            # Failed to read dataset
+            try:
+                # Rewind file-like
+                dataset.seek(0)
+            except Exception:
+                pass
+
+            raise NetCDFError(
+                f"Can't open {dataset!r} with any of the backends "
+                f"{tuple(open_functions)}:\n\n"
+                f"{self.dataset_open_log(display=False)}"
+            )
+               
         # Cache the backend, library, dataset, and dataset name
+        dataset_name = dataset_name
         if not isinstance(dataset_name, str):
             dataset_name = ""
 
+        self._library = nc['library']
+        self._owns_nc = nc['owns_nc']
         self._backend = backend
-        self._library = library
         self._dataset = dataset
         self._dataset_name = dataset_name
 
         # Cache the file system protocol, but only if we've found out
         # what it is, and whether or not the dataset exists in the
         # local file system.
+        protocol = nc['protocol']
         if protocol == -1:
             is_local = None
         else:
@@ -2195,7 +2180,7 @@ class Dataset(Group):
         # Parse the group structure
         # ------------------------------------------------------------
         super().__init__(
-            name="", parent=None, root=self, grp=nc, grp_attrs=attrs
+            name="", parent=None, root=self, grp=nc['nc'], grp_attrs=nc['attrs']
         )
 
         # Cache the requested amount of structural metadata (after the

@@ -29,10 +29,62 @@ def ppfive_open(dataset, options):
     """
     import ppfive
 
-    options = options.copy()
-    mode = options.pop("mode", "r")
-    if mode != "r":
-        raise ValueError(f"Can't set mode={mode!r} in ppfive_options")
+    protocol = -1
+    
+    if isinstance(dataset, ppfive.File):
+        nc = dataset
+        library=get_library(dataset)
+        dataset_name = dataset.filepath()
+        owns_nc = False
+        
+        # Attempt to get the dataset name and file system protocol
+        try:
+            # fsspec file-like
+            dataset_name = dataset._fh.path
+        except AttributeError:
+            try:
+                # BinaryIO
+                dataset_name = dataset._fh.name
+            except AttributeError:
+                pass
+            else:
+                # BinaryIO
+                protocol = "file"
+        else:
+            try:
+                # fsspec file-like
+                protocol = dataset._fh.fs.protocol
+            except AttributeError:
+                pass
+            
+        if not dataset_name:
+            dataset_name = "<ppfive-like>"
+            
+    else:    
+        options = options.copy()
+        mode = options.pop("mode", "r")
+        if mode != "r":
+            raise ValueError(f"Can't set mode={mode!r} in ppfive_options")
+        
+        nc = ppfive.File(dataset, mode="r", **options)
 
-    nc = ppfive.File(dataset, mode="r", **options)
-    return nc, nc.attrs, ppfive
+        dataset_name, protocol = get_dataset_name_and_protocol(dataset)
+        library=ppfive
+        owns_nc = True        
+
+    return {
+        "dataset_name": dataset_name,
+        "protocol": protocol,
+        "nc": nc,
+        "attrs": nc.attrs,
+        "library": library,
+        "owns_nc": owns_nc
+    }
+
+    #options = options.copy()
+    #mode = options.pop("mode", "r")
+    #if mode != "r":
+    #    raise ValueError(f"Can't set mode={mode!r} in ppfive_options")
+    #
+    #nc = ppfive.File(dataset, mode="r", **options)
+    #return nc, nc.attrs, ppfive
