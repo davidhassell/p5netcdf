@@ -84,7 +84,7 @@ def hdf5_parse_group_structure(group):
 
     # Categorise objects without double-reading items from the HDF5
     # dataset
-    library = group.library
+    library = group.backend_library
     library_has_groups = hasattr(library, "Group")
 
     for name, h5 in group._grp.items():

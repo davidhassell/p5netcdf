@@ -234,7 +234,7 @@ def parse_attributes(obj, raw_attrs):
             The attributes formatted according to netCDF-4.
 
     """
-    library = obj.library
+    library = obj.backend_library
 
     return {
         k: format_attr(k, v, library)

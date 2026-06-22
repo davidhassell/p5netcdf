@@ -455,11 +455,19 @@ def test_xnetcdf_Dataset_getncattr(data_dir):
         p.getncattr("nonexistent_attr")
 
 
-def test_xnetcdf_Dataset_library(data_dir):
-    """Test Dataset.library."""
+def test_xnetcdf_Dataset_backend_library(data_dir):
+    """Test Dataset.backend_library."""
     dataset = data_dir / "test.nc"
     with xnetcdf.Dataset(dataset, backend="pyfive") as p:
-        assert p.library is pyfive
+        assert p.backend_library is pyfive
+
+def test_xnetcdf_Dataset_backend_accessor(data_dir):
+    """Test Dataset.backend_accessor."""
+    import pyfive
+    
+    dataset = data_dir / "test.nc"
+    with xnetcdf.Dataset(dataset, backend="pyfive") as p:
+        assert isinstance(p.backend_accessor, pyfive.File)
 
 
 def test_xnetcdf_Dataset_all_properties(data_dir):
@@ -633,11 +641,11 @@ def test_xnetcdf_Dimension_backend_api(data_dir):
         assert p.dimensions["bounds2"].backend_api == "pyfive"
 
 
-def test_xnetcdf_Dimension_library(data_dir):
+def test_xnetcdf_Dimension_backend_library(data_dir):
     """Test Dimension.library."""
     dataset = data_dir / "test.nc"
     with xnetcdf.Dataset(dataset, backend="pyfive") as p:
-        assert p.dimensions["bounds2"].library is pyfive
+        assert p.dimensions["bounds2"].backend_library is pyfive
 
 
 def test_xnetcdf_Variable__repr__(data_dir):
