@@ -1,41 +1,126 @@
 """Utilities for the `zarr` backend."""
 
-from .utils_general import NetCDFError
+from .utils_general import (
+    NetCDFError,
+    get_dataset_name_and_protocol,
+    get_library,
+)
 
-def ggg(dataset):
-    """TODO"""    
-    dataset_name = "<zarr-like>"
 
-    try:
-        import zarr
-    except ModuleNotFoundError:
-        return 
-        
-    if isinstance(dataset, zarr.Group):
-        return 
-    
-    # ----------------------------------------------------------------
-    # 'dataset' is `zarr`-like
-    # ----------------------------------------------------------------
-      
-    # Attempt to get the dataset name and file system protocol
-    try:
-        dataset_name = dataset.encoding.get("source")
-    except AttributeError:
-        pass
-    
-    if dataset_name == "":
-        dataset_name = "<zarr-like>"
+def zarr_get_dataset_name(z):
+    """Returns a clean, standardized path or URI string from any Zarr v3
+    Group or Array.
 
-    return {
-        "dataset_name": dataset_name,
-        "protocol": -1,
-        "backend": "zarr",
-        "nc": dataset,
-        "attrs": dataset.attrs,
-        "library": get_library(dataset)
-        "owns_nc": False,
-    }
+    Hides internal library wrappers like '<FsspecStore...>' or
+    'object_store://'.
+
+    Examples:
+        - '/absolute/local/path/data.zarr'
+        - 's3://my-bucket/data.zarr'
+        - 'https://example.com/data.zarr'
+        - 'memory://'
+
+    """
+    import os
+
+    from zarr.storage import (
+        FsspecStore,
+        LocalStore,
+        MemoryStore,
+        ObjectStore,
+        ZipStore,
+    )
+
+    # Zarr v3 nodes have a .store_path wrapper containing the store
+    # and internal node path
+    store = z.store_path.store
+    node_path = z.store_path.path or ""
+
+    # Helper to cleanly stitch a base path and an internal node path
+    # together
+    def join_paths(base, subpath):
+        if not subpath:
+            return base.rstrip("/")
+        return f"{base.rstrip('/')}/{subpath.lstrip('/')}"
+
+    # --- Case 1: Standard Local Storage ---
+    if isinstance(store, LocalStore):
+        # store.root is a pathlib.Path or string representing the
+        # absolute local directory
+        base_path = os.path.abspath(str(store.root))
+        return join_paths(base_path, node_path)
+
+    # --- Case 2: Memory Storage ---
+    elif isinstance(store, MemoryStore):
+        return join_paths("memory://", node_path)
+
+    # --- Case 3: Zip Archive Storage ---
+    elif isinstance(store, ZipStore):
+        # store.path is the path to the physical .zip container file
+        base_path = os.path.abspath(str(store.path))
+        return f"zip://{join_paths(base_path, node_path)}"
+
+    # --- Case 4: Fsspec-backed Storage (S3, GCS, HTTP, etc.) ---
+    elif isinstance(store, FsspecStore) or hasattr(store, "fs"):
+        protocol = store.fs.protocol
+        # fsspec protocol can sometimes be a tuple/list (e.g.,
+        # ('https', 'http'))
+        if isinstance(protocol, (tuple, list)):
+            protocol = protocol[0]
+
+        base_path = str(store.path)
+
+        # Format based on whether it is a web protocol or a local file
+        # protocol
+        if protocol in ("file", "local"):
+            return join_paths(os.path.abspath(base_path), node_path)
+        else:
+            return f"{protocol}://{join_paths(base_path, node_path)}"
+
+    # --- Case 5: ObjectStore Backends (Rust obstore drivers) ---
+    elif isinstance(store, ObjectStore) or hasattr(store, "_store"):
+        # The internal obstore instance is held in store._store
+        backend = store._store
+        backend_type = type(backend).__name__  # e.g., 'HttpStore',
+        # 'S3Store',
+        # 'LocalFileSystem'
+
+        # Combine Zarr's prefix configuration with the specific array
+        # node path
+        store_prefix = getattr(store, "prefix", "")
+        combined_subpath = join_paths(store_prefix, node_path)
+
+        if backend_type == "HttpStore":
+            base_url = getattr(backend, "base_url", "http://unknown")
+            return join_paths(base_url, combined_subpath)
+
+        elif backend_type == "S3Store":
+            bucket = getattr(backend, "bucket", "unknown-bucket")
+            return f"s3://{join_paths(bucket, combined_subpath)}"
+
+        elif backend_type == "GoogleCloudStorage":
+            bucket = getattr(backend, "bucket", "unknown-bucket")
+            return f"gcs://{join_paths(bucket, combined_subpath)}"
+
+        elif backend_type == "LocalFileSystem":
+            # For native local object store, extract the path string
+            base_path = getattr(backend, "root", "") or os.getcwd()
+            return join_paths(
+                os.path.abspath(str(base_path)), combined_subpath
+            )
+
+    # --- Case 6: Fallback for raw strings or customized stores ---
+    path_str = str(z.store_path)
+
+    # Clean up standard variations if the generic string started with
+    # common wrappers
+    if path_str.startswith("object_store://"):
+        # If it leaked an unparsed string fallback from a custom
+        # obstore structure
+        parts = path_str.split("object_store://")[-1].split("/")
+        return "/".join(parts[1:]) if len(parts) > 1 else path_str
+
+    return path_str
 
 
 def zarr_dimension_maps(group):
@@ -278,7 +363,7 @@ def zarr_open(dataset, options):
     :Parameters:
 
         dataset:
-            The definition of the netCDF dataset to be read. One of:
+            The definition of the dataset to be read. One of:
 
             * string-like (such as `str` or `pathlib.Path`)
             * file-like (such as `io.BufferedReader` or the result
@@ -298,18 +383,50 @@ def zarr_open(dataset, options):
             the `zarr` library itself.
 
     """
-    try:
-        import zarr
-    except ImportError as e:
-        raise RuntimeError("The 'zarr' library is not installed.") from e
+    import zarr
 
-    options = options.copy()
-    mode = options.pop("mode", "r")
-    if mode != "r":
-        raise ValueError(f"Can't set mode={mode!r} in zarr_options")
+    dataset_name = ""
+    protocol = -1
 
-    nc = zarr.open(dataset, mode="r", **options)
-    return nc, nc.attrs, zarr
+    if isinstance(dataset, zarr.Group):
+        nc = dataset
+        library = get_library(dataset)
+        dataset_name = zarr_get_dataset_name(dataset)
+        owns_nc = False
+
+        if not dataset_name:
+            dataset_name = "<zarr-like>"
+        else:
+            try:
+                from urllib.parse import urlparse
+
+                protocol = urlparse(dataset_name).scheme
+            except Exception:
+                pass
+
+    else:
+        options = options.copy()
+        mode = options.pop("mode", "r")
+        if mode != "r":
+            raise ValueError(f"Can't set mode={mode!r} in zarr_options")
+
+        dataset, dataset_name, protocol = get_dataset_name_and_protocol(
+            dataset
+        )
+        nc = zarr.open(dataset, mode="r", **options)
+
+        library = zarr
+        owns_nc = True
+
+    return {
+        "dataset_name": dataset_name,
+        "protocol": protocol,
+        "nc": nc,
+        "attrs": nc.attrs,
+        "backend_api": "zarr",
+        "library": library,
+        "owns_nc": owns_nc,
+    }
 
 
 def zarr_parse_group_structure(group):

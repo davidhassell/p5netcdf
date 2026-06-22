@@ -1,10 +1,8 @@
 """Utilities for the `xarray` backend."""
 
-from .utils_general import get_library
+from .utils_general import get_dataset_name_and_protocol, get_library
 
-# --------------------------------------------------------------------
-# xarray
-# --------------------------------------------------------------------
+
 def xarray_parse_group_structure(group):
     """Parse the group structure for the `xarray` backend.
 
@@ -48,45 +46,6 @@ def xarray_parse_group_structure(group):
     for name, grp in group._grp.children.items():
         group._create_group(name, grp, grp.attrs)
 
-def ggg(dataset):
-    """TODO"""    
-    dataset_name = "<xarray-like>"
-
-    try:
-        import xarray
-    except ModuleNotFoundError:
-        return
-        
-    if not isinstance(dataset, (xarray.Dataset, xarray.DataTree)):
-        return
-    
-    # ----------------------------------------------------------------
-    # 'dataset' is `xarray`-like
-    # ----------------------------------------------------------------
-    if isinstance(dataset, xarray.Dataset):
-        # Convert a Dataset to a DataTree
-        dataset = xarray.DataTree(dataset=dataset)
-        
-    # Attempt to get the dataset name and file system protocol
-    try:
-        dataset_name = dataset.encoding.get("source")
-    except AttributeError:
-        pass
-    
-    if dataset_name == "":
-        dataset_name = "<xarray-like>"
-
-    return {
-        "dataset_name": dataset_name,
-        "protocol": -1,
-        "backend": "xarray",
-        "nc": dataset,
-        "attrs": dataset.attrs,
-        "library": get_library(dataset)
-        "owns_nc": False,
-    }
-            
-
 
 def xarray_open(dataset, options):
     """Open a dataset with `xarray`.
@@ -97,7 +56,7 @@ def xarray_open(dataset, options):
     :Parameters:
 
         dataset:
-            The definition of the netCDF dataset to be read. One of:
+            The definition of the dataset to be read. One of:
 
             * string-like (such as `str` or `pathlib.Path`)
             * file-like (such as `io.BufferedReader` or the result
@@ -123,17 +82,53 @@ def xarray_open(dataset, options):
     """
     import xarray
 
-    options = options.copy()
-    mask_and_scale = options.pop("mask_and_scale", False)
-    decode_cf = options.pop("decode_cf", False)
-    if mask_and_scale:
-        raise ValueError("Can't set mask_and_scale=True in xarray_options")
+    dataset_name = None
+    protocol = -1
 
-    if decode_cf:
-        raise ValueError("Can't set decode_cf=True in xarray_options")
+    if isinstance(dataset, (xarray.Dataset, xarray.DataTree)):
+        if isinstance(dataset, xarray.Dataset):
+            # Convert a Dataset to a DataTree
+            dataset = xarray.DataTree(dataset=dataset)
 
-    nc = xarray.open_datatree(
-        dataset, mask_and_scale=False, decode_cf=False, **options
-    )
-    attrs = nc.attrs
-    return nc, attrs, xarray
+        nc = dataset
+        library = get_library(dataset)
+        owns_nc = False
+
+        # Attempt to get the dataset name and file system protocol
+        try:
+            dataset_name = dataset.encoding.get("source")
+        except AttributeError:
+            pass
+
+        if not dataset_name or not isinstance(dataset_name, str):
+            dataset_name = "<xarray-like>"
+
+    else:
+        options = options.copy()
+        mask_and_scale = options.pop("mask_and_scale", False)
+        decode_cf = options.pop("decode_cf", False)
+        if mask_and_scale:
+            raise ValueError("Can't set mask_and_scale=True in xarray_options")
+
+        if decode_cf:
+            raise ValueError("Can't set decode_cf=True in xarray_options")
+
+        dataset, dataset_name, protocol = get_dataset_name_and_protocol(
+            dataset
+        )
+        nc = xarray.open_datatree(
+            dataset, mask_and_scale=False, decode_cf=False, **options
+        )
+
+        library = xarray
+        owns_nc = True
+
+    return {
+        "dataset_name": dataset_name,
+        "protocol": protocol,
+        "nc": nc,
+        "attrs": nc.attrs,
+        "backend_api": "xarray",
+        "library": library,
+        "owns_nc": owns_nc,
+    }

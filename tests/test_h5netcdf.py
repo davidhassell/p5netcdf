@@ -1,18 +1,18 @@
-"""Check that p5netcdf is consistent with h5netcdf, where approriate."""
+"""Check that xnetcdf is consistent with h5netcdf, where approriate."""
 
 import h5netcdf
 import numpy as np
 import pytest
 
-import p5netcdf
+import xnetcdf
 
 
-def test_p5netcdf_h5netcdf_attributes(data_dir):
+def test_xnetcdf_h5netcdf_attributes(data_dir):
     """Check that attributes are parsed correctly."""
     dataset = data_dir / "test.nc"
     with (
         h5netcdf.File(dataset) as h,
-        p5netcdf.Dataset(dataset, backend="pyfive") as p,
+        xnetcdf.Dataset(dataset, backend="pyfive") as p,
     ):
         hq = h["/forecast/model/q"]
         pq = p["/forecast/model/q"]
@@ -35,12 +35,12 @@ def test_p5netcdf_h5netcdf_attributes(data_dir):
                 assert pvalue == hvalue
 
 
-def test_p5netcdf_h5netcdf_dimensions(data_dir):
+def test_xnetcdf_h5netcdf_dimensions(data_dir):
     """Check that dimensions are parsed correctly."""
     dataset = data_dir / "test.nc"
     with (
         h5netcdf.File(dataset) as h,
-        p5netcdf.Dataset(dataset, backend="pyfive") as p,
+        xnetcdf.Dataset(dataset, backend="pyfive") as p,
     ):
         for group in ("/", "/forecast", "/forecast/model"):
             pg = p[group]
@@ -57,12 +57,12 @@ def test_p5netcdf_h5netcdf_dimensions(data_dir):
                     assert getattr(pdim, attr) == getattr(ndim, attr)
 
 
-def test_p5netcdf_h5netcdf_variables(data_dir):
+def test_xnetcdf_h5netcdf_variables(data_dir):
     """Check that variables are parsed correctly."""
     dataset = data_dir / "test.nc"
     with (
         h5netcdf.File(dataset) as h,
-        p5netcdf.Dataset(dataset, backend="pyfive") as p,
+        xnetcdf.Dataset(dataset, backend="pyfive") as p,
     ):
         for group in ("/", "/forecast", "/forecast/model"):
             pg = p[group]
@@ -92,12 +92,12 @@ def test_p5netcdf_h5netcdf_variables(data_dir):
                     assert getattr(pvar, attr) == getattr(hvar, attr)
 
 
-def test_p5netcdf_h5netcdf_groups(data_dir):
+def test_xnetcdf_h5netcdf_groups(data_dir):
     """Check that groups are parsed correctly."""
     dataset = data_dir / "test.nc"
     with (
         h5netcdf.File(dataset) as h,
-        p5netcdf.Dataset(dataset, backend="pyfive") as p,
+        xnetcdf.Dataset(dataset, backend="pyfive") as p,
     ):
         for group in ("/", "/forecast", "/forecast/model"):
             pg = p[group]

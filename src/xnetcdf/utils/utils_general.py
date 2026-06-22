@@ -1,6 +1,7 @@
 """General utilities."""
 
 import sys
+from os.path import expanduser, expandvars
 
 import numpy as np
 
@@ -23,12 +24,13 @@ class NetCDFError(Exception):
 
 
 def get_dataset_name_and_protocol(dataset):
+    """TODO."""
     dataset_name = ""
-    protcol = -1
+    protocol = -1
 
     try:
-        dataset_name = os.fspath(dataset)
-    except:
+        dataset = expanduser(expandvars(dataset))
+    except Exception:
         try:
             # fsspec file-like
             dataset_name = dataset.path
@@ -50,19 +52,23 @@ def get_dataset_name_and_protocol(dataset):
                 # fsspec file-like
                 protocol = dataset.fs.protocol
             except AttributeError:
+                pass
 
-                pass   
+        if not isinstance(dataset_name, str):
+            dataset_name = str(dataset_name)
 
-        if dataset_name == "":
+        if not dataset_name:
             dataset_name = "<file-or-directory-like>"
-     
+
     else:
         # string-like
         from urllib.parse import urlparse
-        
+
+        dataset_name = dataset
         protocol = urlparse(dataset_name).scheme
 
-    return dataset_name, protocol
+    return dataset, dataset_name, protocol
+
 
 def get_library(obj):
     """Get the library that provides an object.
@@ -80,7 +86,11 @@ def get_library(obj):
     module_name = type(obj).__module__
     parts = module_name.split(".")
 
-    current_package = None
+    current_package = sys.modules.get(parts[0])
+    if current_package is not None:
+        return current_package
+
+    # Try something else
     for i in range(1, len(parts) + 1):
         name = ".".join(parts[:i])
         mod = sys.modules.get(name)

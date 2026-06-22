@@ -1,5 +1,7 @@
 """Utilities for the `ppfive` backend."""
 
+from .utils_general import get_dataset_name_and_protocol, get_library
+
 
 def ppfive_open(dataset, options):
     """Open a dataset with `ppfive`.
@@ -7,7 +9,7 @@ def ppfive_open(dataset, options):
     :Parameters:
 
         dataset:
-            The definition of the netCDF dataset to be read. One of:
+            The definition of the dataset to be read. One of:
 
             * string-like (such as `str` or `pathlib.Path`)
             * file-like (such as `io.BufferedReader` or the result
@@ -29,14 +31,15 @@ def ppfive_open(dataset, options):
     """
     import ppfive
 
+    dataset_name = ""
     protocol = -1
-    
+
     if isinstance(dataset, ppfive.File):
         nc = dataset
-        library=get_library(dataset)
-        dataset_name = dataset.filepath()
+        library = get_library(dataset)
+        dataset_name = dataset.filename
         owns_nc = False
-        
+
         # Attempt to get the dataset name and file system protocol
         try:
             # fsspec file-like
@@ -56,35 +59,30 @@ def ppfive_open(dataset, options):
                 protocol = dataset._fh.fs.protocol
             except AttributeError:
                 pass
-            
+
         if not dataset_name:
             dataset_name = "<ppfive-like>"
-            
-    else:    
+
+    else:
         options = options.copy()
         mode = options.pop("mode", "r")
         if mode != "r":
             raise ValueError(f"Can't set mode={mode!r} in ppfive_options")
-        
+
+        dataset, dataset_name, protocol = get_dataset_name_and_protocol(
+            dataset
+        )
         nc = ppfive.File(dataset, mode="r", **options)
 
-        dataset_name, protocol = get_dataset_name_and_protocol(dataset)
-        library=ppfive
-        owns_nc = True        
+        library = ppfive
+        owns_nc = True
 
     return {
         "dataset_name": dataset_name,
         "protocol": protocol,
         "nc": nc,
         "attrs": nc.attrs,
+        "backend_api": "ppfive",
         "library": library,
-        "owns_nc": owns_nc
+        "owns_nc": owns_nc,
     }
-
-    #options = options.copy()
-    #mode = options.pop("mode", "r")
-    #if mode != "r":
-    #    raise ValueError(f"Can't set mode={mode!r} in ppfive_options")
-    #
-    #nc = ppfive.File(dataset, mode="r", **options)
-    #return nc, nc.attrs, ppfive

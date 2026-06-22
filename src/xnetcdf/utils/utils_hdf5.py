@@ -1,11 +1,8 @@
-"""Utilities for the `pyfive` and `h5py` backends."""
+"""Utilities for the parsing HDF5 datasets."""
 
 from .utils_general import NetCDFError
 
 
-# --------------------------------------------------------------------
-# pyfive | h5py
-# --------------------------------------------------------------------
 def hdf5_dimension_names(variable):
     """Get the variable dimension names.
 
@@ -91,7 +88,6 @@ def hdf5_parse_group_structure(group):
     library_has_groups = hasattr(library, "Group")
 
     for name, h5 in group._grp.items():
-
         if library_has_groups and isinstance(h5, library.Group):
             subgroups[name] = h5
         else:
@@ -166,150 +162,3 @@ def hdf5_parse_group_structure(group):
     # ----------------------------------------------------------------
     for name, grp in subgroups.items():
         group._create_group(name, grp, grp.attrs)
-
-
-# --------------------------------------------------------------------
-# pyfive
-# --------------------------------------------------------------------
-def pyfive_open(dataset, options):
-    """Open a dataset with `pyfive`.
-
-    :Parameters:
-
-        dataset:
-            The definition of the netCDF dataset to be read. One of:
-
-            * string-like (such as `str` or `pathlib.Path`)
-            * file-like (such as `io.BufferedReader` or the result
-                         of an `fsspec` file system open)
-            * directory-like (such as `fsspec.mapping.FSMap`)
-
-             An exception is raised if the *dataset* can't be
-             interpreted.
-
-        options: `dict`
-            Additional keyword parameters to pass to `pyfive.File`.
-
-    :Returns:
-
-        (`pyfive.File`, `dict`, library)
-            The opened dataset, the dataset's global attributes, and
-            the `pyfive` library itself.
-
-    """
-    import pyfive
-
-    protocol = -1
-    
-    if isinstance(dataset, pyfive.File):
-        nc = dataset
-        library=get_library(dataset)
-        dataset_name = dataset.filepath()
-        owns_nc = False
-        
-        # Attempt to get the dataset name and file system protocol
-        try:
-            # fsspec file-like
-            dataset_name = dataset._fh.path
-        except AttributeError:
-            try:
-                # BinaryIO
-                dataset_name = dataset._fh.name
-            except AttributeError:
-                pass
-            else:
-                # BinaryIO
-                protocol = "file"
-        else:
-            try:
-                # fsspec file-like
-                protocol = dataset._fh.fs.protocol
-            except AttributeError:
-                pass
-            
-        if not dataset_name:
-            dataset_name = "<pyfive-like>"
-            
-    else:    
-        options = options.copy()
-        mode = options.pop("mode", "r")
-        if mode != "r":
-            raise ValueError(f"Can't set mode={mode!r} in pyfive_options")
-    
-        nc = pyfive.File(dataset, mode="r", **options)
-
-        dataset_name, protocol = get_dataset_name_and_protocol(dataset)
-        library=pyfive
-        owns_nc = True        
-
-    return {
-        "dataset_name": dataset_name,
-        "protocol": protocol,
-        "nc": nc,
-        "attrs": nc.attrs,
-        "library": library,
-        "owns_nc": owns_nc
-    }
-
-
-# --------------------------------------------------------------------
-# h5py
-# --------------------------------------------------------------------
-def h5py_open(dataset, options):
-    """Open a dataset with the `h5py`.
-
-    :Parameters:
-
-        dataset:
-            The definition of the netCDF dataset to be read. One of:
-
-            * string-like (such as `str` or `pathlib.Path`)
-            * file-like (such as `io.BufferedReader` or the result
-                         of an `fsspec` file system open)
-            * directory-like (such as `fsspec.mapping.FSMap`)
-
-             An exception is raised if the *dataset* can't be
-             interpreted.
-
-        options: `dict`
-            Additional keyword parameters to pass to `h5py.File`.
-
-    :Returns:
-
-        (`h5py.File`, `dict`, library)
-            The opened dataset, the dataset's global attributes, and
-            the `h5py` library itself.
-
-    """
-    import h5py
-
-    protocol = -1
-    
-    if isinstance(dataset, pyfive.File):
-        nc = dataset
-        library=get_library(dataset)
-        dataset_name = dataset.filename
-        owns_nc = False
-        if not dataset_name:
-            dataset_name = "<h5py-like>"
-
-    else:    
-        options = options.copy()
-        mode = options.pop("mode", "r")
-        if mode != "r":
-            raise ValueError(f"Can't set mode={mode!r} in h5py_options")
-        
-        nc = h5py.File(dataset, mode="r", **options)
-
-        dataset_name, protocol = get_dataset_name_and_protocol(dataset)
-        library=h5py
-        owns_nc = True    
-    
-    return {
-        "dataset_name": dataset_name,
-        "protocol": protocol,
-        "nc": nc,
-        "attrs": nc.attrs,
-        "library": library,
-        "owns_nc": owns_nc
-    }

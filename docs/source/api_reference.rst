@@ -1,33 +1,10 @@
 API Reference
 =============
 
-.. currentmodule:: xnetcdf
+.. toctree::
+   :maxdepth: 1
 
-
-Dataset
--------
-
-.. autoclass:: Dataset
-   :members:
-   :inherited-members:
-
-Group
------
-
-.. autoclass:: Group
-   :members:
-   :inherited-members:
-
-Variable
---------
-
-.. autoclass:: Variable
-   :members:
-   :inherited-members:
-
-Dimension
----------
-
-.. autoclass:: Dimension
-   :members:
-   :inherited-members:
+   api_dataset
+   api_group
+   api_variable
+   api_dimension

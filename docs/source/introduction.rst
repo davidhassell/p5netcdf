@@ -1,37 +1,112 @@
 Introduction
 ============
 
+Overview
+--------
+
 `xnetcdf` is an open source library for representing datasets, in a
-variety of formats and accessed through a variety of Python backends,
-with a common netCDF API that follows the `netCDF Enhanced Data Model
+variety of formats and accessed through diverse Python backends, with
+a common netCDF view.
+
+A dataset format can be netCDF, or a format that can be logically
+mapped to `netCDF Enhanced Data Model
 <https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html>`_.
 
-A dataset is mapped to a `xnetcdf.Dataset` object, which contains
+A dataset is mapped to an `xnetcdf.Dataset` object, which contains
 netCDF groups (`xnetcdf.Group` objects), netCDF dimensions
 (`xnetcdf.Dimension` objects), netCDF variables (`xnetcdf.Variable`
 objects), and attributes. A variable is associated with dimensions and
 may contain attributes; and a group may contain other groups,
 dimensions, variables, and attributes.
- 
-- Currently supported Python backends are `pyfive`, `netCDF4`, `zarr`,
-  `scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py`.
 
-- Currently supported dataset formats that can be read by at least one
-  of the backends are `netCDF-4
-  <https://docs.unidata.ucar.edu/nug/current/netcdf_introduction.html>`_,
-  `netCDF-3
-  <https://docs.unidata.ucar.edu/nug/current/netcdf_introduction.html>`_,
-  `Zarr v3 <https://zarr-specs.readthedocs.io/en/latest/specs.html>`_,
-  `Zarr v2
-  <https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html>`_,
-  `Kerchunk <https://fsspec.github.io/kerchunk>`_, PP, and fields file
-  (the last two are UK Met Office formats).
+`xnetcdf` has no native capability for directly opening a dataset,
+rather it relies on external backend libraries to provide a view of
+the dataset which `xnetcdf` can then map to its common netCDF view.
 
-- Additionally, a dataset can be defined by a `pyfive`-like or
-  `xarray`-like object in memory.
+Backends
+^^^^^^^^
 
-Here is a simple example of how to use `xnetcdf` to open a dataset
-and inspect its contents:
+`xnetcdf` supports the following backends for giving access to a
+dataset:
+
+- `pyfive`
+- `zarr`
+- `xarray`
+- `ppfive`
+- `netCDF4`
+- `scipy.io.netcdf_file`
+- `h5py`
+
+By default, `xnetcdf` will attempt to open a dataset with each of
+these backends in turn, in the order given above, returning the
+`xnetcdf.Dataset` object from the first successful read.
+
+Dataset formats
+^^^^^^^^^^^^^^^
+Supported dataset formats that can be read by at least one of the
+supported backends (shown in brackets) are:
+
+- `netCDF-4
+  <https://docs.unidata.ucar.edu/nug/current/netcdf_introduction.html>`_
+  (`pyfive`, `zarr`, `xarray`, `netCDF4`, `h5py`)
+- `netCDF-3
+  <https://docs.unidata.ucar.edu/nug/current/netcdf_introduction.html>`_
+  (`netCDF4`, `scipy.io.netcdf_file`)
+- `Zarr v3
+  <https://zarr-specs.readthedocs.io/en/latest/specs.html>`_
+  (`zarr`, `xarray`)
+- `Zarr v2 <https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html>`_ 
+  (`zarr`, `xarray`)
+- `Kerchunk <https://fsspec.github.io/kerchunk>`_ (`zarr`, `xarray`)
+- `GRIB
+  <https://community.wmo.int/site/knowledge-hub/programmes-and-initiatives/wmo-information-system-wis/about-manual-codes-volume-i2>`_
+  (`xarray`)
+- `UK Met Office PP
+  <https://artefacts.ceda.ac.uk/badc_datadocs/um/umdp_F3-UMDPF3.pdf>`_
+  (`ppfive`)
+- `UK Met Office fields file
+  <https://artefacts.ceda.ac.uk/badc_datadocs/um/umdp_F3-UMDPF3.pdf>`_
+  (`ppfive`)
+
+Dataset definitions
+^^^^^^^^^^^^^^^^^^^
+
+A dataset can be passed to `xnetcdf.Dataset` with one of the following
+dataset definitions:
+
+- A string-like path name to the dataset (such as `str` or
+  `pathlib.Path` instance).
+  
+- A file-like object that accesses the dataset (such as
+  `io.BufferedReader` or the result of an `fsspec` file system open)
+
+- A directory-like object that accesses the dataset (such as
+  `fsspec.mapping.FSMap`)
+
+- Any of the following backend objects that accesses the dataset:
+  `pyfive.File`, `zarr.Group`, `xarray.Dataset`, `xarray.DataTree`,
+  `ppfive.File`, `netCDF4.Dataset`, `scipy.io.netcdf_file`, and
+  `h5py.File`.
+
+  - Any object ``x`` that accesses the dataset, and for which
+    ``isinstance(x, <backend-object>)`` is `True` for any
+    ``<backend-object>`` for the selection of allowed backend
+    objects. For instance, if you have created a library called
+    ``my_pyfive`` for which ``my_pyfive.File`` is (a registered)
+    subclass of `pyfive.File`, then ``my_pyfive.File`` instances can
+    be passed to `xnetcdf.Dataset`.
+  
+  In this case, the dataset structure and attributes are derived from
+  the underlying backend object, and not directly from the dataset
+  itself. For instance, an attribute that exists in a dataset on disk
+  but has been hidden by the underlying backend object will not be
+  available to `xnetcdf`.
+
+A simple example
+----------------
+    
+An example of how to use `xnetcdf` to open a dataset and inspect its
+contents:
 
 .. code-block:: python
 
@@ -57,16 +132,20 @@ and inspect its contents:
    >>> nc['lat'][...]  # Get a variable's data array
    array([-75., -45.,   0.,  45.,  75.])
 
-See :ref:`Quick_start` for more examples.
+The dataset is presented in terms of netCDF groups, dimensions and
+variables (there is only the root group in this example), which can
+contain attributes and data arrays.
 
-API
----
+See :ref:`Quick-start` for more examples.
 
-The `xnetcdf` API has been been designed to be "largely consistent"
-with the APIs of `netCDF4`, `pyfive` and `h5netcdf`. This means that,
-whilst `xnetcdf` can't be used as a perfect drop-in for any of these
-three libraries, most attributes and methods of each one of them can
-be found in `xnetcdf`, and with the same behaviour.
+The `xnetcdf` API
+-----------------
+
+The `xnetcdf` API has been designed to be "largely consistent" with
+the APIs of `netCDF4`, `pyfive` and `h5netcdf`. This means that, while
+`xnetcdf` can't be used as a perfect drop-in for any of these three
+libraries, most attributes and methods of each one of them can be
+found in `xnetcdf`, and with the same behaviour.
 
 For instance, `xnetcdf.Variable` instances have a
 `~xnetcdf.Variable.chunks` attribute and a
@@ -77,12 +156,20 @@ library.
 Performance
 -----------
 
-TODO `xnetcdf` is "structure- and attribute-eager", meaning that
-during `Dataset` instantiation, the entire netCDF group, variable, and
-dimension structure is parsed; along with all group and variable
-attributes. Variable data array access is always via access to the
-underlying backend library (see the *backend* and *dataset*
-parameters). Some `Variable` and `Group` properties and methods might
-also access the underlying backend for structural metadata, but only
-for the first request, after which the result is cached (see the
-*structural_metadata_strategy* parameter).
+`xnetcdf` is "structure- and attribute-eager", meaning that during
+`xnetcdf.Dataset` instantiation, the minimum amount of metadata
+required to parse the entire netCDF group, variable, and dimension
+structure is brought into memory and cached. This includes all group
+and variable attributes.
+
+Some `xnetcdf.Variable` and `xnetcdf.Group` attributes and methods
+might also access the underlying backend for structural metadata that
+is not necessary for parsing the dataset. In this case, the metadata
+is also cached for future use. (Note that these extra structural
+metadata can also be cached at instantiation time -- see the
+``structural_metadata_strategy`` parameter to `xnetcdf.Dataset`)
+
+:ref:`Variable data array access <Variable-data-access>` is always via
+the underlying backend library, and therefore if that library supports
+lazy data array access (which all of the supported backends do), then
+so will the `xnetcdf.Variable` instance.

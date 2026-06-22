@@ -25,7 +25,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
     "sphinx.ext.extlinks",
-#   "sphinx.ext.napoleon",  # <-- Add this for Google/NumPy docstring style
+    #   "sphinx.ext.napoleon",  # <-- Add this for Google/NumPy docstring style
 ]
 
 # Tell Intersphinx where to find the documentation mappings for other libraries
@@ -76,6 +76,6 @@ html_theme_options = {
 default_role = "py:obj"
 
 
-# Inject the custom.css file into the build
 def setup(app):
+    """Inject the custom.css file into the build."""
     app.add_css_file("custom.css")

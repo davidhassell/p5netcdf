@@ -10,7 +10,10 @@
    introduction
    installation
    quickstart
-   datasets_backends
+   dataset
+   group
+   variable
+   dimension
    api_reference
    changelog
    contributing
