@@ -56,9 +56,8 @@ html_codeblock_linenos_style = "inline"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = (
-    "furo"  # "sphinx_book_theme" "pydata_sphinx_theme" " #sphinx_rtd_theme"
-)
+html_theme = "furo"
+
 html_static_path = ["_static"]
 
 # Tell Sphinx to parse internal page headers down to the level you
@@ -68,6 +67,8 @@ html_toc_object_entries_type = "domain"
 # If your theme options block exists, add/check this:
 html_theme_options = {
     "sidebar_hide_name": False,
+    "light_logo": "xnetcdf_logo_light.png",
+    "dark_logo": "xnetcdf_logo_dark.png", 
     # This prevents Furo from aggressively hiding collapsed child components
     "navigation_with_keys": True,
 }

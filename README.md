@@ -11,35 +11,88 @@
 
 ## [Read the documentation](https://xnetcdf.readthedocs.io)
 
-`xnetcdf` is an open source library for representing datasets, in a
-variety of formats and accessed through a variety of Python backends,
-with a common netCDF API that follows the [netCDF Enhanced Data
+`xnetcdf` is a Python open source library for representing datasets,
+in a variety of formats and accessed through diverse Python backends,
+with a common netCDF view.
+
+A dataset format can be in one of many formats that can be logically
+mapped to the [netCDF Enhanced Data
 Model](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html).
 
-A dataset is mapped to a `xnetcdf.Dataset` object, which contains
+A dataset is mapped to an `xnetcdf.Dataset` object, which contains
 netCDF groups (`xnetcdf.Group` objects), netCDF dimensions
 (`xnetcdf.Dimension` objects), netCDF variables (`xnetcdf.Variable`
 objects), and attributes. A variable is associated with dimensions and
-may contain attributes; and a group may contain other groups,
+may contain attributes; and a group may contain sub-groups,
 dimensions, variables, and attributes.
- 
-- Currently supported Python backends are `pyfive`, `netCDF4`, `zarr`,
-  `scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py`.
 
-- Currently supported dataset formats that can be read by at least one
-  of the backends are
-  [netCDF-4](https://docs.unidata.ucar.edu/nug/current/netcdf_introduction.html),
-  [netCDF-3](https://docs.unidata.ucar.edu/nug/current/netcdf_introduction.html),
-  [Zarr v3](https://zarr-specs.readthedocs.io/en/latest/specs.html),
-  [Zarr v2](https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html),
-  [Kerchunk](https://fsspec.github.io/kerchunk), PP, and fields file
-  (the last two are UK Met Office formats).
+### Backends
 
-- Additionally, a dataset can be defined by a `pyfive`-like or
-  `xarray`-like object in memory.
+`xnetcdf` has no native capability for directly opening a dataset,
+rather it wholly relies on external backend libraries to provide a
+view of the dataset which can then be mapped to the common netCDF
+view.
 
-Here is a simple example of how to use `xnetcdf` to open a dataset
-and inspect its contents:
+`xnetcdf` supports the following backends for giving access to a
+dataset:
+
+- `pyfive`
+- `zarr`
+- `xarray`
+- `ppfive`
+- `netCDF4`
+- `scipy.io.netcdf_file`
+- `h5py`
+
+By default, `xnetcdf` will attempt to open a dataset with each of
+these backends in turn, in the order given above, returning the
+`xnetcdf.Dataset` object from the first successful read.
+
+### Dataset formats
+
+Supported dataset formats that can be read by at least one of the
+supported backends are:
+
+- netCDF-4
+- netCDF-3
+- Zarr v3
+- Zarr v2
+- Kerchunk
+- UK Met Office PP
+- UK Met Office fields file
+
+### Dataset definitions
+
+A dataset can be passed to `xnetcdf.Dataset` with one of the following
+dataset definitions:
+
+- A string-like path name to the dataset (such as `str` or
+  `pathlib.Path` instance).
+  
+- A file-like object that accesses the dataset (such as
+  `io.BufferedReader` or the result of an `fsspec` file system open)
+
+- A directory-like object that accesses the dataset (such as
+  `fsspec.mapping.FSMap`)
+
+- Any of the following allowed backend objects that accesses the
+  dataset: `pyfive.File`, `zarr.Group`, `xarray.Dataset`,
+  `xarray.DataTree`, `ppfive.File`, `netCDF4.Dataset`,
+  `scipy.io.netcdf_file`, and `h5py.File`.
+
+- Any object ``x`` that accesses the dataset and has the same API as
+  one of the allowed backend objects. In pratice, this means any
+  object ``x`` for which ``isinstance(x, <backend-object>)`` is `True`
+  for any ``<backend-object>`` from the selection of allowed backend
+  objects. For instance, if you have created a library called
+  ``my_pyfive`` for which ``my_pyfive.File`` is (registered as) a
+  subclass of `pyfive.File`, then ``my_pyfive.File`` instances can be
+  passed to `xnetcdf.Dataset`.
+
+### A simple example
+    
+An example of how to use `xnetcdf` to open a dataset and inspect its
+contents:
 
 ``` python
 >>> import xnetcdf
@@ -63,7 +116,11 @@ path/to/your/dataset: <xnetcdf.Dataset: /, 3 dimensions, 6 variables, 0 groups>
  'units': 'degrees_north'}
 >>> nc['lat'][...]  # Get a variable's data array
 array([-75., -45.,   0.,  45.,  75.])
+
 ```
+The dataset is presented in terms of netCDF groups, dimensions and
+variables (there is only the root group in this example), which can
+contain attributes and data arrays.
 
 See the
 [documentation](https://xnetcdf.readthedocs.io/en/latest/quickstart/)

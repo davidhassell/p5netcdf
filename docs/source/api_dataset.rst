@@ -1,5 +1,7 @@
 .. currentmodule:: xnetcdf
 
+.. _xnetcdf.Dataset:
+
 `xnetcdf.Dataset`
 -----------------
 

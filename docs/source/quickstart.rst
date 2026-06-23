@@ -3,6 +3,13 @@
 Quick start
 ===========
 
+The examples on this page use the ``test.nc`` dataset (`download 28 KB
+<https://raw.githubusercontent.com/davidhassell/xnetcdf/main/tests/data/test.nc>`_).
+Example datasets in other formats can be found `here
+<https://github.com/davidhassell/xnetcdf/tree/main/tests/data>`_.
+
+----
+
 Here is an example of how to use `xnetcdf` to open a dataset
 and inspect its contents:
 
@@ -10,8 +17,8 @@ and inspect its contents:
 
     import xnetcdf
 
-    # Open a dataset
-    with xnetcdf.Dataset('path/to/your/dataset') as nc:
+    # Open the dataset
+    with xnetcdf.Dataset('test.nc') as nc:
         # A one-line summary of the dataset
         print(repr(nc))
 
@@ -27,15 +34,15 @@ and inspect its contents:
         # Use the dump() method with "data=True" for yet more detail
         nc.dump(data=True)
 
-        # Use the ncdump() method to emulate `$ ncdump -h path/to/your/dataset`
+        # Use the ncdump() method to emulate `$ ncdump -h test.nc`
         nc.ncdump()
 
         # The dataset attributes
         print(nc.attrs)
 	
         # Access a variable
-        if 'temperature' in nc.variables:
-            var = nc.variables['temperature']
+        if 'forecast/time' in nc:
+            var = nc['forecast/time']
             print(var)
 
             # Print the variable attributes
@@ -44,14 +51,9 @@ and inspect its contents:
             # Print the data array from the variable
             print(var[...])
 	    
+.. rubric:: Import the library and open the dataset.
 
-Let's go through this functionality with a netCDF-4 dataset that
-contains a group hierarchy: ``test.nc`` (`download 28 KB
-<https://raw.githubusercontent.com/davidhassell/xnetcdf/main/tests/data/test.nc>`_,
-example datasets in other formats can be found `here
-<https://github.com/davidhassell/xnetcdf/tree/main/tests/data>`_).
-
-.. rubric:: Import the library and open the dataset
+See `xnetcdf.Dataset`.
 
 .. code-block:: python
 
@@ -92,11 +94,11 @@ indicate which dimensions are spanned by their data arrays (the
 In addition to the `str` description, this shows one-line details
 about each of the components in each sub-group recursively. In this
 case there are three levels in the group hierarchy -- ``/``,
-``/forecast``, and ``/forecast/model`` (and note that the depth of
-recursion can be limited with the ``depth`` keyword argument to
-`~xnetcdf.Dataset.structure` method). The variable descriptions
-indicate which dimensions are spanned by their data arrays (for
-instance, the `/forecast/lon_bnds` variable is spans the
+``/forecast``, and ``/forecast/model`` (note that the depth of the
+group hierarchy shown can be limited with the ``depth`` keyword
+argument to `~xnetcdf.Dataset.structure` method). The variable
+descriptions indicate which dimensions are spanned by their data
+arrays (for instance, the `/forecast/lon_bnds` variable is spans the
 `/forecast/lon` and `/bounds2` dimensions).
 
 .. code-block:: python
@@ -125,6 +127,8 @@ instance, the `/forecast/lon_bnds` variable is spans the
     
 .. rubric:: Access the dataset attributes
 	     
+See :ref:`Dataset-attributes`.
+
 .. code-block:: python
 		
    >>> nc.attrs
@@ -133,6 +137,9 @@ instance, the `/forecast/lon_bnds` variable is spans the
     'global_attr_2': 'foo'}
           
 .. rubric:: Access a variable, its attributes and its data array
+
+See :ref:`Dataset-indexing`, :ref:`Variable-attributes`, and
+:ref:`Variable-data`.
 	     
 .. code-block:: python
 		
@@ -146,7 +153,7 @@ instance, the `/forecast/lon_bnds` variable is spans the
    >>> var[...]
    array([ 22.5,  67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5])
 
-.. rubric:: Access a variable's attributes and data array using the
+.. rubric:: Display a variable's attributes and data array using the
             variable's `~xnetcdf.Variable.dump` method
 
 .. code-block:: python
@@ -164,7 +171,9 @@ instance, the `/forecast/lon_bnds` variable is spans the
             dataset
 
 In addition to the `~xnetcdf.Dataset.structure` description, this
-shows the attributes of all variables and groups.
+shows the attributes of all variables and groups (note that the depth
+of the group hierarchy shown can be limited with the ``depth`` keyword
+argument to `~xnetcdf.Dataset.dump` method).
 	     
 .. code-block:: python
 

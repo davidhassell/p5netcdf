@@ -4,27 +4,29 @@ Introduction
 Overview
 --------
 
-`xnetcdf` is an open source library for representing datasets, in a
-variety of formats and accessed through diverse Python backends, with
-a common netCDF view.
+`xnetcdf` is a Python open source library for representing datasets,
+in a variety of formats and accessed through diverse Python backends,
+with a common netCDF view.
 
-A dataset format can be netCDF, or a format that can be logically
-mapped to `netCDF Enhanced Data Model
+A dataset format can be in one of :ref:`many formats
+<Dataset-formats>` that can be logically mapped to the `netCDF
+Enhanced Data Model
 <https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html>`_.
 
 A dataset is mapped to an `xnetcdf.Dataset` object, which contains
 netCDF groups (`xnetcdf.Group` objects), netCDF dimensions
 (`xnetcdf.Dimension` objects), netCDF variables (`xnetcdf.Variable`
 objects), and attributes. A variable is associated with dimensions and
-may contain attributes; and a group may contain other groups,
+may contain attributes; and a group may contain sub-groups,
 dimensions, variables, and attributes.
-
-`xnetcdf` has no native capability for directly opening a dataset,
-rather it relies on external backend libraries to provide a view of
-the dataset which `xnetcdf` can then map to its common netCDF view.
 
 Backends
 ^^^^^^^^
+
+`xnetcdf` has no native capability for directly opening a dataset,
+rather it wholly relies on external backend libraries to provide a
+view of the dataset which can then be mapped to the common netCDF
+view.
 
 `xnetcdf` supports the following backends for giving access to a
 dataset:
@@ -41,6 +43,8 @@ By default, `xnetcdf` will attempt to open a dataset with each of
 these backends in turn, in the order given above, returning the
 `xnetcdf.Dataset` object from the first successful read.
 
+.. _Dataset-formats:
+
 Dataset formats
 ^^^^^^^^^^^^^^^
 Supported dataset formats that can be read by at least one of the
@@ -56,7 +60,7 @@ supported backends (shown in brackets) are:
   <https://zarr-specs.readthedocs.io/en/latest/specs.html>`_
   (`zarr`, `xarray`)
 - `Zarr v2 <https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html>`_ 
-  (`zarr`, `xarray`)
+  (`zarr`, `netCDF4`, `xarray`)
 - `Kerchunk <https://fsspec.github.io/kerchunk>`_ (`zarr`, `xarray`)
 - `GRIB
   <https://community.wmo.int/site/knowledge-hub/programmes-and-initiatives/wmo-information-system-wis/about-manual-codes-volume-i2>`_
@@ -83,33 +87,19 @@ dataset definitions:
 - A directory-like object that accesses the dataset (such as
   `fsspec.mapping.FSMap`)
 
-- Any of the following backend objects that accesses the dataset:
-  `pyfive.File`, `zarr.Group`, `xarray.Dataset`, `xarray.DataTree`,
-  `ppfive.File`, `netCDF4.Dataset`, `scipy.io.netcdf_file`, and
-  `h5py.File`.
+- Any of the following allowed backend objects that accesses the
+  dataset: `pyfive.File`, `zarr.Group`, `xarray.Dataset`,
+  `xarray.DataTree`, `ppfive.File`, `netCDF4.Dataset`,
+  `scipy.io.netcdf_file`, and `h5py.File`.
 
-  - Any object ``x`` that accesses the dataset, and for which
-    ``isinstance(x, <backend-object>)`` is `True` for any
-    ``<backend-object>`` for the selection of allowed backend
-    objects. For instance, if you have created a library called
-    ``my_pyfive`` for which ``my_pyfive.File`` is (a registered)
-    subclass of `pyfive.File`, then ``my_pyfive.File`` instances can
-    be passed to `xnetcdf.Dataset`.
-  
-  - Any object ``x`` that has the same API as one of these backend
-    objects. In pratice, this means any object ``x`` that accesses the
-    dataset, and for which ``isinstance(x, <backend-object>)`` is
-    `True` for any ``<backend-object>`` from the selection of allowed
-    backend objects. For instance, if you have created a library
-    called ``my_pyfive`` for which ``my_pyfive.File`` is (a
-    registered) subclass of `pyfive.File`, then ``my_pyfive.File``
-    instances can be passed to `xnetcdf.Dataset`.
-  
-  In this case, the dataset structure and attributes are derived from
-  the underlying backend object, and not directly from the dataset
-  itself. For instance, an attribute that exists in a dataset on disk
-  but has been hidden by the underlying backend object will not be
-  available to `xnetcdf`.
+- Any object ``x`` that accesses the dataset and has the same API as
+  one of the allowed backend objects. In pratice, this means any
+  object ``x`` for which ``isinstance(x, <backend-object>)`` is `True`
+  for any ``<backend-object>`` from the selection of allowed backend
+  objects. For instance, if you have created a library called
+  ``my_pyfive`` for which ``my_pyfive.File`` is (registered as) a
+  subclass of `pyfive.File`, then ``my_pyfive.File`` instances can be
+  passed to `xnetcdf.Dataset`.
 
 A simple example
 ----------------
@@ -178,7 +168,7 @@ is also cached for future use. (Note that these extra structural
 metadata can also be cached at instantiation time -- see the
 ``structural_metadata_strategy`` parameter to `xnetcdf.Dataset`)
 
-:ref:`Variable data array access <Variable-data-access>` is always via
+:ref:`Variable data array access <Variable-data>` is always via
 the underlying backend library, and therefore if that library supports
 lazy data array access (which all of the supported backends do), then
 so will the `xnetcdf.Variable` instance.

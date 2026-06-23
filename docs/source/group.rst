@@ -91,14 +91,19 @@ The attributes of an `xnetcdf.Group` instance are accessed with the
    {'group_attr_1': np.int64(12),
     'group_attr_2': 'bar'}
 
-Attributes follow the netCDF conventions that assign special meaning
-to selected attributes, treating them as internal attributes that may
-be required to define the dataset structure.
+Attributes are derived from the underlying backend object, and not
+directly from the dataset on disk. An attribute that exists in a
+dataset on disk but has been hidden by the underlying backend object
+will not be available to `xnetcdf`. For instance, a backend that
+follows the CF conventions might remove ``coordinates`` and ``bounds``
+attributes.
 
+Attributes that have special structural meanings according to the
+netCDF-4 conventions will not appear in the attribute collection.
 These attributes are ``CLASS``, ``NAME``, ``REFERENCE_LIST``,
 ``DIMENSION_LIST``, ``DIMENSION_LABELS``, and ``_ARRAY_DIMENSIONS``,
 as well as any attributes that start with ``_Netcdf4``, ``_nc``, or
-``_NC``; and will not appear in the attribute collection.
+``_NC``.
 
 .. _Group-sub-groups:
 

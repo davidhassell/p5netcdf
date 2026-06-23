@@ -123,14 +123,19 @@ The attributes of an `xnetcdf.Dataset` instance are accessed with the
     'global_attr_1': np.float64(3.14),
     'global_attr_2': 'foo'}
 
-Attributes follow the netCDF conventions that assign special meaning
-to selected attributes, treating them as internal attributes that may
-be required to define the dataset structure.
+Attributes are derived from the underlying backend object, and not
+directly from the dataset on disk. An attribute that exists in a
+dataset on disk but has been hidden by the underlying backend object
+will not be available to `xnetcdf`. For instance, a backend that
+follows the CF conventions might remove ``coordinates`` and ``bounds``
+attributes.
 
+Attributes that have special structural meanings according to the
+netCDF-4 conventions will not appear in the attribute collection.
 These attributes are ``CLASS``, ``NAME``, ``REFERENCE_LIST``,
 ``DIMENSION_LIST``, ``DIMENSION_LABELS``, and ``_ARRAY_DIMENSIONS``,
 as well as any attributes that start with ``_Netcdf4``, ``_nc``, or
-``_NC``; and will not appear in the attribute collection.
+``_NC``.
 
 .. _Dataset-groups:
 
@@ -156,7 +161,7 @@ wherever they appear in the group hierarchy.
     '/forecast': forecast: <xnetcdf.Group: /forecast, 1 dimension, 2 variables, 1 group>,
     '/forecast/model': model: <xnetcdf.Group: /forecast/model, 1 dimension, 3 variables, 0 groups>}
 
-.. _Dataset-variable-access:
+.. _Dataset-variables:
 
 Dataset variables
 -----------------

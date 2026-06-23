@@ -71,7 +71,7 @@ class Mixin:
         backend API is the same as the name of underlying backend
         library that provides access the dataset, however these might
         be different if the dataset was defined as (a registered)
-        subclass of the one of the recognised backends.
+        subclass of the one of the allowed backends.
 
         .. seealso:: `backend_library`, `dataset`
 
@@ -369,6 +369,8 @@ class Dimension(Mixin):
     def size(self):
         """The size of the dimension.
 
+        .. seealso:: `isunlimited`
+        
         :Returns:
 
             `int`
@@ -435,6 +437,8 @@ class Dimension(Mixin):
     def isunlimited(self):
         """Whether the dimension is unlimited.
 
+        .. seealso:: `size`
+
         :Returns:
 
             `bool`
@@ -495,15 +499,19 @@ class Variable(Mixin, Mixin2):
 
     :Attributes:
 
-    Attributes follow the netCDF-4 conventions that assign special
-    meaning to selected attributes, treating them as internal
-    attributes which may be required to define the dataset structure.
+    Attributes are derived from the underlying backend object, and not
+    directly from the dataset on disk. An attribute that exists in a
+    dataset on disk but has been hidden by the underlying backend
+    object will not be available to `xnetcdf`. For instance, a backend
+    that follows the CF conventions might remove ``coordinates`` and
+    ``bounds`` attributes.
 
+    Attributes that have special structural meanings according to the
+    netCDF-4 conventions will not appear in the attribute collection.
     These attributes are ``CLASS``, ``NAME``, ``REFERENCE_LIST``,
     ``DIMENSION_LIST``, ``DIMENSION_LABELS``, and
     ``_ARRAY_DIMENSIONS``, as well as any attributes that start with
-    ``_Netcdf4``, ``_nc``, or ``_NC``; and will not appear in the
-    attribute collection.
+    ``_Netcdf4``, ``_nc``, or ``_NC``.
 
     :Parameters:
 
@@ -1113,15 +1121,19 @@ class Group(Mixin, Mixin2, Mapping):
 
     :Attributes:
 
-    Attributes follow the netCDF-4 conventions that assign special
-    meaning to selected attributes, treating them as internal
-    attributes which may be required to define the dataset structure.
+    Attributes are derived from the underlying backend object, and not
+    directly from the dataset on disk. An attribute that exists in a
+    dataset on disk but has been hidden by the underlying backend
+    object will not be available to `xnetcdf`. For instance, a backend
+    that follows the CF conventions might remove ``coordinates`` and
+    ``bounds`` attributes.
 
+    Attributes that have special structural meanings according to the
+    netCDF-4 conventions will not appear in the attribute collection.
     These attributes are ``CLASS``, ``NAME``, ``REFERENCE_LIST``,
     ``DIMENSION_LIST``, ``DIMENSION_LABELS``, and
     ``_ARRAY_DIMENSIONS``, as well as any attributes that start with
-    ``_Netcdf4``, ``_nc``, or ``_NC``; and will not appear in the
-    attribute collection.
+    ``_Netcdf4``, ``_nc``, or ``_NC``.
 
     :Parameters:
 
@@ -1434,6 +1446,8 @@ class Group(Mixin, Mixin2, Mapping):
     def is_root(self):
         """Whether or not this is the root group.
 
+        .. seealso:: `root`
+        
         :Returns:
 
             `bool`
@@ -1446,6 +1460,8 @@ class Group(Mixin, Mixin2, Mapping):
     def name(self):
         """The name of the group in its parent group.
 
+        .. seealso:: `path`
+        
         :Returns:
 
             `str`
@@ -1458,6 +1474,8 @@ class Group(Mixin, Mixin2, Mapping):
     def path(self):
         """The absolute path of the group.
 
+        .. seealso:: `name`
+        
         :Returns:
 
             `str`
@@ -1750,15 +1768,19 @@ class Dataset(Group):
 
     :Attributes:
 
-    Attributes follow the netCDF-4 conventions that assign special
-    meaning to selected attributes, treating them as internal
-    attributes which may be required to define the dataset structure.
+    Attributes are derived from the underlying backend object, and not
+    directly from the dataset on disk. An attribute that exists in a
+    dataset on disk but has been hidden by the underlying backend
+    object will not be available to `xnetcdf`. For instance, a backend
+    that follows the CF conventions might remove ``coordinates`` and
+    ``bounds`` attributes.
 
+    Attributes that have special structural meanings according to the
+    netCDF-4 conventions will not appear in the attribute collection.
     These attributes are ``CLASS``, ``NAME``, ``REFERENCE_LIST``,
     ``DIMENSION_LIST``, ``DIMENSION_LABELS``, and
     ``_ARRAY_DIMENSIONS``, as well as any attributes that start with
-    ``_Netcdf4``, ``_nc``, or ``_NC``; and will not appear in the
-    attribute collection.
+    ``_Netcdf4``, ``_nc``, or ``_NC``.
 
     :Parameters:
 
@@ -1781,28 +1803,26 @@ class Dataset(Group):
               `ppfive.File`, `netCDF4.Dataset`,
               `scipy.io.netcdf_file`, and `h5py.File`.
 
-              * Any object ``x`` that accesses the dataset, and for
-                which ``isinstance(x, <backend-object>)`` is `True`
-                for any of these backend objects
-                ``<backend-object>``. For instance, if you have
-                created a library called ``my_pyfive`` for which
-                ``my_pyfive.File`` is (a registered) subclass of
-                `pyfive.File`, then ``my_pyfive.File`` instances can
-                be passed to `xnetcdf.Dataset`.
-
-              In this case, the dataset structure and attributes are
-              derived from the underlying backend object, and not
-              directly from the dataset itself. For instance, an
-              attribute that exists in a dataset on disk but has been
-              hidden by the underlying backend object will not be
-              available to `xnetcdf`.
-
+            * Any object ``x`` that accesses the dataset and has the
+              same API as one of the allowed backend objects. In
+              pratice, this means any object ``x`` for which
+              ``isinstance(x, <backend-object>)`` is `True` for any
+              ``<backend-object>`` from the selection of allowed
+              backend objects. For instance, if you have created a
+              library called ``my_pyfive`` for which
+              ``my_pyfive.File`` is (registered as) a subclass of
+              `pyfive.File`, then ``my_pyfive.File`` instances can be
+              passed to `Dataset`.
+  
         backend: `None` or (sequence of) `str`, optional
             Which library or libraries to use for opening a
             string-like, file-like, or directory-like *dataset*. An
             attempt to open the dataset is made by the given backends
             in the order in which they are provided, stopping after
-            the first successful read.
+            the first successful read. Performance may be improved by
+            specifiying a backend library, because it reduces or
+            removes any unsuccessful dataset read attempts, which can
+            be expensive, especially for remote datasets.
 
             The available backends are:
 
@@ -1824,9 +1844,9 @@ class Dataset(Group):
             ``('pyfive', 'zarr', 'xarray', 'ppfive', 'netCDF4',
             'netcdf_file', 'h5py')``
 
-            If *dataset* is (a subclass of) a backend object then
-            *backend* should be `None` or include the name of that
-            backend, otherwise an exception will be raised. For
+            If *dataset* is given as (a subclass of) a backend object
+            then *backend* should be `None` or include the name of
+            that backend, otherwise an exception will be raised. For
             instance, if *dataset* is a `pyfive.File` object then
             *backend* should be `None`, or the string ``'pyfive'``, or
             be a sequence that includes the string ``'pyfive'``.
@@ -2243,9 +2263,7 @@ class Dataset(Group):
 
         :Returns:
 
-                The name of the backend API, one of ``'pyfive'``,
-                ``'zarr'``, ``'xarray'``, ``'ppfive'``, ``'netCDF4'``,
-                ``'netcdf_file'``, ``'h5py'``.
+                The backend object.
 
         """
         return self._grp

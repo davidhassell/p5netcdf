@@ -90,14 +90,19 @@ rules are allowed by the underlying backend object.
     'standard_name': 'longitude',
     'units': 'degrees_east'}
 
-Attributes follow the netCDF conventions that assign special meaning
-to selected attributes, treating them as internal attributes that may
-be required to define the dataset structure.
+Attributes are derived from the underlying backend object, and not
+directly from the dataset on disk. An attribute that exists in a
+dataset on disk but has been hidden by the underlying backend object
+will not be available to `xnetcdf`. For instance, a backend that
+follows the CF conventions might remove ``coordinates`` and ``bounds``
+attributes.
 
+Attributes that have special structural meanings according to the
+netCDF-4 conventions will not appear in the attribute collection.
 These attributes are ``CLASS``, ``NAME``, ``REFERENCE_LIST``,
 ``DIMENSION_LIST``, ``DIMENSION_LABELS``, and ``_ARRAY_DIMENSIONS``,
 as well as any attributes that start with ``_Netcdf4``, ``_nc``, or
-``_NC``; and will not appear in the attribute collection.
+``_NC``.
 
 .. _Variable-dimensions:
 
