@@ -96,6 +96,15 @@ dataset definitions:
     subclass of `pyfive.File`, then ``my_pyfive.File`` instances can
     be passed to `xnetcdf.Dataset`.
   
+  - Any object ``x`` that has the same API as one of these backend
+    objects. In pratice, this means any object ``x`` that accesses the
+    dataset, and for which ``isinstance(x, <backend-object>)`` is
+    `True` for any ``<backend-object>`` from the selection of allowed
+    backend objects. For instance, if you have created a library
+    called ``my_pyfive`` for which ``my_pyfive.File`` is (a
+    registered) subclass of `pyfive.File`, then ``my_pyfive.File``
+    instances can be passed to `xnetcdf.Dataset`.
+  
   In this case, the dataset structure and attributes are derived from
   the underlying backend object, and not directly from the dataset
   itself. For instance, an attribute that exists in a dataset on disk
