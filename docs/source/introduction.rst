@@ -8,9 +8,8 @@ Overview
 in a variety of formats and accessed through diverse Python backends,
 with a common netCDF view.
 
-A dataset format can be in one of :ref:`many formats
-<Dataset-formats>` that can be logically mapped to the `netCDF
-Enhanced Data Model
+A dataset format can be one of :ref:`many formats <Dataset-formats>`
+that can be logically mapped to the `netCDF Enhanced Data Model
 <https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html>`_.
 
 A dataset is mapped to an `xnetcdf.Dataset` object, which contains
@@ -19,6 +18,8 @@ netCDF groups (`xnetcdf.Group` objects), netCDF dimensions
 objects), and attributes. A variable is associated with dimensions and
 may contain attributes; and a group may contain sub-groups,
 dimensions, variables, and attributes.
+
+.. _Backends:
 
 Backends
 ^^^^^^^^
@@ -42,6 +43,10 @@ dataset:
 By default, `xnetcdf` will attempt to open a dataset with each of
 these backends in turn, in the order given above, returning the
 `xnetcdf.Dataset` object from the first successful read.
+
+.. note:: It is not a problem , in general, if a backend library is
+          not installed -- it just reduces the size of the pool of
+          backends that are available for reading a dataset.
 
 .. _Dataset-formats:
 

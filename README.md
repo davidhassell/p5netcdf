@@ -15,7 +15,7 @@
 in a variety of formats and accessed through diverse Python backends,
 with a common netCDF view.
 
-A dataset format can be in one of many formats that can be logically
+A dataset format can be one of many formats that can be logically
 mapped to the [netCDF Enhanced Data
 Model](https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html).
 
@@ -66,17 +66,14 @@ dataset definitions:
   one of the allowed backend objects. In pratice, this means any
   object ``x`` for which ``isinstance(x, <backend-object>)`` is `True`
   for any ``<backend-object>`` from the selection of allowed backend
-  objects. For instance, if you have created a library called
-  ``my_pyfive`` for which ``my_pyfive.File`` is (registered as) a
-  subclass of `pyfive.File`, then ``my_pyfive.File`` instances can be
-  passed to `xnetcdf.Dataset`.
+  objects.
 
 ### A simple example
     
 An example of how to use `xnetcdf` to open a dataset and inspect its
 contents:
 
-``` python
+```python
 >>> import xnetcdf
 >>> nc = xnetcdf.Dataset('path/to/your/dataset')  # Open the dataset
 >>> print(nc)  # Inspect the dataset contents
@@ -113,10 +110,14 @@ for more information and examples.
 `xnetcdf` is tested against Python versions 3.10 to 3.14.  It may
 also work with other Python versions.
 
-The only dependency to required run the software, besides Python, is
-`numpy`. However, each of the backend libraries `pyfive`, `netCDF4`,
-`zarr`, `scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py` can
-only be used if it also installed.
+The only dependency required run the software, besides Python, is
+`numpy`.
+
+However, each of the backend libraries `pyfive`, `netCDF4`, `zarr`,
+`scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py` can only be
+used if it also installed. It is not a problem, in general, if a
+backend library is not installed -- it just reduces the size of the
+pool of backends that are available for reading a dataset.
 
 ## Installation
 
