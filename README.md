@@ -34,15 +34,8 @@ view of the dataset which can then be mapped to the common netCDF
 view.
 
 `xnetcdf` supports the following backends for giving access to a
-dataset:
-
-- `pyfive`
-- `zarr`
-- `xarray`
-- `ppfive`
-- `netCDF4`
-- `scipy.io.netcdf_file`
-- `h5py`
+dataset: `pyfive`, `zarr`, `xarray`, `ppfive`, `netCDF4`,
+`scipy.io.netcdf_file`, and `h5py`.
 
 By default, `xnetcdf` will attempt to open a dataset with each of
 these backends in turn, in the order given above, returning the
@@ -51,15 +44,8 @@ these backends in turn, in the order given above, returning the
 ### Dataset formats
 
 Supported dataset formats that can be read by at least one of the
-supported backends are:
-
-- netCDF-4
-- netCDF-3
-- Zarr v3
-- Zarr v2
-- Kerchunk
-- UK Met Office PP
-- UK Met Office fields file
+supported backends are: netCDF-4, netCDF-3, Zarr v3, Zarr v2,
+Kerchunk, UK Met Office PP, and UK Met Office fields file.
 
 ### Dataset definitions
 
