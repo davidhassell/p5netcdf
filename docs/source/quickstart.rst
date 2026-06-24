@@ -139,7 +139,7 @@ See :ref:`Dataset-attributes`.
 .. rubric:: Access a variable, its attributes and its data array
 
 See :ref:`Dataset-indexing`, :ref:`Variable-attributes`, and
-:ref:`Variable-data`.
+:ref:`Variable-data-and-indexing`.
 	     
 .. code-block:: python
 		

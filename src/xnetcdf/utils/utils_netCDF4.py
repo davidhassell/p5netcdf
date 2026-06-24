@@ -33,8 +33,8 @@ def netCDF4_parse_group_structure(group):
         group._create_group(name, grp, attrs)
 
 
-def netCDF4_open(dataset, options):
-    """Open a dataset with `netCDF4`.
+def netCDF4_read(dataset, options):
+    """Read a dataset with `netCDF4`.
 
     The dataset is opened with "auto mask" and "auto scale" both set
     to `False`.
@@ -71,7 +71,7 @@ def netCDF4_open(dataset, options):
     if isinstance(dataset, netCDF4.Dataset):
         nc = dataset
         library = get_library(dataset)
-        owns_nc = False
+        owns_accessor = False
 
         dataset_name = dataset.filepath()
         if not dataset_name:
@@ -90,16 +90,15 @@ def netCDF4_open(dataset, options):
         if mode != "r":
             raise ValueError(f"Can't set mode={mode!r} in netCDF4_options")
 
-        print(type(dataset))
         dataset, dataset_name, protocol = get_dataset_name_and_protocol(
             dataset
         )
-        print(type(dataset))
+
         nc = netCDF4.Dataset(dataset, mode="r", **options)
         nc.set_auto_maskandscale(False)
 
         library = netCDF4
-        owns_nc = True
+        owns_accessor = True
 
     return {
         "dataset_name": dataset_name,
@@ -108,5 +107,5 @@ def netCDF4_open(dataset, options):
         "attrs": {attr: nc.getncattr(attr) for attr in nc.ncattrs()},
         "backend_api": "netCDF4",
         "library": library,
-        "owns_nc": owns_nc,
+        "owns_accessor": owns_accessor,
     }

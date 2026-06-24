@@ -3,8 +3,8 @@
 from .utils_general import get_dataset_name_and_protocol, get_library
 
 
-def h5py_open(dataset, options):
-    """Open a dataset with the `h5py`.
+def h5py_read(dataset, options):
+    """Read a dataset with the `h5py`.
 
     :Parameters:
 
@@ -38,7 +38,7 @@ def h5py_open(dataset, options):
         nc = dataset
         library = get_library(dataset)
         dataset_name = dataset.filename
-        owns_nc = False
+        owns_accessor = False
         if not dataset_name:
             dataset_name = "<h5py-like>"
 
@@ -54,7 +54,7 @@ def h5py_open(dataset, options):
         nc = h5py.File(dataset, mode="r", **options)
 
         library = h5py
-        owns_nc = True
+        owns_accessor = True
 
     return {
         "dataset_name": dataset_name,
@@ -63,5 +63,5 @@ def h5py_open(dataset, options):
         "attrs": nc.attrs,
         "backend_api": "h5py",
         "library": library,
-        "owns_nc": owns_nc,
+        "owns_accessor": owns_accessor,
     }

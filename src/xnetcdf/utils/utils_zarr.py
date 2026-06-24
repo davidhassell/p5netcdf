@@ -8,17 +8,15 @@ from .utils_general import (
 
 
 def zarr_get_dataset_name(z):
-    """Returns a clean, standardized path or URI string from any Zarr v3
-    Group or Array.
+    """A standardized path from any Zarr v3 Group or Array.
 
-    Hides internal library wrappers like '<FsspecStore...>' or
-    'object_store://'.
+    :Returns:
 
-    Examples:
-        - '/absolute/local/path/data.zarr'
-        - 's3://my-bucket/data.zarr'
-        - 'https://example.com/data.zarr'
-        - 'memory://'
+        `str`
+             The path or URI, such as
+             ``'/absolute/local/path/data.zarr'``,
+             ``'s3://my-bucket/data.zarr'``,
+             ``'https://example.com/data.zarr'``, ``'memory://'``.
 
     """
     import os
@@ -31,40 +29,39 @@ def zarr_get_dataset_name(z):
         ZipStore,
     )
 
+    def join_paths(base, subpath):
+        """Helper to join a base path and an internal node path."""
+        if not subpath:
+            return base.rstrip("/")
+
+        return f"{base.rstrip('/')}/{subpath.lstrip('/')}"
+
     # Zarr v3 nodes have a .store_path wrapper containing the store
     # and internal node path
     store = z.store_path.store
     node_path = z.store_path.path or ""
 
-    # Helper to cleanly stitch a base path and an internal node path
-    # together
-    def join_paths(base, subpath):
-        if not subpath:
-            return base.rstrip("/")
-        return f"{base.rstrip('/')}/{subpath.lstrip('/')}"
-
-    # --- Case 1: Standard Local Storage ---
+    # Case 1: Standard local storage
     if isinstance(store, LocalStore):
         # store.root is a pathlib.Path or string representing the
         # absolute local directory
         base_path = os.path.abspath(str(store.root))
         return join_paths(base_path, node_path)
 
-    # --- Case 2: Memory Storage ---
+    # Case 2: Memory storage
     elif isinstance(store, MemoryStore):
         return join_paths("memory://", node_path)
 
-    # --- Case 3: Zip Archive Storage ---
+    # Case 3: Zip archive storage
     elif isinstance(store, ZipStore):
         # store.path is the path to the physical .zip container file
         base_path = os.path.abspath(str(store.path))
         return f"zip://{join_paths(base_path, node_path)}"
 
-    # --- Case 4: Fsspec-backed Storage (S3, GCS, HTTP, etc.) ---
+    # Case 4: Fsspec-backed storage (S3, GCS, HTTP, etc.)
     elif isinstance(store, FsspecStore) or hasattr(store, "fs"):
         protocol = store.fs.protocol
-        # fsspec protocol can sometimes be a tuple/list (e.g.,
-        # ('https', 'http'))
+        # fsspec protocol can sometimes be a tuple/list
         if isinstance(protocol, (tuple, list)):
             protocol = protocol[0]
 
@@ -74,16 +71,15 @@ def zarr_get_dataset_name(z):
         # protocol
         if protocol in ("file", "local"):
             return join_paths(os.path.abspath(base_path), node_path)
-        else:
-            return f"{protocol}://{join_paths(base_path, node_path)}"
 
-    # --- Case 5: ObjectStore Backends (Rust obstore drivers) ---
+        return f"{protocol}://{join_paths(base_path, node_path)}"
+
+    # Case 5: ObjectStore backends (rust obstore drivers)
     elif isinstance(store, ObjectStore) or hasattr(store, "_store"):
         # The internal obstore instance is held in store._store
         backend = store._store
-        backend_type = type(backend).__name__  # e.g., 'HttpStore',
-        # 'S3Store',
-        # 'LocalFileSystem'
+        # e.g. 'HttpStore', 'S3Store', 'LocalFileSystem'
+        backend_type = type(backend).__name__
 
         # Combine Zarr's prefix configuration with the specific array
         # node path
@@ -109,7 +105,7 @@ def zarr_get_dataset_name(z):
                 os.path.abspath(str(base_path)), combined_subpath
             )
 
-    # --- Case 6: Fallback for raw strings or customized stores ---
+    # Case 6: Fallback for raw strings or customized stores
     path_str = str(z.store_path)
 
     # Clean up standard variations if the generic string started with
@@ -357,8 +353,8 @@ def zarr_raw_dimension_names(variable):
     return dimensions
 
 
-def zarr_open(dataset, options):
-    """Open a dataset with `zarr`.
+def zarr_read(dataset, options):
+    """Read a dataset with `zarr`.
 
     :Parameters:
 
@@ -392,7 +388,7 @@ def zarr_open(dataset, options):
         nc = dataset
         library = get_library(dataset)
         dataset_name = zarr_get_dataset_name(dataset)
-        owns_nc = False
+        owns_accessor = False
 
         if not dataset_name:
             dataset_name = "<zarr-like>"
@@ -416,7 +412,7 @@ def zarr_open(dataset, options):
         nc = zarr.open(dataset, mode="r", **options)
 
         library = zarr
-        owns_nc = True
+        owns_accessor = True
 
     return {
         "dataset_name": dataset_name,
@@ -425,7 +421,7 @@ def zarr_open(dataset, options):
         "attrs": nc.attrs,
         "backend_api": "zarr",
         "library": library,
-        "owns_nc": owns_nc,
+        "owns_accessor": owns_accessor,
     }
 
 

@@ -25,28 +25,28 @@ Backends
 ^^^^^^^^
 
 `xnetcdf` has no native capability for directly opening a dataset,
-rather it wholly relies on external backend libraries to provide a
-view of the dataset which can then be mapped to the common netCDF
-view.
+rather external backend libraries are relied on to read the dataset
+which can then be mapped to the common netCDF view.
 
 `xnetcdf` supports the following backends for giving access to a
 dataset:
 
 - `pyfive`
 - `zarr`
-- `xarray`
 - `ppfive`
 - `netCDF4`
 - `scipy.io.netcdf_file`
 - `h5py`
+- `xarray`
 
 By default, `xnetcdf` will attempt to open a dataset with each of
 these backends in turn, in the order given above, returning the
 `xnetcdf.Dataset` object from the first successful read.
 
 .. note:: It is not a problem , in general, if a backend library is
-          not installed -- it just reduces the size of the pool of
-          backends that are available for reading a dataset.
+          not :ref:`installed <Installation>` -- it just reduces the
+          size of the pool of backends that are available for reading
+          a dataset.
 
 .. _Dataset-formats:
 
@@ -57,7 +57,7 @@ supported backends (shown in brackets) are:
 
 - `netCDF-4
   <https://docs.unidata.ucar.edu/nug/current/netcdf_introduction.html>`_
-  (`pyfive`, `zarr`, `xarray`, `netCDF4`, `h5py`)
+  (`pyfive`, `zarr`, `netCDF4`, `h5py`, `xarray`)
 - `netCDF-3
   <https://docs.unidata.ucar.edu/nug/current/netcdf_introduction.html>`_
   (`netCDF4`, `scipy.io.netcdf_file`)
@@ -93,9 +93,9 @@ dataset definitions:
   `fsspec.mapping.FSMap`)
 
 - Any of the following allowed backend objects that accesses the
-  dataset: `pyfive.File`, `zarr.Group`, `xarray.Dataset`,
-  `xarray.DataTree`, `ppfive.File`, `netCDF4.Dataset`,
-  `scipy.io.netcdf_file`, and `h5py.File`.
+  dataset: `pyfive.File`, `zarr.Group``ppfive.File`,
+  `netCDF4.Dataset`, `scipy.io.netcdf_file`, `h5py.File`,
+  `xarray.Dataset`, and `xarray.DataTree`.
 
 - Any object ``x`` that accesses the dataset and has the same API as
   one of the allowed backend objects. In pratice, this means any
@@ -173,7 +173,7 @@ is also cached for future use. (Note that these extra structural
 metadata can also be cached at instantiation time -- see the
 ``structural_metadata_strategy`` parameter to `xnetcdf.Dataset`)
 
-:ref:`Variable data array access <Variable-data>` is always via
-the underlying backend library, and therefore if that library supports
-lazy data array access (which all of the supported backends do), then
-so will the `xnetcdf.Variable` instance.
+:ref:`Variable data array access <Variable-data-and-indexing>` is
+always via the underlying backend library, and therefore if that
+library supports lazy data array access (which all of the supported
+backends do), then so will the `xnetcdf.Variable` instance.

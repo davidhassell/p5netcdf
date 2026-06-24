@@ -47,8 +47,8 @@ def xarray_parse_group_structure(group):
         group._create_group(name, grp, grp.attrs)
 
 
-def xarray_open(dataset, options):
-    """Open a dataset with `xarray`.
+def xarray_read(dataset, options):
+    """Read a dataset with `xarray`.
 
     The dataset is opened with `xarray.open_datatree` options
     ``mask_and_scale=False`` and ``decode_cf=False``.
@@ -92,7 +92,7 @@ def xarray_open(dataset, options):
 
         nc = dataset
         library = get_library(dataset)
-        owns_nc = False
+        owns_accessor = False
 
         # Attempt to get the dataset name and file system protocol
         try:
@@ -113,6 +113,9 @@ def xarray_open(dataset, options):
         if decode_cf:
             raise ValueError("Can't set decode_cf=True in xarray_options")
 
+        if "chunks" not in options:
+            options["chunks"] = "auto"
+
         dataset, dataset_name, protocol = get_dataset_name_and_protocol(
             dataset
         )
@@ -121,7 +124,7 @@ def xarray_open(dataset, options):
         )
 
         library = xarray
-        owns_nc = True
+        owns_accessor = True
 
     return {
         "dataset_name": dataset_name,
@@ -130,5 +133,5 @@ def xarray_open(dataset, options):
         "attrs": nc.attrs,
         "backend_api": "xarray",
         "library": library,
-        "owns_nc": owns_nc,
+        "owns_accessor": owns_accessor,
     }

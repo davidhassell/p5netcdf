@@ -68,7 +68,7 @@ html_toc_object_entries_type = "domain"
 html_theme_options = {
     "sidebar_hide_name": False,
     "light_logo": "xnetcdf_logo_light.png",
-    "dark_logo": "xnetcdf_logo_dark.png", 
+    "dark_logo": "xnetcdf_logo_dark.png",
     # This prevents Furo from aggressively hiding collapsed child components
     "navigation_with_keys": True,
 }

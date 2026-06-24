@@ -3,8 +3,8 @@
 from .utils_general import get_dataset_name_and_protocol, get_library
 
 
-def pyfive_open(dataset, options):
-    """Open a dataset with `pyfive`.
+def pyfive_read(dataset, options):
+    """Read a dataset with `pyfive`.
 
     :Parameters:
 
@@ -38,7 +38,7 @@ def pyfive_open(dataset, options):
         nc = dataset
         library = get_library(dataset)
         dataset_name = dataset.filename
-        owns_nc = False
+        owns_accessor = False
 
         # Attempt to get the dataset name and file system protocol
         try:
@@ -75,7 +75,7 @@ def pyfive_open(dataset, options):
         nc = pyfive.File(dataset, mode="r", **options)
 
         library = pyfive
-        owns_nc = True
+        owns_accessor = True
 
     return {
         "dataset_name": dataset_name,
@@ -84,5 +84,5 @@ def pyfive_open(dataset, options):
         "attrs": nc.attrs,
         "backend_api": "pyfive",
         "library": library,
-        "owns_nc": owns_nc,
+        "owns_accessor": owns_accessor,
     }

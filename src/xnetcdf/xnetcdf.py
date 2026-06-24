@@ -8,40 +8,41 @@ from .utils import (
     NetCDFError,
     cdl_format,
     get_dimensions_from_defining_group,
-    h5py_open,
+    h5py_read,
     hdf5_dimension_names,
     hdf5_parse_group_structure,
-    netCDF4_open,
     netCDF4_parse_group_structure,
+    netCDF4_read,
     netcdf_file_close,
     netcdf_file_dtype,
-    netcdf_file_open,
     netcdf_file_parse_group_structure,
+    netcdf_file_read,
     parse_attributes,
-    ppfive_open,
-    pyfive_open,
-    xarray_open,
+    ppfive_read,
+    pyfive_read,
     xarray_parse_group_structure,
-    zarr_open,
+    xarray_read,
     zarr_parse_group_structure,
+    zarr_read,
 )
 
 # Map backend names to dataset-read functions. This ordered dictionary
-# defines the default order of functions attempted to open the
+# defines the default order of functions attempted to read the
 # dataset.
 #
 # Note to developers: If you change the order of this dictionary, or
 #                     add a new key/value pair, you must update the
 #                     `Dataset` docstring.
-_open_functions = {
-    "pyfive": pyfive_open,
-    "zarr": zarr_open,
-    "xarray": xarray_open,
-    "ppfive": ppfive_open,
-    "netCDF4": netCDF4_open,
-    "netcdf_file": netcdf_file_open,
-    "h5py": h5py_open,
+_read_functions = {
+    "pyfive": pyfive_read,
+    "zarr": zarr_read,
+    "ppfive": ppfive_read,
+    "netCDF4": netCDF4_read,
+    "netcdf_file": netcdf_file_read,
+    "h5py": h5py_read,
+    "xarray": xarray_read,
 }
+backends = tuple(_read_functions)
 
 # np.printoptions parameters for `dump` method output (17 significant
 # digits is enough to fully represent every possible bit of precision
@@ -79,8 +80,8 @@ class Mixin:
 
             `str`
                 The name of the backend API, one of ``'pyfive'``,
-                ``'zarr'``, ``'xarray'``, ``'ppfive'``, ``'netCDF4'``,
-                ``'netcdf_file'``, ``'h5py'``.
+                ``'zarr'``, ``'ppfive'``, ``'netCDF4'``,
+                ``'netcdf_file'``, ``'h5py'``, and ``'xarray'``.
 
         """
         return self.root._backend_api
@@ -370,7 +371,7 @@ class Dimension(Mixin):
         """The size of the dimension.
 
         .. seealso:: `isunlimited`
-        
+
         :Returns:
 
             `int`
@@ -388,7 +389,7 @@ class Dimension(Mixin):
     ):
         """A full description of the dimension.
 
-        .. seealso:: `structure`, `ncdump`
+        .. seealso:: `structure`
 
         :Parameters:
 
@@ -456,7 +457,9 @@ class Dimension(Mixin):
     ):
         """A purely structural description of the dimension.
 
-        .. seealso:: `dump`, `ncdump`
+        This is identical to `dump`.
+
+        .. seealso:: `dump`
 
         :Parameters:
 
@@ -484,11 +487,11 @@ class Dimension(Mixin):
 class Variable(Mixin, Mixin2):
     """A netCDF variable.
 
-    :Data access:
+    :Data access and indexing:
 
-    The data of a `Variable` instance is accessed by direct indexing
-    (via the `__getitem__` method), following whatever indexing rules
-    are allowed by the underlying backend object.
+    The data array of an `Variable` instance is accessed by direct
+    indexing, following whatever indexing rules are allowed by the
+    underlying backend object.
 
     The requested subspace is always returned as a `numpy` array.
 
@@ -918,7 +921,7 @@ class Variable(Mixin, Mixin2):
     ):
         """A full description of the variable.
 
-        .. seealso:: `structure`, `ncdump`
+        .. seealso:: `structure`
 
         :Parameters:
 
@@ -1075,7 +1078,10 @@ class Variable(Mixin, Mixin2):
     ):
         """A purely structural description of the variable.
 
-        .. seealso:: `dump`, `ncdump`
+        This similar to `dump`, but no attributes and no data are
+        shown.
+
+        .. seealso:: `dump`
 
         :Parameters:
 
@@ -1105,8 +1111,9 @@ class Group(Mixin, Mixin2, Mapping):
 
     :Indexing:
 
-    Dictionary-like key lookup via the `__getitem__` method gives
-    access to any group or variable in the entire dataset.
+    A group or variable object, anywhere in the group hierarchy, can
+    be accessed by indexing an `Group` instance with the object's
+    name.
 
     Keys can be provided as an absolute path name or as a path name
     that is relative to the root group. Relative path names may
@@ -1157,10 +1164,12 @@ class Group(Mixin, Mixin2, Mapping):
 
     """
 
-    # Store classes for creating dimensions, variables and sub-groups
+    # Store references to classes for creating dimensions, variables
+    # and sub-groups in `_create_dimension`, `_create_variable` and
+    # `_create_group` respectively.
     #
     # Note: __Group will be re-set to `Group` after the `Group` class
-    #       has finished defining itself
+    #       has finished defining itself.
     __Dimension = Dimension
     __Variable = Variable
     __Group = None
@@ -1407,7 +1416,7 @@ class Group(Mixin, Mixin2, Mapping):
         """The dimensions defined in this group.
 
         .. seealso:: `variables`, `groups`
-        
+
         :Returns:
 
             `dict`
@@ -1427,7 +1436,7 @@ class Group(Mixin, Mixin2, Mapping):
         """The sub-groups defined in this group.
 
         .. seealso:: `variables`, `dimensions`
-        
+
         :Returns:
 
             `dict`
@@ -1447,7 +1456,7 @@ class Group(Mixin, Mixin2, Mapping):
         """Whether or not this is the root group.
 
         .. seealso:: `root`
-        
+
         :Returns:
 
             `bool`
@@ -1461,7 +1470,7 @@ class Group(Mixin, Mixin2, Mapping):
         """The name of the group in its parent group.
 
         .. seealso:: `path`
-        
+
         :Returns:
 
             `str`
@@ -1475,7 +1484,7 @@ class Group(Mixin, Mixin2, Mapping):
         """The absolute path of the group.
 
         .. seealso:: `name`
-        
+
         :Returns:
 
             `str`
@@ -1503,15 +1512,15 @@ class Group(Mixin, Mixin2, Mapping):
         """The variables defined in this group.
 
         .. seealso:: `dimensions`, `groups`
-        
+
         :Returns:
 
             `dict`
                 The `Variable` objects, keyed by their names relative
                 to the group.
-        
+
         :Examples:
-        
+
            >>> n.variables
            {'time': <xnetcdf.Variable: /time, shape=(), dimensions=()>}
 
@@ -1529,7 +1538,7 @@ class Group(Mixin, Mixin2, Mapping):
     ):
         """A full description of the group.
 
-        .. seealso:: `structure`, `ncdump`
+        .. seealso:: `structure`
 
         :Parameters:
 
@@ -1701,7 +1710,10 @@ class Group(Mixin, Mixin2, Mapping):
     ):
         """A purely structural description of the group.
 
-        .. seealso:: `dump`, `ncdump`
+        This similar to `dump`, but no group or variable attributes,
+        and no variable data are shown.
+
+        .. seealso:: `dump`
 
         :Parameters:
 
@@ -1735,8 +1747,8 @@ class Group(Mixin, Mixin2, Mapping):
         )
 
 
-# Set __Group to `Group`, now that `Group` has been defined. This is
-# used to create sub-groups.
+# Set __Group to `Group`, now that `Group` has been defined. This
+# references is used to create sub-groups in `Group._create_group`.
 Group._Group__Group = Group
 
 
@@ -1750,10 +1762,29 @@ class Dataset(Group):
     group may contain other groups, dimensions, variables, and
     attributes.
 
+    :Backends:
+
+    There is no native capability for directly opening a dataset,
+    rather external backend libraries are relied on to read the
+    dataset which can then be mapped to the common netCDF view. See
+    the *backends* parameter for the supported backends.
+
+    :Dataset formats:
+
+    Supported dataset formats that can be read by at least one of the
+    supported backends are: netCDF-4, netCDF-3, Zarr v3, Zarr v2,
+    Kerchunk, UK Met Office PP, and UK Met Office fields file.
+
+    :Dataset deinitions:
+
+    See the *dataset* parameter for the different ways in which a
+    dataset can be provided.
+
     :Indexing:
 
-    Dictionary-like key lookup via the `__getitem__` method gives
-    access to any group or variable in the entire dataset.
+    A group or variable object, anywhere in the group hierarchy, can
+    be accessed by indexing an `Dataset` instance with the object's
+    name.
 
     Keys can be provided as an absolute path name or as a path name
     that is relative to the root group. Relative path names may
@@ -1799,9 +1830,9 @@ class Dataset(Group):
 
             * Any of the following backend objects (see the *backend*
               parameter) that accesses the dataset: `pyfive.File`,
-              `zarr.Group`, `xarray.Dataset`, `xarray.DataTree`,
-              `ppfive.File`, `netCDF4.Dataset`,
-              `scipy.io.netcdf_file`, and `h5py.File`.
+              `zarr.Group`, `ppfive.File`, `netCDF4.Dataset`,
+              `scipy.io.netcdf_file`, `h5py.File`, `xarray.Dataset`,
+              and `xarray.DataTree`.
 
             * Any object ``x`` that accesses the dataset and has the
               same API as one of the allowed backend objects. In
@@ -1813,36 +1844,43 @@ class Dataset(Group):
               ``my_pyfive.File`` is (registered as) a subclass of
               `pyfive.File`, then ``my_pyfive.File`` instances can be
               passed to `Dataset`.
-  
+
         backend: `None` or (sequence of) `str`, optional
             Which library or libraries to use for opening a
             string-like, file-like, or directory-like *dataset*. An
-            attempt to open the dataset is made by the given backends
+            attempt to read the dataset is made by the given backends
             in the order in which they are provided, stopping after
             the first successful read. Performance may be improved by
             specifiying a backend library, because it reduces or
             removes any unsuccessful dataset read attempts, which can
             be expensive, especially for remote datasets.
 
-            The available backends are:
+            The available backends, and the formats they can read,
+            are:
 
-            =================  ======================
-            Backend            Library
-            =================  ======================
-            ``'pyfive'``       `pyfive`
-            ``'zarr'``         `zarr`
-            ``'xarray'``       `xarray`
-            ``'ppfive'``       `ppfive`
-            ``'netCDF4'``      `netCDF4`
-            ``'netcdf_file'``  `scipy.io.netcdf_file`
-            ``'h5py'``         `h5py`
-            =================  ======================
+            =================  ======================  ===================
+            Backend            Library                 Formats
+            =================  ======================  ===================
+            ``'pyfive'``       `pyfive`                netCDF-4
+            ``'zarr'``         `zarr`                  Zarr, Kerchunk
+            ``'ppfive'``       `ppfive`                PP, fields file
+            ``'netCDF4'``      `netCDF4`               netCDF-4, netCDF-3
+            ``'netcdf_file'``  `scipy.io.netcdf_file`  netCDF-3
+            ``'h5py'``         `h5py`                  netCDF-4
+            ``'xarray'``       `xarray`                netCDF-4, netCDF-3,
+                                                       Zarr, Kerchunk,
+                                                       GRIB
+            =================  ======================  ===================
 
             By default *backend* is `None`, which is equivalent to
             providing the ordered sequence of backends:
 
-            ``('pyfive', 'zarr', 'xarray', 'ppfive', 'netCDF4',
-            'netcdf_file', 'h5py')``
+            ``('pyfive', 'zarr' 'ppfive', 'netCDF4', 'netcdf_file',
+            'h5py', 'xarray')``
+
+            Note that the `xarray` library also uses other backends to
+            access the dataset, which can be configured via the
+            *xarray_options* parameter.
 
             If *dataset* is given as (a subclass of) a backend object
             then *backend* should be `None` or include the name of
@@ -1935,9 +1973,11 @@ class Dataset(Group):
             `xarray.open_datatree` when opening a dataset with the
             ``'xarray'`` backend. Setting to `None` (the default) is
             equivalent to providing an empty dictionary. The keyword
-            arguments ``mask_and_scale=False, decode_cf=False`` are
-            always automatically applied, even when not provided, and
-            can't be set to different values.
+            arguments ``mask_and_scale=False, decode_cf=False,
+            chunks='auto'`` are always automatically applied, even
+            when not provided. The first two arguments can't be set to
+            different values, but the third argument (``chunks``) may
+            be modified.
 
         zarr_options: `dict` or `None`, optional
             Keyword arguments that are passed to `zarr.open` when
@@ -2016,63 +2056,69 @@ class Dataset(Group):
         zarr_dimension_search="closest_ancestor",
         verbose=0,
     ):
-        # Options for the different backend open functions
-        open_options = {}
+        # Options for the different backend read functions
+        read_options = {}
         if pyfive_options:
-            open_options["pyfive"] = pyfive_options
+            read_options["pyfive"] = pyfive_options
 
         if zarr_options:
-            open_options["zarr"] = zarr_options
+            read_options["zarr"] = zarr_options
 
         if xarray_options:
-            open_options["xarray"] = xarray_options
+            read_options["xarray"] = xarray_options
 
         if ppfive_options:
-            open_options["ppfive"] = ppfive_options
+            read_options["ppfive"] = ppfive_options
 
         if netCDF4_options:
-            open_options["netCDF4"] = netCDF4_options
+            read_options["netCDF4"] = netCDF4_options
 
         if netcdf_file_options:
-            open_options["netcdf_file"] = netcdf_file_options
+            read_options["netcdf_file"] = netcdf_file_options
 
         if h5py_options:
-            open_options["h5py"] = h5py_options
+            read_options["h5py"] = h5py_options
 
         self._zarr_dimension_search = zarr_dimension_search
 
-        # The log of how the dataset was/wasn't opened
-        self._dataset_open_log = []
+        # Initialise the log of how the dataset was/wasn't read by
+        # each backend
+        self._dataset_read_log = []
 
         self._dataset = dataset
-        
+
         if backend is None:
-            open_functions = _open_functions
+            read_functions = _read_functions
         else:
-            # Restrict to selected backends
+            # Restrict the reading to selected backends
             if isinstance(backend, str):
                 backend = (backend,)
 
             try:
-                open_functions = {b: _open_functions[b] for b in backend}
+                read_functions = {b: _read_functions[b] for b in backend}
             except KeyError as error:
                 raise ValueError(
-                    f"Invalid backend. Got {error}. Valid backends are "
-                    f"{tuple(_open_functions)}"
+                    f"Invalid backend. Got {error!r}. Valid backends are "
+                    f"{tuple(_read_functions)}"
                 )
 
         nc = None
-        for backend, func in open_functions.items():
-            options = open_options.get(backend, {})
+        for backend, func in read_functions.items():
+            options = read_options.get(backend, {})
             try:
                 nc = func(dataset, options)
             except Exception as error:
-                self._dataset_open_log.append(
+                self._dataset_read_log.append(
                     f"{backend}: {error.__class__.__name__}: {error}"
                 )
             else:
-                self._dataset_open_log.append(
-                    f"{backend}: Successfully read {dataset!r}"
+                message = (
+                    "Successfully read"
+                    if nc["owns_accessor"]
+                    else "Using existing object"
+                )
+                self._dataset_read_log.append(
+                    f"{backend}: {message} {dataset!r}"
                 )
                 break
 
@@ -2085,14 +2131,14 @@ class Dataset(Group):
                 pass
 
             raise NetCDFError(
-                f"Can't open {dataset!r} with any of the backends "
-                f"{tuple(open_functions)}:\n\n"
-                f"{self.dataset_open_log(display=False)}"
+                f"Can't read {dataset!r} with any of the backends "
+                f"{tuple(read_functions)}:\n\n"
+                f"{self.dataset_read_log(display=False)}"
             )
 
         # Cache the backend, library, dataset, and dataset name
         self._backend_library = nc["library"]
-        self._owns_nc = nc["owns_nc"]
+        self._owns_accessor = nc["owns_accessor"]
         self._backend_api = nc["backend_api"]
         self._dataset_name = nc["dataset_name"]
 
@@ -2105,7 +2151,7 @@ class Dataset(Group):
         if protocol == -1:
             is_local = None
         else:
-            if isinstance(protocol, tuple):
+            if isinstance(protocol, (tuple, list)):
                 protocol = protocol[0]
 
             if protocol in ("", "file", "local", None):
@@ -2138,7 +2184,7 @@ class Dataset(Group):
             verbose = 5
 
         if verbose >= 1:
-            log = self.dataset_open_log(display=False)
+            log = self.dataset_read_log(display=False)
             if log:
                 print(log, "\n")
 
@@ -2255,7 +2301,7 @@ class Dataset(Group):
     @property
     def backend_accessor(self):
         """The backend object that accesses the dataset.
-        
+
         The backend accessor is the interface to the dataset, and
         provides access to the dataset contents.
 
@@ -2338,7 +2384,7 @@ class Dataset(Group):
             `None`
 
         """
-        if not self._owns_nc:
+        if not self._owns_accessor:
             return
 
         if self.backend_api == "netcdf_file":
@@ -2349,8 +2395,11 @@ class Dataset(Group):
             except AttributeError:
                 pass
 
-    def dataset_open_log(self, display=True):
-        """The dataset-open log.
+    def dataset_read_log(self, display=True):
+        """The dataset-read log.
+
+        .. seealso:: `backend_library`, `backend_api`,
+                     `backend_accessor`
 
         :Parameters:
 
@@ -2365,8 +2414,15 @@ class Dataset(Group):
                 log is printed and `None` is returned. Otherwise the
                 log is returned as a string.
 
+        :Examples:
+
+        >>> nc = xnetcdf.Dataset('test.zarr3/')
+        >>> nc.dataset_read_log()
+        pyfive: IsADirectoryError: [Errno 21] Is a directory: 'test.zarr3/'
+        zarr: Successfully read 'test.zarr3/'
+
         """
-        log = "\n".join(self._dataset_open_log)
+        log = "\n".join(self._dataset_read_log)
         if not display:
             return log
 

@@ -24,7 +24,19 @@ class NetCDFError(Exception):
 
 
 def get_dataset_name_and_protocol(dataset):
-    """TODO."""
+    """Get the data name and file system protocol.
+
+    :Returns:
+
+        (`object`, `str`, `str`)
+            The input *dataset* object (but if it's a string, modifed
+            with tilde and environment variable expansions), the
+            dataset name, and the file system protocol of the
+            dataset. If either of the latter two can not be
+            determined, then ``''`` and ``-1`` are returned
+            repectively.
+
+    """
     dataset_name = ""
     protocol = -1
 

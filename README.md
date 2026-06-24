@@ -29,13 +29,12 @@ dimensions, variables, and attributes.
 ### Backends
 
 `xnetcdf` has no native capability for directly opening a dataset,
-rather it wholly relies on external backend libraries to provide a
-view of the dataset which can then be mapped to the common netCDF
-view.
+rather external backend libraries are relied on to read the dataset
+which can then be mapped to the common netCDF view.
 
 `xnetcdf` supports the following backends for giving access to a
-dataset: `pyfive`, `zarr`, `xarray`, `ppfive`, `netCDF4`,
-`scipy.io.netcdf_file`, and `h5py`.
+dataset: `pyfive`, `zarr`, `ppfive`, `netCDF4`,
+`scipy.io.netcdf_file`, `h5py`, and `xarray`
 
 ### Dataset formats
 
@@ -116,7 +115,7 @@ The only dependency required run the software, besides Python, is
 However, each of the backend libraries `pyfive`, `netCDF4`, `zarr`,
 `scipy.io.netcdf_file`, `xarray`, `ppfive`, and `h5py` can only be
 used if it also installed. It is not a problem, in general, if a
-backend library is not installed -- it just reduces the size of the
+backend library is not installed, as it just reduces the size of the
 pool of backends that are available for reading a dataset.
 
 ## Installation

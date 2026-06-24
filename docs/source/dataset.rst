@@ -63,6 +63,10 @@ dataset are availabl via the `xnetcdf.Dataset` attributes
    >>> nc.backend_accessor
    <HDF5 file "test.nc" (mode r)>
 
+A log of which backend libraries were used, successfully or
+unsuccessfuly, to read the data set is available with the
+`~xnetcdf.Dataset.dataset_read_log` method.
+   
 .. _Dataset-indexing:
 
 Dataset indexing

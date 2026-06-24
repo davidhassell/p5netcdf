@@ -49,8 +49,8 @@ def netcdf_file_dtype(variable):
     return variable._var[(slice(0, 1),) * len(variable.shape)].flat[0].dtype
 
 
-def netcdf_file_open(dataset, options):
-    """Open a dataset with `netcdf_file`.
+def netcdf_file_read(dataset, options):
+    """Read a dataset with `scipy.io.netcdf_file`.
 
     The dataset is opened with `scipy.io.netcdf_file` options
     ``mode='r'`` and ``mmap=True``.
@@ -86,7 +86,7 @@ def netcdf_file_open(dataset, options):
     if isinstance(dataset, netcdf_file):
         nc = dataset
         library = get_library(dataset)
-        owns_nc = False
+        owns_accessor = False
 
         dataset_name = dataset.filename
         if not dataset_name:
@@ -115,7 +115,7 @@ def netcdf_file_open(dataset, options):
         nc = netcdf_file(dataset, mode="r", mmap=True, **options)
 
         library = netcdf_file
-        owns_nc = True
+        owns_accessor = True
 
     return {
         "dataset_name": dataset_name,
@@ -124,7 +124,7 @@ def netcdf_file_open(dataset, options):
         "attrs": nc._attributes,
         "backend_api": "netcdf_file",
         "library": library,
-        "owns_nc": owns_nc,
+        "owns_accessor": owns_accessor,
     }
 
 

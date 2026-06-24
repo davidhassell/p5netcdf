@@ -461,10 +461,11 @@ def test_xnetcdf_Dataset_backend_library(data_dir):
     with xnetcdf.Dataset(dataset, backend="pyfive") as p:
         assert p.backend_library is pyfive
 
+
 def test_xnetcdf_Dataset_backend_accessor(data_dir):
     """Test Dataset.backend_accessor."""
     import pyfive
-    
+
     dataset = data_dir / "test.nc"
     with xnetcdf.Dataset(dataset, backend="pyfive") as p:
         assert isinstance(p.backend_accessor, pyfive.File)
@@ -511,11 +512,11 @@ def test_xnetcdf_Dataset_protocol_is_local(data_dir):
         assert p.is_local
 
 
-def test_xnetcdf_Dataset_dataset_open_log(data_dir):
-    """Test Dataset.dataset_open_log."""
+def test_xnetcdf_Dataset_dataset_read_log(data_dir):
+    """Test Dataset.dataset_read_log."""
     dataset = data_dir / "test.nc"
     with xnetcdf.Dataset(dataset, backend="pyfive") as p:
-        log = p.dataset_open_log(display=False)
+        log = p.dataset_read_log(display=False)
         assert isinstance(log, str)
         assert "Successfully read" in log
 

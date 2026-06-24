@@ -1,3 +1,5 @@
+.. _Installation:
+
 Installation
 ============
 
@@ -23,8 +25,8 @@ To install with all of the :ref:`backend libraries <Backends>` using
 
     $ pip install xnetcdf[all]
 
-A ``conda`` package, which also installs all of the backend libraries,
-is available from conda-forge:
+A ``conda`` package, which also installs all of the :ref:`backend
+libraries <Backends>`, is available from conda-forge:
 
 .. code-block:: console
 

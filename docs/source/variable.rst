@@ -28,10 +28,10 @@ name respectively.
    >>> g.path
    '/forecast/model/q'
 
-.. _Variable-data:
+.. _Variable-data-and-indexing:
 
-Variable data
--------------
+Variable data and indexing
+--------------------------
 
 The data array of an `xnetcdf.Variable` instance is accessed by direct
 indexing, following whatever indexing rules are allowed by the
